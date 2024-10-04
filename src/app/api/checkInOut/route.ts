@@ -32,9 +32,9 @@ export async function POST(req: Request) {
       to: `91${phoneNumber}`,
       type: "template",
       template: {
-        name: "hello_world",
+        name: "checkin",
         language: {
-          code: "en_US",
+          code: "en",
         },
       },
     };
