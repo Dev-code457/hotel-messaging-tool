@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 function PromotionalMessage() {
   const sendBulkMessage = async (messageType: "diwali" | "newyear") => {
-    const promise = axios.post("/api/Promotinal", {
+    const promise = axios.post("/api/Promotional", {
       messageType,
     });
     toast.promise(promise, {
