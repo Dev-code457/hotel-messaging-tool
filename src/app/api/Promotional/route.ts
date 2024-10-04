@@ -71,15 +71,11 @@ export async function POST(req: Request) {
       },
       { status: 200 }
     );
-  }catch (error: unknown) {
+  } catch (error: unknown) {
     console.error("Error during bulk messaging:", error);
     const errorMessage =
       error instanceof Error ? error.message : "An unknown error occurred";
-  
-    return NextResponse.json(
-      { error: errorMessage },
-      { status: 500 }
-    );
+
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
-  
 }

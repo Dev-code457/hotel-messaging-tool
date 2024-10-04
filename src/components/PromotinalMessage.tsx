@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 function PromotionalMessage() {
   const sendBulkMessage = async (messageType: "diwali" | "newyear") => {
-    const promise = axios.post("/api/Promotional", {
+    const promise = axios.post("/api/PromotinalMessage", {
       messageType,
     });
     toast.promise(promise, {
@@ -52,9 +52,9 @@ function PromotionalMessage() {
           <Image
             src={Hero}
             alt="Promotional Messages"
-            width={200}
+            width={180}
             height={300}
-            className="mt-16"
+            className="mt-8"
           />
         </div>
       </div>

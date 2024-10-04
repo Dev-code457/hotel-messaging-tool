@@ -12,6 +12,7 @@ function CheckInOut() {
   const [phoneNumber, setPhoneNumber] = useState("");
 
   const handleSubmit = async () => {
+    // EX :- http://localhost:3000/api/send-message
     const promise = axios.post("/api/checkInOut", {
       phoneNumber,
     });
@@ -57,7 +58,7 @@ function CheckInOut() {
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
             />
-            <div className="flex  justify-center">
+            <div className="flex  justify-center -mt-6">
               <Button
                 text="Send Check In Message"
                 classnames="bg-green-500 hover:bg-green-600"
@@ -79,7 +80,7 @@ function CheckInOut() {
             alt="Check In & Check Out"
             width={400}
             height={300}
-            className="mt-12"
+            className="mt-8"
           />
         </div>
       </div>
