@@ -12,7 +12,7 @@ function PromotionalNumber() {
   const [phoneNumber, setPhoneNumber] = useState("");
 
   const handleSubmit = async () => {
-    const promise = axios.post("/api/PromotionalNumber", {
+    const promise = axios.post("/api/customers", {
       phoneNumber,
     });
 setPhoneNumber("")
@@ -35,12 +35,12 @@ setPhoneNumber("")
   };
 
   return (
-    <Section heading="Add Promotional Number" classnames="my-32">
+    <Section heading="Add Promotional Number" classnames="">
       <div className="grid grid-cols-5 gap-4">
         <div className="col-span-3">
-          <div className="flex justify-start items-center mt-11 -space-x-6">
+          <div className="flex justify-start items-center mt-8 -space-x-6">
             <Input
-              classnames="p-10 flex-grow"
+              classnames="p-8 flex-grow"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
             />
