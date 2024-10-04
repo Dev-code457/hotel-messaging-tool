@@ -8,7 +8,7 @@ import axios from "axios";
 import { toast } from "sonner";
 
 function PromotionalMessage() {
-  const sendBulkMessage = async (messageType: "diwali" | "newyear") => {
+  const sendBulkMessage = async (messageType: "promotional_newyear" | "promotional_dewali") => {
     const promise = axios.post("/api/Promotional", {
       messageType,
     });
@@ -39,12 +39,12 @@ function PromotionalMessage() {
             <Button
               text="Send Diwali Message"
               classnames="bg-green-500 hover:bg-green-600"
-              onClick={() => sendBulkMessage("diwali")}
+              onClick={() => sendBulkMessage("promotional_dewali")}
             />
             <Button
               text="Send New Year Message"
               classnames="bg-blue-500 hover:bg-blue-600"
-              onClick={() => sendBulkMessage("newyear")}
+              onClick={() => sendBulkMessage("promotional_newyear")}
             />
           </div>
         </div>

@@ -4,6 +4,9 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    const {messageType} = body
+    console.log(messageType,'nklsafnsdfnsdfn');
+    
 
     const client = await clientPromise;
     const db = client.db("Customers");
@@ -23,9 +26,9 @@ export async function POST(req: Request) {
         to: `91${customer.phoneNumber}`,
         type: "template",
         template: {
-          name: "hello_world",
+          name: String(messageType),
           language: {
-            code: "en_US",
+            code: "en",
           },
         },
       };
@@ -67,7 +70,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(
       {
-        message: `Bulk Messages sent successfully`,
+        message: `Messages sent successfully`,
       },
       { status: 200 }
     );
