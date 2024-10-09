@@ -1,45 +1,38 @@
+// routes/api/auth/login.ts
 import { NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/mongodb";
-import User from "@/models/user"; 
-import generateTokens from "@/utils/generateTokens";
+import { loginUser } from "@/services/authService";
+import { BadRequestError, NotFoundError, UnauthorizedError } from "@/utils/errors";
 
 export async function POST(req: Request) {
-  await connectToDatabase(); 
-
-  const { email, password } = await req.json();
-
-  if (!(email && password)) {
-    return NextResponse.json(
-      { message: "All fields are mandatory." },
-      { status: 400 }
-    );
-  }
-
   try {
-    const user = await User.findOne({ email });
-    const isValidPassword = await user.matchPassword(password);
-    console.log(user, "This is my user");
+    const { email, password } = await req.json();
 
-    if (!user) {
-      return NextResponse.json({ message: "User Not Found" }, { status: 404 });
+    if (!(email && password)) {
+      throw new BadRequestError("All fields are mandatory.");
     }
-    if (!isValidPassword) {
-      return NextResponse.json(
-        { message: "Invalid Password" },
-        { status: 401 }
-      );
+
+    const { user, token } = await loginUser(email, password); // Login user
+
+    return NextResponse.json(
+      { message: "Login Successful", token, user: { email: user.email } }, // Optionally return user data
+      { status: 200 }
+    );
+  } catch (error: any) {
+    let status = 500;
+    let message = "Internal server error.";
+
+    if (error instanceof BadRequestError) {
+      status = 400;
+      message = error.message;
+    } else if (error instanceof NotFoundError) {
+      status = 404;
+      message = error.message;
+    } else if (error instanceof UnauthorizedError) {
+      status = 401;
+      message = error.message;
     }
-    const token = generateTokens(user._id);
-    await user.save();
-    return NextResponse.json(
-      { message: "Login Successfull", token },
-      { status: 201 }
-    );
-  } catch (error) {
-    console.error("Error during user creation:", error);
-    return NextResponse.json(
-      { message: "Internal server error." },
-      { status: 500 }
-    );
+
+    console.error("Error during login:", error);
+    return NextResponse.json({ message }, { status });
   }
 }

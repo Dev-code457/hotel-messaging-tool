@@ -4,10 +4,12 @@ function Input({
   classnames,
   value,
   onChange,
+  placeHolder
 }: {
   classnames: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeHolder: string
 }) {
   return (
     <div className={`max-w-md ${classnames}`}>
@@ -20,8 +22,8 @@ function Input({
           id="phone"
           value={value}
           onChange={onChange}
-          className="block w-full p-4 text-sm font-bold text-black border border-gray-300 rounded-lg bg-white placeholder-black"
-          placeholder="Enter Number"
+          className="block w-80 p-4 text-sm font-bold text-black border border-gray-300 rounded-lg bg-gray-100 placeholder-black"
+          placeholder={placeHolder}
           required
         />
       </div>

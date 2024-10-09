@@ -1,12 +1,61 @@
-import Image from "next/image";
-import React from "react";
-import Logo from "@/app/assets/FIRANGIPANI-logo-1 1.svg";
-import CheckInOut from "@/components/CheckInOut";
-import Link from "next/link";
-import PromotionalNumber from "@/components/PromotionalNumber";
-import PromotionalMessage from "@/components/PromotinalMessage";
+"use client";
 
-function Page() {
+import Image from "next/image";
+import React, { ReactNode, useEffect, useState } from "react";
+import Logo from "@/app/assets/Logo.svg";
+import Section from "@/components/Layout";
+import Input from "@/components/Input";
+import Button from "@/components/Button";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import axios from "axios";
+import HelperImage from "@/app/assets/Login.com.svg";
+import Cookies from "js-cookie"; // Import js-cookie
+
+function Page({ children }: { children: ReactNode }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault(); // Prevent form submission from reloading the page
+
+    const promise = axios.post("/api/auth/login", {
+      email,
+      password,
+    });
+
+    toast.promise(promise, {
+      loading: "Logging in...",
+      success: (response) => {
+        const data = response.data;
+
+        // Store the token in a cookie
+        Cookies.set("_session", data.token, { expires: 7 }); // Set cookie to expire in 7 days
+
+        // On successful login, redirect to CheckInOut page
+        router.push("/CheckInOut"); // Redirect to the CheckInOut page
+        return data.message || "Login successful!";
+      },
+      error: (error) => {
+        if (error.response && error.response.data) {
+          return error.response.data.error || "Something went wrong!";
+        } else {
+          return error.message || "An unknown error occurred.";
+        }
+      },
+    });
+  };
+
+  useEffect(() => {
+    // Check for the token in cookies
+    const token = Cookies.get("_session"); // Retrieve the token from cookies
+    if (token) {
+      // If the token exists, redirect to CheckInOut
+      router.push("/CheckInOut");
+    }
+  }, [router]);
+
   return (
     <>
       <button
@@ -14,7 +63,7 @@ function Page() {
         data-drawer-toggle="default-sidebar"
         aria-controls="default-sidebar"
         type="button"
-        className="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+        className="inline-flex items-center p-2 mt-2 ms-3 text-sm rounded-lg sm:hidden hover:bg-gray-550 focus:outline-none focus:ring-2 dark:text-gray-400"
       >
         <span className="sr-only">Open sidebar</span>
         <svg
@@ -42,20 +91,52 @@ function Page() {
             <li>
               <a
                 href="#"
-                className="flex items-center p-6 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                className="flex items-center -mt-6 text-gray-900 rounded-lg dark:text-white hover group"
               >
-                <Image src={Logo} alt="LOGO" className="" />
+                <Image src={Logo} alt="LOGO" className="w-full h-full" />
               </a>
             </li>
           </ul>
         </div>
       </aside>
 
-      <div className="sm:ml-64 flex justify-center items-center  ">
-        <div className="flex flex-col justify-center items-center w-full bg-gray-50">
-          <CheckInOut />
-          <PromotionalNumber />
-          <PromotionalMessage />
+      <div className="sm:ml-64 flex justify-center">
+        <div className="flex flex-col h-screen pt-10 items-center w-full bg-gray-50">
+          <Section heading="Login" classnames="flex-col justify-start h-[50vh]">
+            <form onSubmit={handleSubmit}>
+              <Input
+                classnames="py-6"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeHolder="Enter Email"
+              />
+              <Input
+                classnames="py-6"
+                value={password}
+                placeHolder="Enter Password"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <div className="flex justify-start">
+                <Button
+                  text="Log In"
+                  classnames="bg-green-500 hover:bg-green-600"
+                  type="submit" // Change type to "submit"
+                />
+              </div>
+              <div className="absolute right-[20%] -mt-[3%]">
+                <Image
+                  src={HelperImage}
+                  alt="Check In & Check Out"
+                  width={400}
+                  height={300}
+                  className="-mt-8"
+                />
+              </div>
+            </form>
+            <div className="text-sm font-semibold text-[#FB5151] py-6 underline font-serif">
+              Forgot Password
+            </div>
+          </Section>
         </div>
       </div>
     </>

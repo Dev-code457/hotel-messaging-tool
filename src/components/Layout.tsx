@@ -12,9 +12,9 @@ function Section({
 }) {
   return (
     <div
-      className={`bg-white w-[55%] h-[30vh] flex-col justify-end items-start rounded-3xl shadow-2xl my-8 border-2 space-x-6 border-black ${classnames}`}
+      className={`bg-white w-[55%] h-[30vh] flex-col justify-end items-start rounded-2xl shadow-2xl my-8 border-2 space-x-6 border-black ${classnames}`}
     >
-      <p className="text-lg font-bold text-white bg-black px-6 py-1 absolute -mt-[18px] right-[22%] rounded-lg">
+      <p className="text-2xl font-bold text-white bg-black px-8 py-3 absolute -mt-[22px] right-[15%] rounded-lg">
         {heading}
       </p>
       {children}
