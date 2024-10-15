@@ -1,22 +1,32 @@
-import React, { ReactNode } from 'react';
-import { usePathname } from 'next/navigation'; // Importing usePathname
-import Logo from "@/app/assets/Logo.svg";
-import Image from 'next/image';
+import React, { ReactNode, useState } from "react";
+import { usePathname } from "next/navigation";
+import Logo from "@/app/public/assets/GoodPegg.png";
+import Image from "next/image";
+import Link from "next/link";
+import Confirmation from "@/components/Confirmation";
+import { RootState } from "@/redux/store";
+import { useSelector } from "react-redux";
 
 function SideLayout({ children }: { children: ReactNode }) {
-  const pathname = usePathname(); // Get the current pathname
- 
-  
-console.log(pathname,"knsjknskfnsdfnlsdf");
+  const pathname = usePathname();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const value = useSelector((state: RootState) => state.example.value);
 
   const links = [
-    { name: 'Add Number Database', path: '/add-number-database' },
-    { name: 'Check In/ Check Out', path: '/CheckInOut' },
-    { name: 'Promotions/ Offers', path: '/promotions-offers' },
-    { name: 'Feedback', path: '/feedback' },
-    { name: 'Change Password', path: '/change-password' },
-    { name: 'Logout', path: '/logout' },
+    { name: "Add Number Database", path: "/AddNumber" },
+    { name: "Check In/ Check Out", path: "/CheckInOut" },
+    { name: "Promotions/ Offers", path: "/Promotion-Offer" },
+    { name: "Feedback", path: "/FeedBack" },
+    { name: "Change Password", path: "/ChangePassword" },
+    { name: "Logout", path: "#" },
   ];
+
+  const handleLogout = () => {
+    document.cookie =
+      "_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    window.location.href = "/";
+  };
 
   return (
     <>
@@ -44,37 +54,54 @@ console.log(pathname,"knsjknskfnsdfnlsdf");
       </button>
       <aside
         id="default-sidebar"
-        className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
+        className="fixed top-0 left-0 z-40 w-64 h-screen  transition-transform -translate-x-full sm:translate-x-0"
         aria-label="Sidebar"
       >
-        <div className="h-full px-3 py-4 overflow-y-auto bg-black">
-          <ul className="space-y-8 font-medium">
+        <div className="h-full px-3 overflow-y-auto bg-black">
+          <ul className="space-y-4">
             <li>
               <a
                 href="#"
-                className="flex items-center -mt-6  rounded-lg  hover group"
+                className="flex items-center justify-center rounded-lg hover group"
               >
-                <Image src={Logo} alt="LOGO" className="w-full h-full" />
+                <Image src={Logo} alt="LOGO" className="w-[60%]" />
               </a>
             </li>
-            {links.map(link => (
+            {links.map((link) => (
               <li key={link.path}>
-                  <a
+                <Link
                   href={link.path}
-                  className={`flex items-center justify-start rounded-lg  group ${
-                    pathname === link.path
-                      ? ' text-[#EF5C5C] ' // Glass effect for active link
-                      : 'text-white '
+                  className={`flex items-center justify-start rounded-lg group ${
+                    pathname === link.path ? " text-[#EF5C5C] " : "text-white "
                   }`}
+                  onClick={
+                    link.name === "Logout"
+                      ? (e) => {
+                          e.preventDefault(); // Prevent default link behavior
+                          setIsModalOpen(true); // Open confirmation modal
+                        }
+                      : undefined
+                  }
                 >
                   <p>{link.name}</p>
-                </a>
+                </Link>
               </li>
             ))}
+
+            <div className="text-xl text-white font-semibold pt-[70%]">
+              Messsages Left: {value}
+            </div>
           </ul>
         </div>
       </aside>
       {children}
+
+      {/* Confirmation Modal */}
+      <Confirmation
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleLogout}
+      />
     </>
   );
 }

@@ -1,38 +1,52 @@
-// routes/api/auth/login.ts
-import { NextResponse } from "next/server";
-import { loginUser } from "@/services/authService";
-import { BadRequestError, NotFoundError, UnauthorizedError } from "@/utils/errors";
+  import { NextResponse } from "next/server";
+  import { connectToDatabase } from "@/lib/mongodb";
+  import User from "@/models/user";
+  import generateTokens from "@/utils/generateTokens";
 
-export async function POST(req: Request) {
-  try {
+  export async function POST(req: Request) {
+    await connectToDatabase();
+
     const { email, password } = await req.json();
 
+    // Validate input fields
     if (!(email && password)) {
-      throw new BadRequestError("All fields are mandatory.");
+      return NextResponse.json(
+        { message: "All fields are mandatory." },
+        { status: 400 }
+      );
     }
 
-    const { user, token } = await loginUser(email, password); // Login user
+    try {
+      // Find the user by email
+      const user = await User.findOne({ email });
 
-    return NextResponse.json(
-      { message: "Login Successful", token, user: { email: user.email } }, // Optionally return user data
-      { status: 200 }
-    );
-  } catch (error: any) {
-    let status = 500;
-    let message = "Internal server error.";
+      // Check if the user exists
+      if (!user) {
+        return NextResponse.json({ message: "User Not Found" }, { status: 404 });
+      }
 
-    if (error instanceof BadRequestError) {
-      status = 400;
-      message = error.message;
-    } else if (error instanceof NotFoundError) {
-      status = 404;
-      message = error.message;
-    } else if (error instanceof UnauthorizedError) {
-      status = 401;
-      message = error.message;
+      // Validate the password
+      const isValidPassword = await user.matchPassword(password);
+      if (!isValidPassword) {
+        return NextResponse.json(
+          { message: "Invalid Password" },
+          { status: 401 }
+        );
+      }
+
+      const userId = user._id.toString();
+
+      const token = generateTokens(userId);
+
+      return NextResponse.json(
+        { message: "Login Successful", token },
+        { status: 201 }
+      );
+    } catch (error) {
+      console.error("Error during user login:", error);
+      return NextResponse.json(
+        { message: "Internal server error." },
+        { status: 500 }
+      );
     }
-
-    console.error("Error during login:", error);
-    return NextResponse.json({ message }, { status });
   }
-}

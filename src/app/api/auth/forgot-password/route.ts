@@ -24,27 +24,45 @@ export async function PUT(req: Request) {
 
     const resetToken = crypto.randomBytes(20).toString("hex");
 
-    // Hash token and set to user fields
     user.resetPasswordToken = crypto
       .createHash("sha256")
       .update(resetToken)
       .digest("hex");
 
-    user.resetPasswordExpire = Date.now() + 10 * 60 * 1000; // Token valid for 10 minutes
+    user.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
     await user.save();
 
-    // Create reset URL using req headers (since Next.js `Request` does not support req.protocol or req.get directly)
- const host = req.headers.get("x-forwarded-host") || req.headers.get("host");
-const protocol = req.headers.get("x-forwarded-proto") || "http";
-const resetUrl = `${protocol}://${host}/api/auth/resetpassword/${resetToken}`;
+    const host = req.headers.get("x-forwarded-host") || req.headers.get("host");
+    const protocol = req.headers.get("x-forwarded-proto") || "http";
+    const resetUrl = `${protocol}://${host}/ResetPassword/${resetToken}`;
 
-    const message = `You are receiving this email because you (or someone else) have requested the reset of a password. Please make a PUT request to: \n\n ${resetUrl}`;
+    const message = `
+      <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f6f6f6; border-radius: 8px;">
+        <h2 style="color: #333;">Password Reset Request</h2>
+        <p style="color: #555;">
+          You are receiving this email because you (or someone else) have requested the reset of your password.
+        </p>
+        <p style="color: #555;">
+          Please click the link below to reset your password:
+        </p>
+        <p>
+          <a href="${resetUrl}" style="display: inline-block; padding: 10px 20px; background-color: #3483BC; color: white; text-decoration: none; border-radius: 5px;">Reset Password</a>
+        </p>
+        <p style="color: #555;">
+          If you did not request this, please ignore this email. Your password will remain unchanged.
+        </p>
+        <p style="color: #999; font-size: 12px;">
+          This link will expire in 10 minutes.
+        </p>
+      </div>
+    `;
 
     try {
       await sendEmail({
         email: user.email,
         subject: "Password Reset Request",
         message,
+        
       });
 
       return NextResponse.json(
@@ -55,7 +73,7 @@ const resetUrl = `${protocol}://${host}/api/auth/resetpassword/${resetToken}`;
       console.error("Error sending email:", emailError);
       user.resetPasswordToken = undefined;
       user.resetPasswordExpire = undefined;
-      await user.save(); // Clean up the reset token if email sending fails
+      await user.save();
       return NextResponse.json(
         { message: "Failed to send reset email." },
         { status: 500 }

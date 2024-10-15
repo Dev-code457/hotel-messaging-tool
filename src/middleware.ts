@@ -24,5 +24,10 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/CheckInOut/:path*", "/anotherProtectedRoute/:path*", "/"],
+  matcher: [
+    "/CheckInOut/:path*",
+    "/AddNumber/:path*",
+    "/Promotion-Offer/:path*",
+    "/Feedback/:path*",
+  ],
 };

@@ -1,26 +1,25 @@
-import { connectToDatabase } from "@/lib/mongodb"; // Ensure this function returns a MongoDB client
+import { connectToDatabase } from "@/lib/mongodb";
 import { NextResponse } from "next/server";
-import Customer from "@/models/customers"; // Ensure this path is correct
+import Customer from "@/models/customers";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { messageType } = body; // Extracting messageType from the request body
+    const { hotelName, discount, phoneNumber, address, sliderValue } = body;
 
-    // Check if messageType is provided
-    if (!messageType) {
+    if (!hotelName || !discount || !phoneNumber || !address || !sliderValue) {
       return NextResponse.json(
-        { error: "messageType is required" },
+        { error: "All fields are required" },
         { status: 400 }
       );
     }
 
-    await connectToDatabase(); // Establish connection to MongoDB
+    // Connect to the database
+    await connectToDatabase();
 
-    // Fetch customers from the database using Mongoose model
-    const customers = await Customer.find({}); // Use the Customer model to find customers
+    // Fetch all customers from the database
+    const customers = await Customer.find({});
 
-    // Handle case when no customers are found
     if (!customers || customers.length === 0) {
       return NextResponse.json(
         { error: "No customers found" },
@@ -28,21 +27,50 @@ export async function POST(req: Request) {
       );
     }
 
-    // Prepare sending messages
-    const sendPromises = customers.map(async (customer: any) => {
+    // Shuffle customers array to randomize
+    const shuffledCustomers = customers.sort(() => 0.5 - Math.random());
+
+    // Limit the number of customers based on sliderValue
+    const selectedCustomers = shuffledCustomers.slice(0, sliderValue);
+
+    const sendPromises = selectedCustomers.map(async (customer: any) => {
       const requestBody = {
         messaging_product: "whatsapp",
         to: `91${customer.phoneNumber}`,
         type: "template",
         template: {
-          name: String(messageType),
+          name: "event_rsvp_reminder_2", // Replace with actual template name
           language: {
             code: "en",
           },
+          components: [
+            {
+              type: "body",
+              parameters: [
+                {
+                  type: "TEXT",
+                  text: discount, // Add your dynamic message here
+                },
+                {
+                  type: "TEXT",
+                  text: hotelName, // Add your dynamic message here
+                },
+                {
+                  type: "TEXT",
+                  text: phoneNumber, // Add your dynamic message here
+                },
+                {
+                  type: "TEXT",
+                  text: address, // Add your dynamic message here
+                },
+              ],
+            },
+          ],
         },
       };
 
       try {
+        // Send the request to WhatsApp Business API
         const response = await fetch(
           `https://graph.facebook.com/v20.0/${process.env.WHATSAPP_BUSINESS_ID}/messages`,
           {
@@ -57,7 +85,6 @@ export async function POST(req: Request) {
 
         const responseData = await response.json();
 
-        // Check if the response is not OK
         if (!response.ok) {
           console.error(
             `Failed to send message to ${customer.phoneNumber}:`,
@@ -66,13 +93,13 @@ export async function POST(req: Request) {
           throw new Error(responseData.error?.message || "Unknown error");
         }
 
-        return responseData; // Return the successful response
+        return responseData;
       } catch (error) {
         console.error(
           `Error sending message to ${customer.phoneNumber}:`,
           error
         );
-        throw error; // Re-throw the error to be caught in the outer catch block
+        throw error;
       }
     });
 
@@ -81,7 +108,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(
       {
-        message: `Messages sent successfully`,
+        message: `Messages sent successfully to ${sliderValue} users`,
       },
       { status: 200 }
     );

@@ -2,14 +2,14 @@
 
 import Image from "next/image";
 import React, { ReactNode, useEffect, useState } from "react";
-import Logo from "@/app/assets/Logo.svg";
+import Logo from "@/app/public/assets/Logo.svg";
 import Section from "@/components/Layout";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import axios from "axios";
-import HelperImage from "@/app/assets/Login.com.svg";
+import HelperImage from "@/app/public/assets/Login.com.svg";
 import Cookies from "js-cookie"; // Import js-cookie
 
 function Page({ children }: { children: ReactNode }) {
@@ -101,43 +101,45 @@ function Page({ children }: { children: ReactNode }) {
       </aside>
 
       <div className="sm:ml-64 flex justify-center">
-        <div className="flex flex-col h-screen pt-10 items-center w-full bg-gray-50">
-          <Section heading="Login" classnames="flex-col justify-start h-[50vh]">
-            <form onSubmit={handleSubmit}>
-              <Input
-                classnames="py-6"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeHolder="Enter Email"
-              />
-              <Input
-                classnames="py-6"
-                value={password}
-                placeHolder="Enter Password"
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <div className="flex justify-start">
-                <Button
-                  text="Log In"
-                  classnames="bg-green-500 hover:bg-green-600"
-                  type="submit" // Change type to "submit"
+          <div className="flex flex-col h-screen pt-20 items-center w-full bg-gray-50 ">
+            <Section heading="Login" classnames="flex-col justify-start h-[60vh] w-[65%] space-x-4">
+              <form onSubmit={handleSubmit} className="w-[40%]">
+                <Input
+                  classnames="py-6"
+                  value={email}
+                  required
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeHolder="Enter Email"
                 />
-              </div>
-              <div className="absolute right-[20%] -mt-[3%]">
-                <Image
-                  src={HelperImage}
-                  alt="Check In & Check Out"
-                  width={400}
-                  height={300}
-                  className="-mt-8"
+                <Input
+                  classnames="mb-8"
+                  value={password}
+                  required
+                  placeHolder="Enter Password"
+                  onChange={(e) => setPassword(e.target.value)}
                 />
+                <div className="flex justify-start">
+                  <Button
+                    text="Submit"
+                    classnames="bg-green-500 hover:bg-green-600"
+                    type="submit" 
+                  />
+                </div>
+                <div className="absolute right-0 -mt-[6%]">
+                  <Image
+                    src={HelperImage}
+                    alt="Check In & Check Out"
+                    className="-mt-8 w-[70%] h-[70%]"
+                  />
+                </div>
+              </form>
+              <div className="text-sm font-semibold text-[#FB5151] py-6 underline font-serif cursor-pointer" onClick={()=>
+                router.push("/ForgotPassword")
+              }>
+                Forgot Password
               </div>
-            </form>
-            <div className="text-sm font-semibold text-[#FB5151] py-6 underline font-serif">
-              Forgot Password
-            </div>
-          </Section>
-        </div>
+            </Section>
+          </div>
       </div>
     </>
   );

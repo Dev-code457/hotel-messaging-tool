@@ -1,5 +1,4 @@
 import React, { ReactNode } from "react";
-import Input from "./Input";
 
 function Section({
   children,
@@ -12,12 +11,14 @@ function Section({
 }) {
   return (
     <div
-      className={`bg-white w-[55%] h-[30vh] flex-col justify-end items-start rounded-2xl shadow-2xl my-8 border-2 space-x-6 border-black ${classnames}`}
+      className={`relative bg-white flex flex-col justify-end items-start rounded-2xl shadow-2xl border-2 gap-3 border-black ${classnames}  h-[30vh]`}
     >
-      <p className="text-2xl font-bold text-white bg-black px-8 py-3 absolute -mt-[22px] right-[15%] rounded-lg">
+      <p className="text-lg font-bold text-white bg-black px-4 py-2 absolute top-0 right-[2%] transform translate-y-[-50%] rounded-lg">
         {heading}
       </p>
+      <div className="w-full">
       {children}
+      </div>
     </div>
   );
 }
