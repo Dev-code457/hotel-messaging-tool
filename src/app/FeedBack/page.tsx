@@ -12,29 +12,30 @@ function CheckInOut() {
   const [feedback, setFeedback] = useState("");
 
   const handleSubmit = async () => {
-    // EX :- http://localhost:3000/api/send-message
-    const promise = axios.post("/api/Feedback", {
-      feedback,
-    });
-
-    toast.promise(promise, {
-      loading: "Please wait",
-      success: (response) => {
-        const data = response.data;
-        return data.message || "Thankyou for your feedback!";
-      },
-      error: (error) => {
-        if (error.response && error.response.data) {
-          return error.response.data || "Something went wrong!";
-        } else {
+    try {
+      const promise = axios.post("/api/Feedback", { feedback });
+      toast.promise(promise, {
+        loading: "Please wait",
+        success: (response) => {
+          const data = response.data;
+          // Check if data.message is a string, or provide a default string
+          const successMessage = typeof data.message === "string" ? data.message : "Thank you for your feedback!";
+      setFeedback("")
+          
+          return successMessage; // Must return a string or valid JSX
+        },
+        error: (error) => {
+          if (error.response && error.response.data) {
+            return error.response.data.message || "Something went wrong!"; // Ensure this is a string
+          }
           return error.message || "An unknown error occurred.";
-        }
-      },
-    });
+        },
+      });
+    } catch (err) {
+      toast.error("An unexpected error occurred");
+    }
   };
-
-
-
+  
   return (
     <SideLayout>
       <div className="sm:ml-64 flex justify-center">
@@ -45,7 +46,12 @@ function CheckInOut() {
           >
             <div className=" ">
               <div className="col-span-2 mb-10">
-                <form>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSubmit();
+                  }}
+                >
                   <div className={`max-w-full mb-4 mr-10 ml-10`}>
                     <label
                       htmlFor="phone-input"
@@ -65,14 +71,14 @@ function CheckInOut() {
                       }
                       required
                       value={feedback}
-                      onChange={(e)=>setFeedback(e.target.value)}
+                      onChange={(e) => setFeedback(e.target.value)}
                     />
                   </div>
                   <div className="px-10 max-w-sm mb-4">
                     <Button
                       text="Submit"
                       classnames="bg-green-500 hover:bg-green-600 py-4 px-8"
-                      onClick={handleSubmit}
+                      type="submit"
                     />
                   </div>
                 </form>

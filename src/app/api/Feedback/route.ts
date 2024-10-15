@@ -16,6 +16,7 @@ console.log(typeof feedback,"knfsjdnflsdfnsdfnls");
     }
     const userFeedback = await new Feedback(feedback)
     await userFeedback.save();
+    return NextResponse.json({message: "Thankyou for your feedback 🙏" }, { status: 200 });
   } catch (error) {
     console.log("error: ", error);
 
