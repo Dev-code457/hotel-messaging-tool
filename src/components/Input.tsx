@@ -2,11 +2,12 @@ import React from "react";
 
 interface InputProps {
   classnames?: string;
-  value: string;
+  value: string | number ;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeHolder: string;
   required?: boolean;
   error?: string; // Optional error message
+  type: string
 }
 
 function Input({
@@ -15,7 +16,8 @@ function Input({
   onChange,
   placeHolder,
   required = false,
-  error
+  error,
+  type = "text"
 }: InputProps) {
   const handleClear = () => {
     onChange({ target: { value: "" } } as React.ChangeEvent<HTMLInputElement>);
@@ -35,7 +37,7 @@ function Input({
       {/* Input Field */}
       <div className="relative">
         <input
-          type="text"
+          type={type}
           id="input-field"
           value={value}
           onChange={onChange}

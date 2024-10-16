@@ -2,88 +2,63 @@ import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import User from "@/models/user";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { validatePasswordInput } from "@/validators/index";
+import { AppError } from "@/utils/errorHandler";
+import { sendErrorResponse, sendSuccessResponse } from "@/utils/responseHandler";
 
 export async function PUT(req: Request) {
   try {
-    // Log the incoming request for debugging
-    console.log("Incoming request:", req);
-
-    // Retrieve cookies from the request
     const cookieHeader = req.headers.get("cookie");
     console.log("Cookie header:", cookieHeader);
 
-    // Extract the token from cookies
     const token = cookieHeader
       ?.split("; ")
       .find((row) => row.startsWith("_session="))
       ?.split("=")[1];
 
-    console.log("Extracted token:", token);
-
     await connectToDatabase();
+    const body = await req.json();
+    const {  password, newPassword } = body;
 
-    // Parse the request body
-    const { password, newPassword } = await req.json();
+    const validationErrors = validatePasswordInput({ password, newPassword });
 
-    // Validate passwords
-    if (!password || !newPassword) {
-      return NextResponse.json(
-        { message: "Password and new password are required." },
-        { status: 400 }
-      );
+    if (validationErrors.length > 0) {
+      throw new AppError(400, validationErrors.join(", "))
     }
 
     if (!token) {
-      return NextResponse.json(
-        {
-          message:
-            "Authentication failed, try forgot password instead of change password.",
-        },
-        { status: 411 }
-      );
+      throw new AppError(401, "Authentication failed, try forgot password instead of change password.")
     }
 
     const secret = process.env.JWT_SECRET;
-
-    // Check if the secret is defined
     if (!secret) {
-      return NextResponse.json(
-        { message: "Internal server error: JWT secret not defined." },
-        { status: 500 }
-      );
+      throw new AppError(401, "Internal Server Error: JWT Secret is not defined")
     }
 
-    // Verify the token to extract the user ID
     let userId;
     try {
       const decodedToken = jwt.verify(token, secret) as JwtPayload;
-      userId = decodedToken.id; // Extract the ID as a string
-      console.log("Decoded user ID:", userId);
-    } catch (error) {
-      return NextResponse.json(
-        { message: "Invalid or expired token." },
-        { status: 400 }
-      );
+      userId = decodedToken.id;
+    } catch (error: any) {
+      throw new AppError(500, error)
     }
+
     const user = await User.findById(userId);
 
     if (!user) {
-      return NextResponse.json({ message: "User not found." }, { status: 404 });
+      throw new AppError(404, "User Not Found")
     }
 
-
-    user.password = newPassword; 
+    // Update the user's password
+    user.password = newPassword;
     await user.save();
 
-    return NextResponse.json(
-      { message: "Password reset successful." },
-      { status: 200 }
-    );
-  } catch (error) {
+    return sendSuccessResponse(200, {
+      message: "Password reset successfully!"
+    })
+  } catch (error: any) {
     console.error("Error during password reset:", error);
-    return NextResponse.json(
-      { message: "Internal Server Error." },
-      { status: 500 }
-    );
+    return sendErrorResponse(500, error)
+
   }
 }

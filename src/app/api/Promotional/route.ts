@@ -1,122 +1,60 @@
+// app/api/customers/route.ts
 import { connectToDatabase } from "@/lib/mongodb";
 import { NextResponse } from "next/server";
 import Customer from "@/models/customers";
+import { AppError, handleAppError } from "@/utils/errorHandler";
+import { validateCustomerInput } from "@/validators/index";
+import { sendWhatsAppMessage } from "@/utils/whatsappApi";
+import { sendSuccessResponse } from "@/utils/responseHandler";
 
 export async function POST(req: Request) {
   try {
+    await connectToDatabase();
+
     const body = await req.json();
     const { hotelName, discount, phoneNumber, address, sliderValue } = body;
 
-    if (!hotelName || !discount || !phoneNumber || !address || !sliderValue) {
-      return NextResponse.json(
-        { error: "All fields are required" },
-        { status: 400 }
-      );
+    const validationErrors = validateCustomerInput({ hotelName, discount, phoneNumber, address, sliderValue });
+    if (validationErrors.length > 0) {
+      throw new AppError(400, validationErrors.join(", "));
     }
 
-    // Connect to the database
-    await connectToDatabase();
-
-    // Fetch all customers from the database
     const customers = await Customer.find({});
-
     if (!customers || customers.length === 0) {
-      return NextResponse.json(
-        { error: "No customers found" },
-        { status: 404 }
-      );
+      throw new AppError(404, "No customers found");
     }
 
-    // Shuffle customers array to randomize
     const shuffledCustomers = customers.sort(() => 0.5 - Math.random());
 
-    // Limit the number of customers based on sliderValue
+
     const selectedCustomers = shuffledCustomers.slice(0, sliderValue);
 
-    const sendPromises = selectedCustomers.map(async (customer: any) => {
-      const requestBody = {
-        messaging_product: "whatsapp",
-        to: `91${customer.phoneNumber}`,
-        type: "template",
-        template: {
-          name: "event_rsvp_reminder_2", // Replace with actual template name
-          language: {
-            code: "en",
-          },
-          components: [
-            {
-              type: "body",
-              parameters: [
-                {
-                  type: "TEXT",
-                  text: discount, // Add your dynamic message here
-                },
-                {
-                  type: "TEXT",
-                  text: hotelName, // Add your dynamic message here
-                },
-                {
-                  type: "TEXT",
-                  text: phoneNumber, // Add your dynamic message here
-                },
-                {
-                  type: "TEXT",
-                  text: address, // Add your dynamic message here
-                },
-              ],
-            },
-          ],
-        },
-      };
+    const sendPromises = selectedCustomers.map(async (customer) => {
+
+      const parameters = [
+        { type: "TEXT", text: discount },
+        { type: "TEXT", text: hotelName },
+        { type: "TEXT", text: phoneNumber },
+        { type: "TEXT", text: address },
+      ];
 
       try {
-        // Send the request to WhatsApp Business API
-        const response = await fetch(
-          `https://graph.facebook.com/v20.0/${process.env.WHATSAPP_BUSINESS_ID}/messages`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${process.env.FACEBOOK_ACCESS_TOKEN}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestBody),
-          }
-        );
 
-        const responseData = await response.json();
-
-        if (!response.ok) {
-          console.error(
-            `Failed to send message to ${customer.phoneNumber}:`,
-            responseData.error
-          );
-          throw new Error(responseData.error?.message || "Unknown error");
-        }
-
-        return responseData;
+        await sendWhatsAppMessage(customer.phoneNumber, "event_rsvp_reminder_2", parameters);
+        return { success: true, phoneNumber: customer.phoneNumber };
       } catch (error) {
-        console.error(
-          `Error sending message to ${customer.phoneNumber}:`,
-          error
-        );
-        throw error;
+        console.error(`Error sending message to ${customer.phoneNumber}:`, error);
+        throw new AppError(500, `Failed to send message to ${customer.phoneNumber}`);
       }
     });
 
-    // Wait for all messages to be sent
     await Promise.all(sendPromises);
 
-    return NextResponse.json(
-      {
-        message: `Messages sent successfully to ${sliderValue} users`,
-      },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.error("Error during bulk messaging:", error);
-    const errorMessage =
-      error instanceof Error ? error.message : "An unknown error occurred";
+    return sendSuccessResponse(200, {
+      message: `Message is sent successfully to ${sliderValue} users`,
+    });
 
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+  } catch (error) {
+    return handleAppError(error);
   }
 }

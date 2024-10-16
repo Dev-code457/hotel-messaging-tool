@@ -1,25 +1,39 @@
+// app/api/feedback/route.ts
 import { connectToDatabase } from "@/lib/mongodb";
-import { NextResponse } from "next/server";
 import Feedback from "@/models/feedback";
+import { AppError, handleAppError } from "@/utils/errorHandler";
+import { sendSuccessResponse } from "@/utils/responseHandler";
+import rateLimit from "@/utils/rateLimiter";
+import { validateFeedbackInput } from "@/validators";
+
+const limiter = rateLimit(5, 15 * 60 * 1000);
 
 export async function POST(req: Request) {
-  await connectToDatabase();
-  const feedback = await req.json();
-console.log(typeof feedback,"knfsjdnflsdfnsdfnls");
+    try {
+      
+        limiter(req);
 
-  try {
-    if (!feedback) {
-      return NextResponse.json(
-        { message: "Feedback is required" },
-        { status: 404 }
-      );
+        await connectToDatabase();
+
+
+        const feedbackData = await req.json();
+
+        
+
+
+        const errors = validateFeedbackInput(feedbackData?.feedback);
+        if (errors) {
+          throw new  AppError(400, errors)
+        }
+
+   
+        const userFeedback = new Feedback({ feedback: feedbackData.feedback });
+        await userFeedback.save();
+
+
+        return sendSuccessResponse(201, { message: "Thank you for your feedback 🙏" });
+
+    } catch (error) {
+        return handleAppError(error);
     }
-    const userFeedback = await new Feedback(feedback)
-    await userFeedback.save();
-    return NextResponse.json({message: "Thankyou for your feedback 🙏" }, { status: 200 });
-  } catch (error) {
-    console.log("error: ", error);
-
-    return NextResponse.json({ error: error }, { status: 500 });
-  }
 }

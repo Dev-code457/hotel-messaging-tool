@@ -1,23 +1,23 @@
 import React from "react";
 
-function Confirmation({ isOpen, onClose, onConfirm }) {
+function Confirmation({ isOpen, onClose, onConfirm }: any) {
     if (!isOpen) return null; // Don't render if not open
 
     return (
         <div
             id="popup-modal"
             tabIndex={-1}
-            className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center  h-full bg-black bg-opacity-50 "
+            className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50"
         >
             <div className="relative p-4 w-full max-w-md max-h-full">
-                <div className="relative bg-black rounded-lg shadow ">
+                <div className="relative bg-gray-900 text-white rounded-lg shadow-lg">
                     <button
                         type="button"
-                        className="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                        className="absolute top-3 right-3 text-gray-400 hover:bg-gray-800 hover:text-white rounded-lg p-2"
                         onClick={onClose} // Close modal
                     >
                         <svg
-                            className="w-3 h-3"
+                            className="w-4 h-4"
                             aria-hidden="true"
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -33,12 +33,12 @@ function Confirmation({ isOpen, onClose, onConfirm }) {
                         </svg>
                         <span className="sr-only">Close modal</span>
                     </button>
-                    <div className="p-4 md:p-5 text-center">
+                    <div className="p-4 text-center">
                         <svg
-                            className="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200"
+                            className="mx-auto mb-4 text-red-600 w-12 h-12"
                             aria-hidden="true"
                             xmlns="http://www.w3.org/2000/svg"
-                            fill="red"
+                            fill="none"
                             viewBox="0 0 20 20"
                         >
                             <path
@@ -49,24 +49,26 @@ function Confirmation({ isOpen, onClose, onConfirm }) {
                                 d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                             />
                         </svg>
-                        <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                        <h3 className="mb-5 text-lg font-normal text-gray-300">
                             Are you sure you want to log out?
                         </h3>
-                        <button
-                            onClick={() => {
-                                onConfirm(); // Confirm logout
-                                onClose(); // Close modal
-                            }}
-                            className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
-                        >
-                            Yes, I'm sure
-                        </button>
-                        <button
-                            onClick={onClose} // Close modal without action
-                            className="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                        >
-                            No, cancel
-                        </button>
+                        <div className="flex justify-center">
+                            <button
+                                onClick={() => {
+                                    onConfirm(); // Confirm logout
+                                    onClose(); // Close modal
+                                }}
+                                className="bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                            >
+                                Yes, I'm sure
+                            </button>
+                            <button
+                                onClick={onClose} // Close modal without action
+                                className="ml-3 text-gray-300 border border-gray-600 hover:bg-gray-800 rounded-lg px-5 py-2.5 text-sm"
+                            >
+                                No, cancel
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

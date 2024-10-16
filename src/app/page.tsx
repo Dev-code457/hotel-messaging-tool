@@ -1,57 +1,31 @@
 "use client";
 
 import Image from "next/image";
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useLayoutEffect, useState } from "react";
 import Logo from "@/app/public/assets/Logo.svg";
+import HelperImage from "@/app/public/assets/Login.com.svg";
 import Section from "@/components/Layout";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import axios from "axios";
-import HelperImage from "@/app/public/assets/Login.com.svg";
-import Cookies from "js-cookie"; // Import js-cookie
+import Cookies from "js-cookie";
+import Spinner from "@/components/Loader";
+import useAuth from "@/hooks/useAuth";
 
 function Page({ children }: { children: ReactNode }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const router = useRouter();
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const { loading, login } = useAuth();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent form submission from reloading the page
-
-    const promise = axios.post("/api/auth/login", {
-      email,
-      password,
-    });
-
-    toast.promise(promise, {
-      loading: "Logging in...",
-      success: (response) => {
-        const data = response.data;
-
-        // Store the token in a cookie
-        Cookies.set("_session", data.token, { expires: 7 }); // Set cookie to expire in 7 days
-
-        // On successful login, redirect to CheckInOut page
-        router.push("/CheckInOut"); // Redirect to the CheckInOut page
-        return data.message || "Login successful!";
-      },
-      error: (error) => {
-        if (error.response && error.response.data) {
-          return error.response.data.error || "Something went wrong!";
-        } else {
-          return error.message || "An unknown error occurred.";
-        }
-      },
-    });
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    login(email, password);
   };
 
-  useEffect(() => {
-    // Check for the token in cookies
-    const token = Cookies.get("_session"); // Retrieve the token from cookies
+  useLayoutEffect(() => {
+    const token = Cookies.get("_session");
     if (token) {
-      // If the token exists, redirect to CheckInOut
       router.push("/CheckInOut");
     }
   }, [router]);
@@ -101,45 +75,49 @@ function Page({ children }: { children: ReactNode }) {
       </aside>
 
       <div className="sm:ml-64 flex justify-center">
-          <div className="flex flex-col h-screen pt-20 items-center w-full bg-gray-50 ">
-            <Section heading="Login" classnames="flex-col justify-start h-[60vh] w-[65%] space-x-4">
-              <form onSubmit={handleSubmit} className="w-[40%]">
-                <Input
-                  classnames="py-6"
-                  value={email}
-                  required
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeHolder="Enter Email"
+        <div className="flex flex-col h-screen pt-20 items-center w-full bg-gray-50">
+          <Section heading="Login" classnames="flex-col justify-start h-[60vh] w-[65%] space-x-4">
+            <form onSubmit={handleSubmit} className="w-[40%]">
+              <Input
+                classnames="py-6"
+                value={email}
+                required
+                onChange={(e) => setEmail(e.target.value)}
+                placeHolder="Enter Email"
+                type="email"
+              />
+              <Input
+                classnames="mb-8"
+                value={password}
+                required
+                type="password"
+                placeHolder="Enter Password"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <div className="flex justify-start">
+                <Button
+                  text={loading ? <div className={"flex gap-2  font-bold justify-center items-center"}><Spinner /> Logging In...</div> : "Submit"}
+                  classnames="bg-green-500 hover:bg-green-600"
+                  type="submit"
+                  disabled={loading}
                 />
-                <Input
-                  classnames="mb-8"
-                  value={password}
-                  required
-                  placeHolder="Enter Password"
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <div className="flex justify-start">
-                  <Button
-                    text="Submit"
-                    classnames="bg-green-500 hover:bg-green-600"
-                    type="submit" 
-                  />
-                </div>
-                <div className="absolute right-0 -mt-[6%]">
-                  <Image
-                    src={HelperImage}
-                    alt="Check In & Check Out"
-                    className="-mt-8 w-[70%] h-[70%]"
-                  />
-                </div>
-              </form>
-              <div className="text-sm font-semibold text-[#FB5151] py-6 underline font-serif cursor-pointer" onClick={()=>
-                router.push("/ForgotPassword")
-              }>
-                Forgot Password
               </div>
-            </Section>
-          </div>
+              <div className="absolute right-0 -mt-[6%]">
+                <Image
+                  src={HelperImage}
+                  alt="Check In & Check Out"
+                  className="-mt-8 w-[70%] h-[70%]"
+                />
+              </div>
+            </form>
+            <div
+              className="text-sm font-semibold text-[#FB5151] py-6 underline font-serif cursor-pointer"
+              onClick={() => router.push("/ForgotPassword")}
+            >
+              Forgot Password
+            </div>
+          </Section>
+        </div>
       </div>
     </>
   );

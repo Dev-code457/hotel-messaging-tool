@@ -1,41 +1,22 @@
-"use client";
+"use client"; // Ensure this component runs on the client side
 import React, { useState } from "react";
 import Section from "../../components/Layout";
 import Button from "../../components/Button";
 import Image from "next/image";
 import Hero from "../public/assets/feedbak.com.svg";
-import axios from "axios";
-import { toast } from "sonner";
 import SideLayout from "@/components/SideLayout";
+import useFeedback from "@/hooks/useFeedback";
+import Spinner from "@/components/Loader";
 
-function CheckInOut() {
+const CheckInOut = () => {
   const [feedback, setFeedback] = useState("");
+  const { loading, handleSubmitFeedback } = useFeedback();
 
-  const handleSubmit = async () => {
-    try {
-      const promise = axios.post("/api/Feedback", { feedback });
-      toast.promise(promise, {
-        loading: "Please wait",
-        success: (response) => {
-          const data = response.data;
-          // Check if data.message is a string, or provide a default string
-          const successMessage = typeof data.message === "string" ? data.message : "Thank you for your feedback!";
-      setFeedback("")
-          
-          return successMessage; // Must return a string or valid JSX
-        },
-        error: (error) => {
-          if (error.response && error.response.data) {
-            return error.response.data.message || "Something went wrong!"; // Ensure this is a string
-          }
-          return error.message || "An unknown error occurred.";
-        },
-      });
-    } catch (err) {
-      toast.error("An unexpected error occurred");
-    }
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSubmitFeedback(feedback);
   };
-  
+
   return (
     <SideLayout>
       <div className="sm:ml-64 flex justify-center">
@@ -47,10 +28,7 @@ function CheckInOut() {
             <div className=" ">
               <div className="col-span-2 mb-10">
                 <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    handleSubmit();
-                  }}
+                  onSubmit={handleSubmit}
                 >
                   <div className={`max-w-full mb-4 mr-10 ml-10`}>
                     <label
@@ -76,9 +54,10 @@ function CheckInOut() {
                   </div>
                   <div className="px-10 max-w-sm mb-4">
                     <Button
-                      text="Submit"
+                      text={loading ? <div className={"flex gap-2  font-bold justify-center items-center"}><Spinner /> Submitting...</div> : "Submit"}
                       classnames="bg-green-500 hover:bg-green-600 py-4 px-8"
                       type="submit"
+                      disabled={loading}
                     />
                   </div>
                 </form>
@@ -98,6 +77,6 @@ function CheckInOut() {
       </div>
     </SideLayout>
   );
-}
+};
 
 export default CheckInOut;

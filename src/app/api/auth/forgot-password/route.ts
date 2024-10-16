@@ -3,27 +3,37 @@ import { connectToDatabase } from "@/lib/mongodb";
 import User from "@/models/user";
 import sendEmail from "@/utils/sendEmail";
 import crypto from "crypto";
+import { validateForgot } from "@/validators/index"; 
+import { AppError } from "@/utils/errorHandler";
+import { sendErrorResponse, sendSuccessResponse } from "@/utils/responseHandler";
 
 export async function PUT(req: Request) {
+
+
   await connectToDatabase();
-
-  const { email } = await req.json();
-
-  if (!email) {
-    return NextResponse.json(
-      { message: "All fields are mandatory." },
-      { status: 400 }
-    );
+  
+  const body = await req.json();
+  const { email } = body; // Ensure email is destructured correctly
+  
+  // Validate the email
+  const validationError = validateForgot({ email });
+  if (validationError.length > 0) { // Check for errors
+    throw new AppError(400, validationError.join(", "));
   }
-
+  
+  // Optional: If you want to add email format validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Simple email format regex
+  if (email && !emailRegex.test(email)) {
+    throw new AppError(400, "Invalid email format");
+  }
+  
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return NextResponse.json({ message: "User Not Found" }, { status: 404 });
+      throw new AppError(404, "User Not Found");
     }
 
     const resetToken = crypto.randomBytes(20).toString("hex");
-
     user.resetPasswordToken = crypto
       .createHash("sha256")
       .update(resetToken)
@@ -36,8 +46,7 @@ export async function PUT(req: Request) {
     const protocol = req.headers.get("x-forwarded-proto") || "http";
     const resetUrl = `${protocol}://${host}/ResetPassword/${resetToken}`;
 
-    const message = `
-      <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f6f6f6; border-radius: 8px;">
+    const message = ` <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f6f6f6; border-radius: 8px;">
         <h2 style="color: #333;">Password Reset Request</h2>
         <p style="color: #555;">
           You are receiving this email because you (or someone else) have requested the reset of your password.
@@ -55,35 +64,27 @@ export async function PUT(req: Request) {
           This link will expire in 10 minutes.
         </p>
       </div>
-    `;
+    ;`
 
     try {
       await sendEmail({
         email: user.email,
         subject: "Password Reset Request",
         message,
-        
       });
 
-      return NextResponse.json(
-        { message: "Password reset email sent successfully." },
-        { status: 200 }
-      );
-    } catch (emailError) {
+      return sendSuccessResponse(200, {
+        message: "Password Reset Link Sent Successfully",
+      });
+    } catch (emailError: any) {
       console.error("Error sending email:", emailError);
       user.resetPasswordToken = undefined;
       user.resetPasswordExpire = undefined;
       await user.save();
-      return NextResponse.json(
-        { message: "Failed to send reset email." },
-        { status: 500 }
-      );
+      return sendErrorResponse(500, emailError);
     }
-  } catch (error) {
-    console.error("Error during password reset:", error);
-    return NextResponse.json(
-      { message: "Internal server error." },
-      { status: 500 }
-    );
+  } catch (error: any) {
+    console.error("Error during password reset:", error.message, error.stack);
+    return sendErrorResponse(500, error);
   }
 }

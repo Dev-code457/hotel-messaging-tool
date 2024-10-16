@@ -1,7 +1,7 @@
 // services/userService.ts
 import { connectToDatabase } from "@/lib/mongodb";
 import User from "@/models/user"; 
-import { ConflictError } from "@/utils/errors";
+import { ConflictError } from "@/utils/errorHandler";
 import bcrypt from "bcryptjs"; 
 
 export async function createUser(email: string, password: string) {

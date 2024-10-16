@@ -1,57 +1,31 @@
 "use client"; // Ensure this component is treated as a client component
-import React, { useState, useEffect } from "react";
-import { usePathname } from "next/navigation"; // Make sure to import from next/router
+import React, { useState } from "react";
+import { usePathname } from "next/navigation";
 import Section from "../../../components/Layout";
 import Input from "../../../components/Input";
 import Button from "../../../components/Button";
 import Image from "next/image";
 import Hero from "@/app/public/assets/forgot password.svg";
-import axios from "axios";
-import { toast } from "sonner";
 import SideLayout from "@/components/SideLayout";
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
+import { usePasswordReset } from "@/hooks/usePassword"; // Import the custom hook
+import Spinner from "@/components/Loader";
 
 function ChangePassword() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-
   // Extract the token from the URL
   const pathname = usePathname();
-  const token = pathname.split("/").slice(-1)[0]; // Get the last segment of the pathname
+  const token = pathname.split("/").slice(-1)[0];
   const router = useRouter();
 
-
-
-
-// console.log(,'sdkfnsdfnsdkfhl');
-
+  // Use the custom hook
+  const { resetPassword, loading, error } = usePasswordReset(token);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-   
-
-    const promise = axios.put(`/api/auth/reset-password/${token}`, {
-      // token,
-      password,
-      confirmPassword,
-    });
-
-    toast.promise(promise, {
-      loading: "Please wait, resetting password...",
-      success: (response) => {
-        const data = response.data;
-        return data.message || "Password reset successfully!";
-      },
-      error: (error) => {
-        if (error.response && error.response.data) {
-          return error.response.data.error || "Something went wrong!";
-        } else {
-          return error.message || "An unknown error occurred.";
-        }
-      },
-    });
+    await resetPassword(password, confirmPassword);
   };
 
   return (
@@ -70,25 +44,30 @@ function ChangePassword() {
                     value={password}
                     placeHolder="Enter Password"
                     onChange={(e) => setPassword(e.target.value)}
+                    type="password"
                   />
                   <Input
                     classnames="py-4"
                     value={confirmPassword}
                     placeHolder="Confirm Password"
                     onChange={(e) => setConfirmPassword(e.target.value)}
+                    type="password"
                   />
+             
                   <div className="flex justify-start space-x-11 mt-8">
                     <Button
-                      text="Submit"
+                      text={loading ? <div className={"flex gap-2  font-bold justify-center items-center"}><Spinner /> Submitting...</div> : "Submit"}
                       classnames="bg-green-500 hover:bg-green-600 py-4"
-                  onClick={handleSubmit}
+                      onClick={handleSubmit}
+                      disabled={loading} // Disable button while loading
                     />
                   </div>
-                  <div className="text-sm font-semibold text-[#FB5151] py-6 underline font-serif cursor-pointer" onClick={()=>
-              router.push("/")
-            }>
-              Login
-            </div>
+                  <div
+                    className="text-sm font-semibold text-[#FB5151] py-6 underline font-serif cursor-pointer"
+                    onClick={() => router.push("/")}
+                  >
+                    Login
+                  </div>
                 </form>
               </div>
               <div className="col-span-1 w-full">
@@ -100,6 +79,7 @@ function ChangePassword() {
                   />
                 </div>
               </div>
+
             </div>
           </Section>
         </div>

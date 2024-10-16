@@ -6,10 +6,14 @@ import Link from "next/link";
 import Confirmation from "@/components/Confirmation";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { logout } from "@/redux/slices/authSlices";
 
 function SideLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const dispatch = useDispatch()
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
   const value = useSelector((state: RootState) => state.example.value);
 
@@ -25,6 +29,8 @@ function SideLayout({ children }: { children: ReactNode }) {
   const handleLogout = () => {
     document.cookie =
       "_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+    dispatch(logout())
     window.location.href = "/";
   };
 
@@ -60,37 +66,45 @@ function SideLayout({ children }: { children: ReactNode }) {
         <div className="h-full px-3 overflow-y-auto bg-black">
           <ul className="space-y-4">
             <li>
-              <a
-                href="#"
+              <Link
+                href="/"
                 className="flex items-center justify-center rounded-lg hover group"
               >
                 <Image src={Logo} alt="LOGO" className="w-[60%]" />
-              </a>
+              </Link>
             </li>
-            {links.map((link) => (
-              <li key={link.path}>
-                <Link
-                  href={link.path}
-                  className={`flex items-center justify-start rounded-lg group ${
-                    pathname === link.path ? " text-[#EF5C5C] " : "text-white "
-                  }`}
-                  onClick={
-                    link.name === "Logout"
-                      ? (e) => {
-                          e.preventDefault(); // Prevent default link behavior
-                          setIsModalOpen(true); // Open confirmation modal
-                        }
-                      : undefined
-                  }
-                >
-                  <p>{link.name}</p>
-                </Link>
-              </li>
-            ))}
+            {isAuthenticated ?
+              <>
+                {links.map((link) => (
+                  <li key={link.path}>
+                    <Link
+                      href={link.path}
+                      className={`flex items-center justify-start rounded-lg group ${pathname === link.path ? " text-[#EF5C5C] " : "text-white "
+                        }`}
+                      onClick={
+                        link.name === "Logout"
+                          ? (e) => {
+                            e.preventDefault(); // Prevent default link behavior
+                            setIsModalOpen(true); // Open confirmation modal
+                          }
+                          : undefined
+                      }
+                    >
+                      <p>{link.name}</p>
+                    </Link>
+                  </li>
 
-            <div className="text-xl text-white font-semibold pt-[70%]">
-              Messsages Left: {value}
-            </div>
+
+                ))}
+
+
+                <div className="text-xl text-white font-semibold pt-[70%]">
+                  Messsages Left: {value}
+                </div>
+              </>
+              : null}
+
+
           </ul>
         </div>
       </aside>
