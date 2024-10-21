@@ -3,9 +3,9 @@ import React from "react"
 import MessageBg from "@/app/public/assets/wallaper.png";
 
 interface MessagePreview{
-    discount: number | undefined,
+    discount: number | undefined | null,
     hotelName: string,
-    phoneNumber: number | undefined,
+    phoneNumber: number | undefined | null,
     address: string
 }
 

@@ -12,7 +12,7 @@ import Cookies from "js-cookie";
 import Spinner from "@/components/Loader";
 import useAuth from "@/hooks/useAuth";
 
-function Page({ children }: { children: ReactNode }) {
+function Page() {
   const router = useRouter();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");

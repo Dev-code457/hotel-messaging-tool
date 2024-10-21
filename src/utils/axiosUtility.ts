@@ -37,7 +37,7 @@ const handleError = (error: any): never => {
 
 
 const makeRequest = async <T, U>(
-    method: "get" | "post" | "put" | "delete",
+    method: "get" | "post" | "put" | "delete" ,
     url: string,
     data?: U | null
 ): Promise<T> => {
@@ -46,6 +46,7 @@ const makeRequest = async <T, U>(
         return handleResponse<T>(response);
     } catch (error) {
         handleError(error);
+        throw error
     }
 };
 
