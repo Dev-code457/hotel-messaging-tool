@@ -1,4 +1,4 @@
-// components/PromotionalMessage.tsx
+
 "use client";
 import React, { useEffect } from "react";
 import Image from "next/image";
@@ -30,10 +30,8 @@ function PromotionalMessage() {
     handleSliderValueChange,
     handleAddressChange,
     sendBulkMessage,
-  } = usePromotionalMessage(hotelDetail.hotelName || "");
+  } = usePromotionalMessage(hotelDetail?.hotelName || "");
 
-  // Get hotel details from Redux store
-  
 
   return (
     <SideLayout>
@@ -62,7 +60,6 @@ function PromotionalMessage() {
                 <Input
                   type="text"
                   classnames="mb-3"
-                  // Use hotelDetail if available, otherwise use the state hotelName
                   value={hotelDetail?.hotelName || hotelName || ""}
                   required
                   placeHolder="Enter Hotel Name"
@@ -74,7 +71,7 @@ function PromotionalMessage() {
                   value={phoneNumber !== undefined ? `${phoneNumber}` : ""}
                   required
                   placeHolder="Enter Phone Number"
-                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  onChange={(e: any) => setPhoneNumber(e.target.value)}
                 />
                 <Input
                   type="text"
@@ -82,7 +79,7 @@ function PromotionalMessage() {
                   value={address}
                   required
                   placeHolder="Enter Address"
-                  onChange={handleAddressChange} // Updated onChange handler
+                  onChange={handleAddressChange}
                 />
                 <div className="flex justify-start my-4">
                   <Button
@@ -96,8 +93,6 @@ function PromotionalMessage() {
                     disabled={loading}
                   />
                 </div>
-
-                {/* Image */}
                 <div className="absolute -right-[8%] -mt-[4%]">
                   <Image
                     src={Hero}
@@ -113,10 +108,8 @@ function PromotionalMessage() {
                 hotelName={hotelDetail?.hotelName || hotelName || ""}
                 phoneNumber={phoneNumber}
               />
-
-              {/* Slider Section */}
               <div className="w-[10%] flex items-center -mr-[21%] -mt-10">
-                <RangeSlider onValueChange={handleSliderValueChange} value={sliderValue}/>
+                <RangeSlider onValueChange={handleSliderValueChange} value={sliderValue} />
               </div>
             </div>
           </Section>

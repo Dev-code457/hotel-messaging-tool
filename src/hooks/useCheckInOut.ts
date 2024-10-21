@@ -27,7 +27,7 @@ export const useCheckInOut = (): UseCheckInOutResult => {
         return null;
     };
 
-    const handleSubmit = async (messageType: "checkIn" | "checkOut") => {
+    const handleSubmit = async (messageType: "checkin" | "checkout") => {
         const validationError = validatePhoneNumber(phoneNumber);
         if (validationError) {
             toast.error(validationError);
@@ -35,7 +35,7 @@ export const useCheckInOut = (): UseCheckInOutResult => {
         }
 
         // Set loading state based on the message type
-        if (messageType === "checkIn") {
+        if (messageType === "checkin") {
             setIsLoadingCheckIn(true);
         } else {
             setIsLoadingCheckOut(true);
@@ -56,7 +56,7 @@ export const useCheckInOut = (): UseCheckInOutResult => {
             }
         } finally {
             // Reset loading state based on the message type
-            if (messageType === "checkIn") {
+            if (messageType === "checkin") {
                 setIsLoadingCheckIn(false);
             } else {
                 setIsLoadingCheckOut(false);
@@ -65,8 +65,8 @@ export const useCheckInOut = (): UseCheckInOutResult => {
         }
     };
 
-    const handleCheckIn = async (): Promise<void> => handleSubmit("checkIn");
-    const handleCheckOut = async (): Promise<void> => handleSubmit("checkOut");
+    const handleCheckIn = async (): Promise<void> => handleSubmit("checkin");
+    const handleCheckOut = async (): Promise<void> => handleSubmit("checkout");
 
     return {
         phoneNumber,

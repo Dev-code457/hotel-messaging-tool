@@ -7,7 +7,6 @@ import { handleAppError } from '@/utils/errorHandler';
 export async function POST(req: Request) {
     try {
         await connectToDatabase();
-
         const body = await req.json();
         if (body.object === "whatsapp_business_account") {
             body.entry.forEach(async (entry: any) => {
@@ -36,11 +35,9 @@ export async function POST(req: Request) {
 export async function GET(req: Request) {
     try {
         const { searchParams } = new URL(req.url);
-
         const mode = searchParams.get('hub.mode');
         const token = searchParams.get('hub.verify_token');
         const challenge = searchParams.get('hub.challenge');
-
         if (mode && token === process.env.FACEBOOK_ACCESS_TOKEN) {
             return new NextResponse(challenge, { status: 200 });
         } else {

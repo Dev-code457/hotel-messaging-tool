@@ -5,7 +5,7 @@ interface ExampleState {
 }
 
 const initialState: ExampleState = {
-  value: 50,
+  value: 8,
 };
 
 const exampleSlice = createSlice({
@@ -21,7 +21,7 @@ const exampleSlice = createSlice({
 });
 
 // Log the action creator
-console.log("MessagesUsed action creator:", exampleSlice.actions.MessagesUsed); 
+console.log("MessagesUsed action creator:", exampleSlice.actions.MessagesUsed);
 
 export const { MessagesUsed } = exampleSlice.actions; // Correctly exported
 export default exampleSlice.reducer; // Default export of the reducer
