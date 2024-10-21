@@ -15,6 +15,7 @@ export const MessagePreviewWindow: React.FC<MessagePreview> = ({
     phoneNumber,
     address,
 }) => {
+
 return(
     <>
          <div className="flex justify-center items-center ml-10 z-0 relative">

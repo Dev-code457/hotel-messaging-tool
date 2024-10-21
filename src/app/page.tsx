@@ -26,7 +26,7 @@ function Page({ children }: { children: ReactNode }) {
   useLayoutEffect(() => {
     const token = Cookies.get("_session");
     if (token) {
-      router.push("/CheckInOut");
+      router.push("/AddNumber");
     }
   }, [router]);
 

@@ -1,6 +1,6 @@
 import React from "react";
 
-function Confirmation({ isOpen, onClose, onConfirm }: any) {
+export default function Confirmation({ isOpen, onClose, onConfirm }: any) {
     if (!isOpen) return null; // Don't render if not open
 
     return (
@@ -75,5 +75,69 @@ function Confirmation({ isOpen, onClose, onConfirm }: any) {
         </div>
     );
 }
+export function Warning({ isOpen, onClose, onConfirm }: any) {
+    if (!isOpen) return null;
+    return (
+        <div
+            id="popup-modal"
+            tabIndex={-1}
+            className="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50"
+        >
+            <div className="relative  w-full max-w-md max-h-full">
+                <div className="relative bg-gray-900 text-white rounded-lg shadow-lg">
+                    <button
+                        type="button"
+                        className="absolute top-3 right-3 text-gray-400 hover:bg-gray-800 hover:text-white rounded-lg p-2"
+                    // onClick={onClose} // Close modal
+                    >
 
-export default Confirmation;
+                        <span className="sr-only">Close modal</span>
+                    </button>
+                    <div className="p-4 text-center">
+                        <svg
+                            className="mx-auto mb-4 text-yellow-500 w-12 h-12"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 20 20"
+                        >
+                            <path
+                                stroke="currentColor"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                            />
+                        </svg>
+                        <h3 className="mb-5 text-lg font-normal text-gray-300">
+                            You spent all of your free 50 message credits!
+                        </h3>
+                        <p className="mb-5 text-gray-400">
+                            Kindly purchase one of our plans to continue our service.
+                        </p>
+                        <div className="flex justify-center">
+                            <button
+                                onClick={() => {
+                                    onConfirm(); // Redirect to purchase plans
+                                    onClose(); // Close modal
+                                }}
+                                className="bg-yellow-600 hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                            >
+                                Purchase Plan
+                            </button>
+                            <button
+                                onClick={onClose} // Close modal without action
+                                className="ml-3 text-gray-300 border border-gray-600 hover:bg-gray-800 rounded-lg px-5 py-2.5 text-sm"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+
+

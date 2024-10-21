@@ -2,22 +2,30 @@ import React from "react";
 
 interface InputProps {
   classnames?: string;
+  label?: string,
   value: string | number ;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeHolder: string;
   required?: boolean;
   error?: string; // Optional error message
   type: string
+  disabled?: boolean
+  defaultValue?: any
+
 }
 
 function Input({
   classnames = "",
+  label="",
   value,
   onChange,
   placeHolder,
   required = false,
   error,
-  type = "text"
+  type = "text",
+  disabled,
+  defaultValue
+
 }: InputProps) {
   const handleClear = () => {
     onChange({ target: { value: "" } } as React.ChangeEvent<HTMLInputElement>);
@@ -30,7 +38,7 @@ function Input({
         htmlFor="input-field"
         className="block text-sm font-medium text-gray-700 mb-1"
       >
-        {placeHolder}
+        {label ? label : placeHolder}
         {required && <span className="text-red-500  text-xl">*</span>}
       </label>
       
@@ -47,6 +55,8 @@ function Input({
           aria-required={required}
           aria-invalid={!!error}
           required={required}
+          disabled={disabled}
+          defaultValue={defaultValue}
         />
       </div>
 

@@ -1,6 +1,6 @@
 // components/PromotionalMessage.tsx
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import Hero from "../public/assets/PromotionalNumber.svg";
 import Section from "@/components/Layout";
@@ -12,21 +12,28 @@ import RangeSlider from "@/components/RangeSlider";
 import Spinner from "@/components/Loader";
 import usePromotionalMessage from "@/hooks/usePromotionalMessage";
 import { MessagePreviewWindow } from "@/components/MessagePreviewWindow";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 function PromotionalMessage() {
+  const hotelDetail = useSelector((state: RootState) => state.hotel.details);
   const {
     discount,
     hotelName,
     phoneNumber,
     address,
     loading,
+    sliderValue,
     setHotelName,
     setPhoneNumber,
     handleDiscountChange,
     handleSliderValueChange,
     handleAddressChange,
     sendBulkMessage,
-  } = usePromotionalMessage();
+  } = usePromotionalMessage(hotelDetail.hotelName || "");
+
+  // Get hotel details from Redux store
+  
 
   return (
     <SideLayout>
@@ -37,7 +44,6 @@ function PromotionalMessage() {
             classnames="flex justify-between h-[80vh] w-[70%] space-x-4"
           >
             <div className="flex w-[80%] justify-between">
-              {/* Form Section */}
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -56,7 +62,8 @@ function PromotionalMessage() {
                 <Input
                   type="text"
                   classnames="mb-3"
-                  value={hotelName}
+                  // Use hotelDetail if available, otherwise use the state hotelName
+                  value={hotelDetail?.hotelName || hotelName || ""}
                   required
                   placeHolder="Enter Hotel Name"
                   onChange={(e) => setHotelName(e.target.value)}
@@ -100,11 +107,16 @@ function PromotionalMessage() {
                 </div>
               </form>
 
-              <MessagePreviewWindow address={address} discount={discount} hotelName={hotelName} phoneNumber={phoneNumber} />
+              <MessagePreviewWindow
+                address={address}
+                discount={discount}
+                hotelName={hotelDetail?.hotelName || hotelName || ""}
+                phoneNumber={phoneNumber}
+              />
 
               {/* Slider Section */}
               <div className="w-[10%] flex items-center -mr-[21%] -mt-10">
-                <RangeSlider onValueChange={handleSliderValueChange} />
+                <RangeSlider onValueChange={handleSliderValueChange} value={sliderValue}/>
               </div>
             </div>
           </Section>

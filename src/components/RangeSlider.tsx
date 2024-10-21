@@ -2,11 +2,12 @@ import React, { useState } from "react";
 
 // Add a prop type definition
 interface RangeSliderProps {
-  onValueChange: (value: number) => void; // Define a callback type for value changes
+  onValueChange: (value: number) => void;
+  value: number // Define a callback type for value changes
 }
 
-const RangeSlider: React.FC<RangeSliderProps> = ({ onValueChange }) => {
-  const [value, setValue] = useState<number>(0);
+const RangeSlider: React.FC<RangeSliderProps> = ({ onValueChange, value }) => {
+
 
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = Number(e.target.value);
@@ -18,8 +19,8 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ onValueChange }) => {
       adjustedValue = newValue - (newValue % 20);
     }
 
-    setValue(adjustedValue);
-    onValueChange(adjustedValue); // Call the prop function with the new value
+
+    onValueChange(adjustedValue);
   };
 
   return (
@@ -56,7 +57,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ onValueChange }) => {
           onChange={handleSliderChange}
           className="w-4 h-full bg-gray-300 rounded-lg appearance-none cursor-pointer focus:outline-none"
           style={{
-            writingMode: "bt-lr",
+            // writingMode: "bt-lr",
             WebkitAppearance: "slider-vertical",
             background: "lightgreen",
             height: "300px", // Adjusted for better vertical height

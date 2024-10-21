@@ -4,7 +4,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import Cookies from "js-cookie";
 
-const useChangePassword = () => {
+ const useChangePassword = () => {
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -53,6 +53,7 @@ const useChangePassword = () => {
     handleChangePassword,
     loading,
   };
-};
-
+}
 export default useChangePassword;
+
+

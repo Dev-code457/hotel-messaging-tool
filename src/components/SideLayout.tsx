@@ -3,18 +3,20 @@ import { usePathname } from "next/navigation";
 import Logo from "@/app/public/assets/GoodPegg.png";
 import Image from "next/image";
 import Link from "next/link";
-import Confirmation from "@/components/Confirmation";
+import Confirmation, { Warning } from "@/components/Confirmation";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { logout } from "@/redux/slices/authSlices";
+import { useRouter } from "next/navigation";
 
 function SideLayout({ children }: { children: ReactNode }) {
+  const router = useRouter();
   const pathname = usePathname();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const dispatch = useDispatch()
+  const [isModal, setIsModal] = useState(true);
+  const dispatch = useDispatch();
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
-
   const value = useSelector((state: RootState) => state.example.value);
 
   const links = [
@@ -22,16 +24,19 @@ function SideLayout({ children }: { children: ReactNode }) {
     { name: "Check In/ Check Out", path: "/CheckInOut" },
     { name: "Promotions/ Offers", path: "/Promotion-Offer" },
     { name: "Feedback", path: "/FeedBack" },
-    { name: "Change Password", path: "/ChangePassword" },
+    { name: "Settings", path: "/Settings" },
     { name: "Logout", path: "#" },
   ];
 
   const handleLogout = () => {
-    document.cookie =
-      "_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-
-    dispatch(logout())
+    document.cookie = "_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    dispatch(logout());
     window.location.href = "/";
+  };
+
+  const handleWarning  = () => {
+router.push("/Payment")
+   
   };
 
   return (
@@ -60,7 +65,7 @@ function SideLayout({ children }: { children: ReactNode }) {
       </button>
       <aside
         id="default-sidebar"
-        className="fixed top-0 left-0 z-40 w-64 h-screen  transition-transform -translate-x-full sm:translate-x-0"
+        className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
         aria-label="Sidebar"
       >
         <div className="h-full px-3 overflow-y-auto bg-black">
@@ -73,42 +78,54 @@ function SideLayout({ children }: { children: ReactNode }) {
                 <Image src={Logo} alt="LOGO" className="w-[60%]" />
               </Link>
             </li>
-            {isAuthenticated ?
+            {isAuthenticated ? (
               <>
-                {links.map((link) => (
-                  <li key={link.path}>
-                    <Link
-                      href={link.path}
-                      className={`flex items-center justify-start rounded-lg group ${pathname === link.path ? " text-[#EF5C5C] " : "text-white "
-                        }`}
-                      onClick={
-                        link.name === "Logout"
-                          ? (e) => {
-                            e.preventDefault(); // Prevent default link behavior
-                            setIsModalOpen(true); // Open confirmation modal
-                          }
-                          : undefined
-                      }
-                    >
-                      <p>{link.name}</p>
-                    </Link>
-                  </li>
+                {links.map((link) => {
+                  // Hide links related to message-sending if value is less than 1
+                  if (value < 1 && ["Check In/ Check Out", "Promotions/ Offers", "Feedback"].includes(link.name)) {
+                    return null; // Do not render this link
+                  }
+                  return (
+                    <li key={link.path}>
+                      <Link
+                        href={link.path}
+                        className={`flex items-center justify-start rounded-lg group ${pathname === link.path ? " text-[#EF5C5C] " : "text-white "}`}
+                        onClick={
+                          link.name === "Logout"
+                            ? (e) => {
+                              e.preventDefault(); // Prevent default link behavior
+                              setIsModalOpen(true); // Open confirmation modal
+                            }
+                            : undefined
+                        }
+                      >
+                        <p>{link.name}</p>
+                      </Link>
+                    </li>
+                  );
+                })}
 
-
-                ))}
-
-
-                <div className="text-xl text-white font-semibold pt-[70%]">
-                  Messsages Left: {value}
+                <div className="text-xl text-white font-semibold absolute bottom-0">
+                  Messages Left: {value}
                 </div>
               </>
-              : null}
-
-
+            ) : null}
           </ul>
         </div>
       </aside>
-      {children}
+      <div className="h-screen">
+        {children}
+      </div>
+{
+  value < 1 && (
+    <Warning
+    isOpen={isModal}
+    onClose={() => setIsModal(false)}
+    onConfirm={handleWarning}
+  />
+  )
+}
+
 
       {/* Confirmation Modal */}
       <Confirmation

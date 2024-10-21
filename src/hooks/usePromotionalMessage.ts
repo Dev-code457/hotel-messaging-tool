@@ -1,18 +1,21 @@
-// hooks/usePromotionalMessage.ts
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { MessagesUsed } from "@/redux/slices/exampleSlice";
 
-const usePromotionalMessage = () => {
-    const [discount, setDiscount] = useState<number | null>();
-    const [hotelName, setHotelName] = useState<string>("");
-    const [phoneNumber, setPhoneNumber] = useState<number>();
+const usePromotionalMessage = (initialHotelName: string) => {
+    const [discount, setDiscount] = useState<number | null>(null);
+    const [hotelName, setHotelName] = useState<string>(initialHotelName);
+    const [phoneNumber, setPhoneNumber] = useState<number | null>(null);
     const [address, setAddress] = useState<string>("");
-    const [sliderValue, setSliderValue] = useState<number | null>(0);
+    const [sliderValue, setSliderValue] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(false);
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        setHotelName(initialHotelName);
+    }, [initialHotelName]);
 
     const handleDiscountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
@@ -21,7 +24,7 @@ const usePromotionalMessage = () => {
         if (!isNaN(numberValue)) {
             setDiscount(numberValue);
         } else if (value === "") {
-            setDiscount(undefined);
+            setDiscount(null);
         }
     };
 
@@ -30,19 +33,22 @@ const usePromotionalMessage = () => {
     };
 
     const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        const formattedValue = value.replace(/  /g, ",");
-        setAddress(formattedValue);
+        const value = e.target.value.replace(/  /g, ",");
+        setAddress(value);
     };
 
     const sendBulkMessage = async () => {
+        if (!hotelName.trim()) {
+            toast.error("Hotel Name is required.");
+            return;
+        }
+
         setLoading(true);
         try {
-            // Format discount with '% Off' if it is defined
-            const formattedDiscount = discount !== undefined ? `${discount}% Off` : undefined;
+            const formattedDiscount = discount !== null ? `${discount}% Off` : undefined;
 
             const response = await axios.post("/api/Promotional", {
-                discount: formattedDiscount, // send formatted discount
+                discount: formattedDiscount,
                 hotelName,
                 phoneNumber,
                 address,
@@ -51,17 +57,12 @@ const usePromotionalMessage = () => {
 
             dispatch(MessagesUsed());
             setAddress("");
-            setPhoneNumber(0);
+            setPhoneNumber(null);
             setDiscount(null);
-            setHotelName("");
             setSliderValue(0);
             toast.success(response.data.message || "Message sent successfully!");
         } catch (error: any) {
-            if (error.response && error.response.data.message) {
-                toast.error(error.response.data.message || "Something went wrong!");
-            } else {
-                toast.error(error.message || "An unknown error occurred.");
-            }
+            toast.error(error.response?.data.message || error.message || "An unknown error occurred.");
         } finally {
             setLoading(false);
         }

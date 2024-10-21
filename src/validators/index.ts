@@ -159,3 +159,28 @@ export const validatePasswords = (password: string, confirmPassword: string): st
 };
 
 
+
+
+
+export const validateHotelDetails = ({
+
+  hotelName,
+
+}: {
+
+  hotelName: string;
+
+}): string[] => {
+  const errors: string[] = [];
+
+
+
+  if (!hotelName) {
+    errors.push("Hotel Name is required.");
+  } else if (hotelName.length < 3) { 
+    errors.push("Hotel Name must be a 3 Characters Long");
+  } 
+
+  return errors;
+};
+

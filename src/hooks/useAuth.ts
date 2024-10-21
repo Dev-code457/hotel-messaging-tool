@@ -35,7 +35,7 @@ const useAuth = (): AuthContext => {
             const response = await axios.post<{ token: string; message: string }>('/api/auth/login', { email, password });
             Cookies.set('_session', response.data.token, { expires: 7 });
             dispatch(loginSuccess(response.data.token))
-            router.push('/CheckInOut');
+            router.push('/AddNumber');
             toast.success('Login successful!');
         } catch (error: any) {
             toast.error(error?.response?.data?.message || 'An unknown error occurred');

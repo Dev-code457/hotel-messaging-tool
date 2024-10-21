@@ -21,7 +21,7 @@ function ChangePassword() {
   const router = useRouter();
 
   // Use the custom hook
-  const { resetPassword, loading, error } = usePasswordReset(token);
+  const { resetPassword, loading } = usePasswordReset(token);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,7 +53,7 @@ function ChangePassword() {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     type="password"
                   />
-             
+
                   <div className="flex justify-start space-x-11 mt-8">
                     <Button
                       text={loading ? <div className={"flex gap-2  font-bold justify-center items-center"}><Spinner /> Submitting...</div> : "Submit"}

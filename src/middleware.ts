@@ -16,7 +16,7 @@ export function middleware(request: NextRequest) {
     }
   } else {
     if (isLoginPage) {
-      return NextResponse.redirect(new URL("/CheckInOut", request.url));
+      return NextResponse.redirect(new URL("/AddNumber", request.url));
     }
   }
 
