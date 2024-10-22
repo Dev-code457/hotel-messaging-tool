@@ -1,5 +1,5 @@
 // app/api/customers/route.ts
-import { connectToDatabase } from "@/lib/mongodb";
+import  connectToDatabase  from "@/lib/mongodb";
 import { NextResponse } from "next/server";
 import Customer from "@/models/customers";
 import { AppError, handleAppError } from "@/utils/errorHandler";

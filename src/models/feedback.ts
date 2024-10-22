@@ -1,10 +1,31 @@
 
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 
-const feedbackSchema = new Schema({
-    feedback: { type: String, required: true },
-});
+export const createFeedbacksModel = (hotelName: string) => {
+    const FeedbackSchema = new mongoose.Schema(
+        {
+            email: {
+                type: String,
+                lowercase: true,
+                trim: true,
+                match: [/.+\@.+\..+/, "Please fill a valid email address"],
+            },
+            phoneNumber: {
+                type: String,
+                unique: true,
+            },
+            name: {
+                type: String,
+            },
+        },
+        {
+            timestamps: true,
+        }
+    );
+    const modelName = `Feedbacks_${hotelName.replace(/\s+/g, '_')}`;
 
-const Feedback = mongoose.models.Feedback || mongoose.model("Feedback", feedbackSchema);
+    const Feedback =
+        mongoose.models[modelName] || mongoose.model(modelName, FeedbackSchema);
 
-export default Feedback;
+    return Feedback;
+};

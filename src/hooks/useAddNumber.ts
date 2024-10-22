@@ -15,24 +15,22 @@ const useAddNumber = () => {
     const [loading, setLoading] = useState(false);
 
     const handleSubmitFeedback = async (phoneNumber: string, email: string, name: string) => {
-        // Validation logic
         if (!phoneNumber) {
             toast.error("Phone Number can not be empty!");
             return false;
         }
-        
-        // Additional validation checks can be added here
+
         const phoneRegex = /^\d{10}$/; // Example regex for 10-digit phone numbers
         if (!phoneRegex.test(phoneNumber)) {
             toast.error("Phone number must be a 10-digit number.");
             return false;
         }
-        
-     
 
         setLoading(true);
         try {
             const data = await axiosPost<FeedbackResponse, FeedbackInput>("/api/customers", { phoneNumber, name, email });
+            console.log('Ybjsdnjksdnjkfnjksdjkmdfnkdsjn');
+            
             toast.success("Customer is added successfully!");
             return true;
         } catch (error: any) {

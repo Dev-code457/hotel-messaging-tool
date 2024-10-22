@@ -7,7 +7,7 @@ import Button from "../../components/Button";
 import Image from "next/image";
 import Hero from "../public/assets/CheckIn.svg";
 import SideLayout from "@/components/SideLayout";
-import { useCheckInOut } from "@/hooks/useCheckInOut"; 
+import { useCheckInOut } from "@/hooks/useCheckInOut";
 import Spinner from "@/components/Loader";
 
 function CheckInOut() {

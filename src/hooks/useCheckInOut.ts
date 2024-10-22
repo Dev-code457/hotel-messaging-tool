@@ -1,10 +1,15 @@
 import { useState } from "react";
-import axios from "axios";
 import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { MessagesUsed } from "@/redux/slices/exampleSlice";
+import { axiosPost } from "@/utils/axiosUtility";
 
 const phoneNumberRegex = /^\d{10}$/;
+
+interface ApiResponse {
+    data?: any; // Adjust this type according to your actual API response structure
+    message?: string;
+}
 
 interface UseCheckInOutResult {
     phoneNumber: string;
@@ -17,8 +22,8 @@ interface UseCheckInOutResult {
 
 export const useCheckInOut = (): UseCheckInOutResult => {
     const [phoneNumber, setPhoneNumber] = useState<string>("");
-    const [loadingCheckIn, setIsLoadingCheckIn] = useState<boolean>(false); // Loading state for check-in
-    const [loadingCheckOut, setIsLoadingCheckOut] = useState<boolean>(false); // Loading state for check-out
+    const [loadingCheckIn, setIsLoadingCheckIn] = useState<boolean>(false);
+    const [loadingCheckOut, setIsLoadingCheckOut] = useState<boolean>(false);
     const dispatch = useDispatch();
 
     const validatePhoneNumber = (phone: string): string | null => {
@@ -42,18 +47,15 @@ export const useCheckInOut = (): UseCheckInOutResult => {
         }
 
         try {
-            const response = await axios.post("/api/checkInOut", { phoneNumber, messageType });
-            const data = response.data;
+            // Use the axiosPost utility function instead of axios directly
+            const response: ApiResponse = await axiosPost("/api/checkInOut", { phoneNumber, messageType });
             dispatch(MessagesUsed());
 
-            toast.success(data.message || "Message sent successfully!");
-        } catch (error) {
+            toast.success(response.message || "Message sent successfully!"); // Accessing message safely
+        } catch (error: any) { 
             console.error(error);
-            if (axios.isAxiosError(error) && error.response) {
-                toast.error(error.response.data.error || "Something went wrong!");
-            } else {
-                toast.error("An unknown error occurred.");
-            }
+            const errorMessage = error?.response?.data?.message || "Something went wrong!";
+            toast.error(errorMessage); // Safely accessing error message
         } finally {
             // Reset loading state based on the message type
             if (messageType === "checkin") {

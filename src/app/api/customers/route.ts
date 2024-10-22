@@ -1,12 +1,30 @@
 import { validateCustomerPhoneNumber } from "@/validators/index";
 import { AppError } from "@/utils/errorHandler";
 import { sendSuccessResponse, sendErrorResponse } from "@/utils/responseHandler";
-import Customer from "@/models/customers";
+import { createCustomersModel } from "@/models/customers";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { connectToDatabase } from "@/lib/mongodb";
 
 export async function POST(req: Request) {
     try {
         const body = await req.json();
         const { phoneNumber, name, email } = body;
+        const token = req.headers.get("Authorization")?.replace("Bearer ", "");
+        if (!token) {
+            console.log("no token found")}
+
+        const secret = process.env.JWT_SECRET;
+        let params;
+
+        if (token) {
+            params = jwt.verify(token, secret) as JwtPayload
+        }
+
+        const hotelName = params?.params?.hotelName
+        connectToDatabase(hotelName)
+        const Customer = createCustomersModel(hotelName)
+
+
 
         const validationErrors = validateCustomerPhoneNumber({ phoneNumber });
         if (validationErrors.length > 0) {

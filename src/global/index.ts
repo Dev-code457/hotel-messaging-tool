@@ -1,7 +1,7 @@
 
 export async function fetchHotelData() {
     try {
-      const response = await fetch('/api/ChangeHotel-Details');  // Replace this with your actual API endpoint
+      const response = await fetch('/api/');  // Replace this with your actual API endpoint
       const data = await response.json();
       if (response.ok) {
         return data;  // Success
