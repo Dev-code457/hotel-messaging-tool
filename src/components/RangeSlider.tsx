@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { ProfileInfoPopover } from "./Info";
 
 // Add a prop type definition
 interface RangeSliderProps {
@@ -27,6 +28,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ onValueChange, value }) => {
     <div className="relative flex w-full items-center justify-center space-x-4">
       {/* Vertical label */}
       <div className="flex  items-center -rotate-90 space-x-2 absolute mr-5">
+      
         <span className="text-center text-sm font-semibold text-black">
           Number
         </span>
@@ -34,6 +36,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ onValueChange, value }) => {
         <span className="text-center text-sm font-semibold text-black">
           recipients
         </span>
+        <ProfileInfoPopover/>
       </div>
 
       {/* Slider and value display */}

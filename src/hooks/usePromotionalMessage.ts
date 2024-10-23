@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { MessagesUsed } from "@/redux/slices/exampleSlice";
+import { axiosPost } from "@/utils/axiosUtility";
+import { ApiResponse } from "@/types";
 
 const usePromotionalMessage = (initialHotelName: string) => {
     const [discount, setDiscount] = useState<number | null>(null);
@@ -47,9 +48,9 @@ const usePromotionalMessage = (initialHotelName: string) => {
         try {
             const formattedDiscount = discount !== null ? `${discount}% Off` : undefined;
 
-            const response = await axios.post("/api/Promotional", {
+            const response = await axiosPost<ApiResponse, { discount?: string, hotelName: string, phoneNumber: number, address: string, sliderValue: number }>("/api/Promotional", {
                 discount: formattedDiscount,
-                hotelName,
+                ownerHotelName: hotelName,
                 phoneNumber,
                 address,
                 sliderValue,

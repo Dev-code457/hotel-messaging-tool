@@ -16,11 +16,12 @@ function Page() {
   const router = useRouter();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [hotelName, setHotelName] = useState<string>("");
   const { loading, login } = useAuth();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    login(email, password);
+    login(email, password,hotelName);
   };
 
   useLayoutEffect(() => {
@@ -76,10 +77,15 @@ function Page() {
 
       <div className="sm:ml-64 flex justify-center">
         <div className="flex flex-col h-screen pt-20 items-center w-full bg-gray-50">
-          <Section heading="Login" classnames="flex-col justify-start h-[60vh] w-[65%] space-x-4">
-            <form onSubmit={handleSubmit} className="w-[40%]">
+          <Section heading="Login" classnames="flex-col justify-start h-[65vh] w-[65%] space-x-4">
+            {/* Warning Message */}
+            <div className="w-full p-4 text-center text-red-600 bg-yellow-100 border border-yellow-300 rounded-md mb-4">
+           HotelName Is Not ChangeAble
+            </div>
+
+            <form onSubmit={handleSubmit} className="w-[40%] -mb-6">
               <Input
-                classnames="py-6"
+                classnames="py-1 "
                 value={email}
                 required
                 onChange={(e) => setEmail(e.target.value)}
@@ -87,31 +93,39 @@ function Page() {
                 type="email"
               />
               <Input
-                classnames="mb-8"
+                classnames="py-1"
                 value={password}
                 required
                 type="password"
                 placeHolder="Enter Password"
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <div className="flex justify-start">
+              <Input
+                classnames="py-1"
+                value={hotelName}
+                required
+                type="text"
+                placeHolder="Enter HotelName"
+                onChange={(e) => setHotelName(e.target.value)}
+              />
+              <div className="flex justify-start -mb-5 py-3">
                 <Button
-                  text={loading ? <div className={"flex gap-2  font-bold justify-center items-center"}><Spinner /> Logging In...</div> : "Submit"}
+                  text={loading ? <div className={"flex gap-2 font-bold justify-center items-center"}><Spinner /> Logging In...</div> : "Submit"}
                   classnames="bg-green-500 hover:bg-green-600"
                   type="submit"
                   disabled={loading}
                 />
               </div>
-              <div className="absolute right-0 -mt-[6%]">
+              <div className="absolute right-0 -mt-[9%]">
                 <Image
                   src={HelperImage}
                   alt="Check In & Check Out"
-                  className="-mt-8 w-[70%] h-[70%]"
+                  className="-mt-8 w-[70%]"
                 />
               </div>
             </form>
             <div
-              className="text-sm font-semibold text-[#FB5151] py-6 underline font-serif cursor-pointer"
+              className="text-sm font-semibold text-[#FB5151] py-6 underline font-serif cursor-pointer w-auto"
               onClick={() => router.push("/ForgotPassword")}
             >
               Forgot Password

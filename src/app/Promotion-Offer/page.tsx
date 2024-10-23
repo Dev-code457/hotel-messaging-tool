@@ -14,6 +14,7 @@ import usePromotionalMessage from "@/hooks/usePromotionalMessage";
 import { MessagePreviewWindow } from "@/components/MessagePreviewWindow";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { ProfileInfoPopover } from "@/components/Info";
 
 function PromotionalMessage() {
   const hotelDetail = useSelector((state: RootState) => state.hotel.details);
@@ -116,6 +117,9 @@ function PromotionalMessage() {
         </div>
       </div>
     </SideLayout>
+
+
+ 
   );
 }
 

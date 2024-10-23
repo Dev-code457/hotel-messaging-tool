@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
-import User from "@/models/user";
+import { createUserModel } from "@/models/user";
 import crypto from "crypto";
 import bcrypt from "bcryptjs"; // Import bcrypt for hashing passwords
 import { AppError } from "@/utils/errorHandler"; // Import your AppError class
@@ -8,11 +8,12 @@ import { validatePasswords } from "@/validators/index"; // Import your validator
 
 export async function PUT(req: Request, { params }: { params: { resetToken: string[] } }) {
   try {
-    await connectToDatabase();
 
-    const { password, confirmPassword } = await req.json();
 
-    // Validate the passwords
+    const { password, confirmPassword, hotelName, email } = await req.json();
+    await connectToDatabase(hotelName);
+    const User = createUserModel(hotelName)
+
     const validationErrors = validatePasswords(password, confirmPassword);
     if (validationErrors.length > 0) {
       throw new AppError(400, validationErrors.join(", "));
@@ -25,7 +26,7 @@ export async function PUT(req: Request, { params }: { params: { resetToken: stri
       .update(token)
       .digest("hex");
 
-    // Find user by token and expiration
+
     const user = await User.findOne({
       resetPasswordToken,
       resetPasswordExpire: { $gt: Date.now() },
@@ -36,7 +37,9 @@ export async function PUT(req: Request, { params }: { params: { resetToken: stri
     }
 
     // Hash the new password before saving
-    user.password = await bcrypt.hash(password, 12); // Use a salt round of 12
+    user.password = password; // Use a salt round of 12
+    console.log("New hashed password:", user.password);
+
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
     await user.save();

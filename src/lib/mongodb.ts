@@ -17,11 +17,11 @@ export const connectToDatabase = async (dbName: string): Promise<void> => {
   }
 
   try {
-    // Connect to the specific MongoDB database
+
     await mongoose.connect(uri, {
-      dbName: dbName,  // Specify the database name to connect
+      dbName: dbName,
     });
-    isConnected[dbName] = true;  // Mark this database as connected
+    isConnected[dbName] = true;
     console.log(`MongoDB connected to ${dbName}`);
   } catch (error) {
     console.error("MongoDB connection error:", error);

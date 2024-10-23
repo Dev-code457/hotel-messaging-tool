@@ -10,11 +10,10 @@ import Id from "@/app/public/assets/id (1).svg"
 import Spinner from "@/components/Loader";
 import useChangePassword from "@/hooks/useChangePassword";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchHotelData } from "@/global/index"; // The function you provided
+import { fetchHotelData } from "@/global/index";
 import { hotelActions } from "@/redux/slices/hotelSlice";
 import { RootState } from "@/redux/store";
 import useHotelDetails from "@/hooks/useHotelDetails";
-import { useRouter } from "next/navigation";
 
 function ChangePassword() {
 
@@ -48,15 +47,15 @@ function ChangePassword() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        dispatch(hotelActions.fetchHotelDetailsPending());  // Set loading state
-        const data = await fetchHotelData();  // Fetch data from the API
-        dispatch(hotelActions.fetchHotelDetailsSuccess(data));  // Dispatch success
+        dispatch(hotelActions.fetchHotelDetailsPending());
+        const data = await fetchHotelData();
+        dispatch(hotelActions.fetchHotelDetailsSuccess(data));
       } catch (error: any) {
-        dispatch(hotelActions.fetchHotelDetailsFailure(error.message));  // Dispatch failure
+        dispatch(hotelActions.fetchHotelDetailsFailure(error.message));
       }
     };
 
-    fetchData();  // Call the fetch function when the component mounts
+    fetchData();
   }, [dispatch, isLoading]);
 
 

@@ -19,13 +19,13 @@ export const validateFeedbackInput = (feedback: string) => {
 };
 
 export const validateCustomerInput = ({
-  hotelName,
+  ownerHotelName,
   discount,
   phoneNumber,
   address,
   sliderValue,
 }: {
-  hotelName: string;
+  ownerHotelName: string;
   discount: string;
   phoneNumber: string;
   address: string;
@@ -34,9 +34,9 @@ export const validateCustomerInput = ({
   const errors: string[] = [];
 
   // Check required fields
-  if (!hotelName || typeof hotelName !== "string" || hotelName.trim() === "") {
+  if (!ownerHotelName || typeof ownerHotelName !== "string" || ownerHotelName.trim() === "") {
     errors.push("Hotel name is required.");
-  } else if (hotelName.length > 100) { // Limit hotel name to 100 characters
+  } else if (ownerHotelName.length > 100) { // Limit hotel name to 100 characters
     errors.push("Hotel name must be less than 100 characters.");
   }
 

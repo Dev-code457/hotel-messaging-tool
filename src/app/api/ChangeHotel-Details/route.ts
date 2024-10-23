@@ -1,72 +1,82 @@
 import { validateHotelDetails } from "@/validators/index";
 import { AppError } from "@/utils/errorHandler";
 import { sendSuccessResponse, sendErrorResponse } from "@/utils/responseHandler";
-import HotelModel from "@/models/hotel";
-import Hotel from "@/models/hotel";
+import { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
+import { createUserModel } from "@/models/user";
 
-// Handle POST request (Add new hotel)
-export async function POST(req: Request) {
+// export async function PUT(req: Request, { params }: { params: any }) {
+//     try {
+//         const body = await req.json();
+//         const { hotelName } = body;
+
+//         const token = req.headers.get("Authorization")?.replace("Bearer ", "");
+//         if (!token) {
+//             console.log("No token found");
+//             throw new AppError(401, "Unauthorized: No token provided");
+//         }
+
+//         const secret = process.env.JWT_SECRET;
+//         let decodedToken: JwtPayload;
+
+//         if (token) {
+//             decodedToken = jwt.verify(token, secret) as JwtPayload;
+//         }
+
+//         const id = decodedToken?.params?.id;
+//         if (!id) {
+//             throw new AppError(400, "User ID not found in token");
+//         }
+
+//         const validationErrors = validateHotelDetails({ hotelName });
+//         if (validationErrors.length > 0) {
+//             throw new AppError(400, validationErrors.join(", "));
+//         }
+
+//         // Find the user by ID and update the hotelName
+//         const User = createUserModel(decodedToken.params.hotelName);
+//         const result = await User.updateOne({ _id: id }, { hotelName });
+
+//         if (result.modifiedCount === 0) {
+//             throw new AppError(404, "Hotel not found or no changes made");
+//         }
+
+//         return sendSuccessResponse(200, {
+//             message: "Hotel updated successfully",
+//         });
+//     } catch (error: unknown) {
+//         console.error("Error during hotel update:", error);
+//         if (error instanceof AppError) {
+//             return sendErrorResponse(error.statusCode, error.message);
+//         }
+//         return sendErrorResponse(500, "An unknown error occurred");
+//     }
+// }
+
+export async function GET(req: Request) {
     try {
-        const body = await req.json();
-        const { hotelName } = body;
 
-        const validationErrors = validateHotelDetails({ hotelName });
-        if (validationErrors.length > 0) {
-            throw new AppError(400, validationErrors.join(", "));
+        const token = req.headers.get("Authorization")?.replace("Bearer ", "");
+        if (!token) {
+            console.log("no token found")
         }
 
-        const newHotel = new HotelModel({ hotelName });
-        await newHotel.save();
-
-        return sendSuccessResponse(200, {
-            message: "Hotel added successfully",
-        });
-    } catch (error: unknown) {
-        console.error("Error during hotel creation:", error);
-        if (error instanceof AppError) {
-            return sendErrorResponse(error.statusCode, error.message);
+        const secret = process.env.JWT_SECRET;
+        if (!secret) {
+            throw new AppError(500, "Internal Server Error: JWT Secret is not defined");
         }
-        return sendErrorResponse(500, "An unknown error occurred");
-    }
-}
+        let params;
 
-
-export async function PUT(req: Request, { params }:{params: any}) {
- 
-    try {
-        const body = await req.json();
-        const { id, hotelName } = body;
-
-        const validationErrors = validateHotelDetails({ hotelName });
-        if (validationErrors.length > 0) {
-            throw new AppError(400, validationErrors.join(", "));
+        if (token) {
+            params = jwt.verify(token, secret) as JwtPayload
         }
 
-        const hotel = await HotelModel.findById(id);
-        if (!hotel) {
-            throw new AppError(404, "Hotel not found");
-        }
-
-        hotel.hotelName = hotelName;
-        await hotel.save();
-
-        return sendSuccessResponse(200, {
-            message: "Hotel updated successfully",
-        });
-    } catch (error: unknown) {
-        console.error("Error during hotel update:", error);
-        if (error instanceof AppError) {
-            return sendErrorResponse(error.statusCode, error.message);
-        }
-        return sendErrorResponse(500, "An unknown error occurred");
-    }
-}
-
-
-export async function GET() {
-    try {
-       const hotels = await Hotel.findOne({});
-       return sendSuccessResponse(200,hotels);
+        const id = params?.params?.id
+        console.log(id)
+        const hotelName = params?.params?.hotelName
+        const User = createUserModel(hotelName)
+        const user = await User.findOne({ _id: id })
+        return sendSuccessResponse(200, user);
     } catch (error: unknown) {
         console.error("Error during fecthing Hotel Details:", error);
         if (error instanceof AppError) {

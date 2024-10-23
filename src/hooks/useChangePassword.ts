@@ -38,7 +38,9 @@ import Cookies from "js-cookie";
       setPassword("");
       setNewPassword("");
     } catch (error: any) {
-      const errorMessage = error.response?.data?.error || "Something went wrong!";
+      console.log(error);
+      
+      const errorMessage = error.response.data.message || "Something went wrong!";
       toast.error(errorMessage);
     } finally {
       setLoading(false);

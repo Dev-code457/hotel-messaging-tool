@@ -3,7 +3,7 @@ import React from "react";
 interface InputProps {
   classnames?: string;
   label?: string,
-  value: string | number ;
+  value: string | number;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeHolder: string;
   required?: boolean;
@@ -14,9 +14,9 @@ interface InputProps {
 
 }
 
-function Input({
+export default function Input({
   classnames = "",
-  label="",
+  label = "",
   value,
   onChange,
   placeHolder,
@@ -41,7 +41,7 @@ function Input({
         {label ? label : placeHolder}
         {required && <span className="text-red-500  text-xl">*</span>}
       </label>
-      
+
       {/* Input Field */}
       <div className="relative">
         <input
@@ -66,4 +66,50 @@ function Input({
   );
 }
 
-export default Input;
+
+
+
+interface CheckboxProps {
+  classnames?: string;
+  label?: string;
+  checked: boolean;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  required?: boolean;
+  error?: string; // Optional error message
+  disabled?: boolean;
+}
+
+export const Checkbox: React.FC<CheckboxProps> = ({
+  classnames = "",
+  label = "",
+  checked,
+  onChange,
+  required = false,
+  error,
+  disabled,
+}) => {
+  return (
+    <div className={`flex items-center ${classnames}`}>
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={onChange}
+        className={`h-4 w-4 text-blue-600 border-gray-300 rounded-xl focus:ring-blue-500 
+          ${error ? "border-red-500" : "border-gray-300"} transition-all`}
+        aria-required={required}
+        aria-invalid={!!error}
+        disabled={disabled}
+      />
+      {label && (
+        <label className="ml-2 text-sm font-medium text-gray-700">
+          {label}
+          {required && <span className="text-red-500 text-xl">*</span>}
+        </label>
+      )}
+      {/* Error Message */}
+      {error && <p className="ml-2 text-sm text-red-600">{error}</p>}
+    </div>
+  );
+};
+
+

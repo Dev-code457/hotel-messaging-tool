@@ -61,6 +61,8 @@ export const createUserModel = (hotelName: string) => {
   userSchema.methods.matchPassword = async function (
     enteredPassword: string
   ): Promise<boolean> {
+    console.log(enteredPassword);
+    
     return await bcrypt.compare(enteredPassword, this.password);
   };
 

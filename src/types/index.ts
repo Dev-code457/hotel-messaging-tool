@@ -10,3 +10,9 @@ export default interface AuthState {
     isAuthenticated: boolean;
     token: string | null
 }
+
+
+export interface ApiResponse {
+    data?: any;
+    message?: string;
+}

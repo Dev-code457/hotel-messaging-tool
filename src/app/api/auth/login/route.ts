@@ -11,7 +11,7 @@ const limiter = rateLimit(5, 15 * 60 * 1000);
 export async function POST(req: Request) {
   try {
     limiter(req);
-    const { email, password, hotelName="dev's" } = await req.json();
+    const { email, password, hotelName = "drive22" } = await req.json();
     await connectToDatabase(hotelName);
     const User = createUserModel(hotelName);
 
@@ -26,9 +26,15 @@ export async function POST(req: Request) {
     }
 
     const isValidPassword = await user.matchPassword(password);
+    console.log("Entered password:", password);
+    console.log("Stored hashed password:", user.password);
+    console.log("Is valid password:", isValidPassword);
+    
+    
     if (!isValidPassword) {
       throw new AppError(401, "Invalid Password");
     }
+    
 
     const token = generateTokens({ id: user._id.toString(), hotelName: hotelName });
 

@@ -3,27 +3,26 @@ import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { MessagesUsed } from "@/redux/slices/exampleSlice";
 import { axiosPost } from "@/utils/axiosUtility";
+import { ApiResponse } from "@/types";
 
 const phoneNumberRegex = /^\d{10}$/;
-
-interface ApiResponse {
-    data?: any; // Adjust this type according to your actual API response structure
-    message?: string;
-}
 
 interface UseCheckInOutResult {
     phoneNumber: string;
     setPhoneNumber: (value: string) => void;
     loadingCheckIn: boolean;
     loadingCheckOut: boolean;
-    handleCheckIn: () => Promise<void>;
-    handleCheckOut: () => Promise<void>;
+    handleCheckIn: (isPromotionalList: boolean) => Promise<void>;
+    handleCheckOut: (isPromotionalList: boolean) => Promise<void>;
+    isPromotionalList: boolean;
+    setIsPromotionalList: (value: boolean) => void;
 }
 
 export const useCheckInOut = (): UseCheckInOutResult => {
     const [phoneNumber, setPhoneNumber] = useState<string>("");
     const [loadingCheckIn, setIsLoadingCheckIn] = useState<boolean>(false);
     const [loadingCheckOut, setIsLoadingCheckOut] = useState<boolean>(false);
+    const [isPromotionalList, setIsPromotionalList] = useState<boolean>(false); // Added checkbox state
     const dispatch = useDispatch();
 
     const validatePhoneNumber = (phone: string): string | null => {
@@ -32,14 +31,13 @@ export const useCheckInOut = (): UseCheckInOutResult => {
         return null;
     };
 
-    const handleSubmit = async (messageType: "checkin" | "checkout") => {
+    const handleSubmit = async (messageType: "checkin" | "checkout", isPromotionalList: boolean) => {
         const validationError = validatePhoneNumber(phoneNumber);
         if (validationError) {
             toast.error(validationError);
             return;
         }
 
-        // Set loading state based on the message type
         if (messageType === "checkin") {
             setIsLoadingCheckIn(true);
         } else {
@@ -47,28 +45,34 @@ export const useCheckInOut = (): UseCheckInOutResult => {
         }
 
         try {
-            // Use the axiosPost utility function instead of axios directly
-            const response: ApiResponse = await axiosPost("/api/checkInOut", { phoneNumber, messageType });
-            dispatch(MessagesUsed());
+            const response = await axiosPost<ApiResponse, { phoneNumber: string; messageType: string; isPromotionalList: boolean }>(
+                "/api/checkInOut",
+                { phoneNumber, messageType, isPromotionalList }
+            );
 
-            toast.success(response.message || "Message sent successfully!"); // Accessing message safely
-        } catch (error: any) { 
-            console.error(error);
-            const errorMessage = error?.response?.data?.message || "Something went wrong!";
-            toast.error(errorMessage); // Safely accessing error message
+            dispatch(MessagesUsed());
+            if (response) {
+                toast.success(response.data.message || "Message sent successfully!");
+            } else {
+                toast.error("No response from server.");
+            }
+        } catch (error: any) {
+            const errorMessage = error?.message || "Something went wrong!";
+            toast.error(errorMessage);
         } finally {
-            // Reset loading state based on the message type
+            // Reset both phoneNumber and isPromotionalList here
+            setPhoneNumber("");
+            setIsPromotionalList(false); // Reset checkbox state
             if (messageType === "checkin") {
                 setIsLoadingCheckIn(false);
             } else {
                 setIsLoadingCheckOut(false);
             }
-            setPhoneNumber(""); // Clear input after submission
         }
     };
 
-    const handleCheckIn = async (): Promise<void> => handleSubmit("checkin");
-    const handleCheckOut = async (): Promise<void> => handleSubmit("checkout");
+    const handleCheckIn = async (isPromotionalList: boolean): Promise<void> => handleSubmit("checkin", isPromotionalList);
+    const handleCheckOut = async (isPromotionalList: boolean): Promise<void> => handleSubmit("checkout", isPromotionalList);
 
     return {
         phoneNumber,
@@ -77,5 +81,7 @@ export const useCheckInOut = (): UseCheckInOutResult => {
         loadingCheckOut,
         handleCheckIn,
         handleCheckOut,
+        isPromotionalList,
+        setIsPromotionalList,
     };
 };

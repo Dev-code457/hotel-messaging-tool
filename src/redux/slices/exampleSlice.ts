@@ -5,7 +5,7 @@ interface ExampleState {
 }
 
 const initialState: ExampleState = {
-  value: 8,
+  value: 10000,
 };
 
 const exampleSlice = createSlice({

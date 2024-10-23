@@ -11,9 +11,13 @@ export async function POST(req: Request) {
         const { phoneNumber, name, email } = body;
         const token = req.headers.get("Authorization")?.replace("Bearer ", "");
         if (!token) {
-            console.log("no token found")}
+            console.log("no token found")
+        }
 
         const secret = process.env.JWT_SECRET;
+        if (!secret) {
+            throw new AppError(500, "Internal Server Error: JWT Secret is not defined");
+        }
         let params;
 
         if (token) {

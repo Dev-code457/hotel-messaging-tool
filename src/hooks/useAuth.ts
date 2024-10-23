@@ -11,7 +11,7 @@ import { useDispatch } from 'react-redux';
 interface AuthContext {
     isAuthenticated: boolean;
     loading: boolean;
-    login: (email: string, password: string) => Promise<void>;
+    login: (email: string, password: string, hotelName: string) => Promise<void>;
     logout: () => void;
 }
 
@@ -29,10 +29,10 @@ const useAuth = (): AuthContext => {
         setLoading(false);
     }, []);
 
-    const login = async (email: string, password: string) => {
+    const login = async (email: string, password: string, hotelName: string) => {
         setLoading(true);
         try {
-            const response = await axios.post<{ token: string; message: string }>('/api/auth/login', { email, password });
+            const response = await axios.post<{ token: string; message: string }>('/api/auth/login', { email, password, hotelName });
             Cookies.set('_session', response.data.token, { expires: 7 });
             dispatch(loginSuccess(response.data.token))
             router.push('/AddNumber');

@@ -1,32 +1,32 @@
-import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
-import User from "@/models/user";
 import sendEmail from "@/utils/sendEmail";
 import crypto from "crypto";
-import { validateForgot } from "@/validators/index"; 
+import { validateForgot } from "@/validators/index";
 import { AppError } from "@/utils/errorHandler";
 import { sendErrorResponse, sendSuccessResponse } from "@/utils/responseHandler";
+import { JwtPayload } from "jsonwebtoken";
+import { createUserModel } from "@/models/user";
+import jwt from "jsonwebtoken"
 
 export async function PUT(req: Request) {
 
 
-  await connectToDatabase();
-  
   const body = await req.json();
-  const { email } = body; // Ensure email is destructured correctly
-  
+  const { email, hotelName } = body;
+  connectToDatabase(hotelName)
+  const User = createUserModel(hotelName)
+
   // Validate the email
   const validationError = validateForgot({ email });
   if (validationError.length > 0) { // Check for errors
     throw new AppError(400, validationError.join(", "));
   }
-  
-  // Optional: If you want to add email format validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Simple email format regex
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (email && !emailRegex.test(email)) {
     throw new AppError(400, "Invalid email format");
   }
-  
+
   try {
     const user = await User.findOne({ email });
     if (!user) {
