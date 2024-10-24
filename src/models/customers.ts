@@ -14,6 +14,9 @@ export const createCustomersModel = (hotelName: string) => {
                 type: String,
                 unique: true,
             },
+            spending: {
+                type: String,
+            },
             name: {
                 type: String,
             },

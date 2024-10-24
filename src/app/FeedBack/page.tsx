@@ -41,8 +41,6 @@ const CheckInOut = () => {
                     <textarea
                       id="phone"
                       rows={3}
-                      //   value={value}
-                      //   onChange={onChange}
                       className="block w-full p-4 text-sm font-medium text-black border border-gray-300 rounded-lg bg-gray-100 placeholder-gray-400"
                       placeholder={
                         "We’d love to hear your feedback! Help us make the app even better by sharing your thoughts..."
@@ -55,7 +53,7 @@ const CheckInOut = () => {
                   <div className="px-10 max-w-sm mb-4">
                     <Button
                       text={loading ? <div className={"flex gap-2  font-bold justify-center items-center"}><Spinner /> Submitting...</div> : "Submit"}
-                      classnames="bg-green-500 hover:bg-green-600 py-4 px-8"
+                      classnames="bg-green-500 hover:bg-green-600 py-3 px-8"
                       type="submit"
                       disabled={loading}
                     />

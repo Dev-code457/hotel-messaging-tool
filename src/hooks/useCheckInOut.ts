@@ -10,6 +10,8 @@ const phoneNumberRegex = /^\d{10}$/;
 interface UseCheckInOutResult {
     phoneNumber: string;
     setPhoneNumber: (value: string) => void;
+    spending: any,
+    setUserSpending: () => void;
     loadingCheckIn: boolean;
     loadingCheckOut: boolean;
     handleCheckIn: (isPromotionalList: boolean) => Promise<void>;
@@ -20,9 +22,10 @@ interface UseCheckInOutResult {
 
 export const useCheckInOut = (): UseCheckInOutResult => {
     const [phoneNumber, setPhoneNumber] = useState<string>("");
+    const [userSpending, setUserSpending] = useState<string>("");
     const [loadingCheckIn, setIsLoadingCheckIn] = useState<boolean>(false);
     const [loadingCheckOut, setIsLoadingCheckOut] = useState<boolean>(false);
-    const [isPromotionalList, setIsPromotionalList] = useState<boolean>(false); // Added checkbox state
+    const [isPromotionalList, setIsPromotionalList] = useState<boolean>(false);
     const dispatch = useDispatch();
 
     const validatePhoneNumber = (phone: string): string | null => {
@@ -45,9 +48,9 @@ export const useCheckInOut = (): UseCheckInOutResult => {
         }
 
         try {
-            const response = await axiosPost<ApiResponse, { phoneNumber: string; messageType: string; isPromotionalList: boolean }>(
+            const response = await axiosPost<ApiResponse, { phoneNumber: string; messageType: string; isPromotionalList: boolean, userSpending: string }>(
                 "/api/checkInOut",
-                { phoneNumber, messageType, isPromotionalList }
+                { phoneNumber, messageType, isPromotionalList, spending: userSpending }
             );
 
             dispatch(MessagesUsed());
@@ -62,6 +65,7 @@ export const useCheckInOut = (): UseCheckInOutResult => {
         } finally {
             // Reset both phoneNumber and isPromotionalList here
             setPhoneNumber("");
+            setUserSpending("")
             setIsPromotionalList(false); // Reset checkbox state
             if (messageType === "checkin") {
                 setIsLoadingCheckIn(false);
@@ -77,6 +81,8 @@ export const useCheckInOut = (): UseCheckInOutResult => {
     return {
         phoneNumber,
         setPhoneNumber,
+        setUserSpending,
+        userSpending,
         loadingCheckIn,
         loadingCheckOut,
         handleCheckIn,

@@ -26,6 +26,7 @@ const useForgotPassword = () => {
     fetchData();
   }, [dispatch]);
 
+console.log(hotelDetail,"mkasdjjksdanjkdl");
 
   const forgotPassword = async (email: string) => {
     setLoading(true);

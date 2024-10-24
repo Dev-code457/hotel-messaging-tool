@@ -17,6 +17,8 @@ function CheckInOut() {
     loadingCheckIn,
     loadingCheckOut,
     handleCheckIn,
+    userSpending,
+    setUserSpending,
     handleCheckOut,
     isPromotionalList,
     setIsPromotionalList
@@ -32,11 +34,11 @@ function CheckInOut() {
         <div className="flex flex-col h-screen justify-center items-center w-full bg-gray-50">
           <Section
             heading="Check In & Check Out"
-            classnames="flex-col justify-start w-[65%] h-[35vh] space-x-4"
+            classnames={`flex-col justify-start w-[65%]  space-x-4 ${isPromotionalList ? " h-[50vh]":"h-[35vh]"}`}
           >
             <div className="grid grid-cols-5 gap-4">
               <div className="col-span-3">
-                <form className="w-[100%] mt-16" onSubmit={(e) => e.preventDefault()}>
+                <form className={`w-[100%]${isPromotionalList ? "-mt-[30%}":"mt-16"}`} onSubmit={(e) => e.preventDefault()}>
                   <Input
                     classnames="p"
                     type="number"
@@ -45,6 +47,18 @@ function CheckInOut() {
                     placeHolder="Enter Phone Number"
                     onChange={(e) => setPhoneNumber(e.target.value)}
                   />
+                  {
+                    isPromotionalList && (
+                      <Input
+                      classnames="py-3"
+                      type="number"
+                      value={userSpending}
+                      placeHolder="Enter User Spending"
+                      onChange={(e) => setUserSpending(e.target.value)}
+                    />
+                    )
+                  }
+            
                   <Checkbox
                     checked={isPromotionalList} // Use the hook's checkbox state
                     classnames="-mb-10 py-5"
@@ -87,7 +101,7 @@ function CheckInOut() {
               </div>
 
               <div className="col-span-2 flex justify-center items-center">
-                <Image src={Hero} alt="Check In & Check Out" className="mt-10 -mb-24 w-[90%] h-[100%]" />
+                <Image src={Hero} alt="Check In & Check Out" className={`  h-[100%] ${isPromotionalList ? "-mb-36 w-[100%]": "-mb-20" }`}/>
               </div>
             </div>
           </Section>

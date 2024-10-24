@@ -79,8 +79,7 @@ function ChangePassword() {
                     placeHolder={hotelDetail?.hotelName ? hotelDetail?.hotelName : null}
                     label="Add Hotel Name"
                     type="text"
-                    onChange={(e) => setHotelDetails(e.target.value)}  // Update state on change
-                  // disabled={!!hotelDetail}  // Disable if `hotelDetail` is available
+                    onChange={(e) => setHotelDetails(e.target.value)}
                   />
                   <div className="flex justify-start py-6 space-x-6">
                     {
@@ -96,7 +95,7 @@ function ChangePassword() {
 
                     <Button
                       text="Edit"
-                      classnames={`py-4 px-8 bg-blue-500 hover:bg-blue-600 `}
+                      classnames={`py-3 px-8 bg-blue-500 hover:bg-blue-600 `}
                       type="submit"
                       disabled={isLoading}
                     />
@@ -108,7 +107,7 @@ function ChangePassword() {
                   <Image
                     src={Id}
                     alt="setting"
-                    className="w-[60%] pt-20 mr-2"
+                    className="w-[60%] pt-16 mr-2"
                   />
                 </div>
               </div>
@@ -141,7 +140,7 @@ function ChangePassword() {
                   <div className="flex justify-start pt-6">
                     <Button
                       text={loading ? <div className={"flex gap-2  font-bold justify-center items-center"}><Spinner /> Submitting...</div> : "Submit"}
-                      classnames={`py-4 px-8 bg-green-500 hover:bg-green-600 `}
+                      classnames={`py-3 px-8 bg-green-500 hover:bg-green-600 `}
                       type="submit"
                       disabled={loading}
                     />
@@ -153,7 +152,7 @@ function ChangePassword() {
                   <Image
                     src={Hero}
                     alt="setting"
-                    className="w-[100%] mt-36 -mr-10"
+                    className="w-[100%] mt-28 -mr-10"
                   />
                 </div>
               </div>
