@@ -7,13 +7,20 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { loginSuccess } from '@/redux/slices/authSlices';
 import { useDispatch } from 'react-redux';
+import { axiosPost } from '@/utils/axiosUtility';
 
 interface AuthContext {
     isAuthenticated: boolean;
     loading: boolean;
     login: (email: string, password: string, hotelName: string) => Promise<void>;
     logout: () => void;
+    signUp:(email: string, password: string, hotelName: string) => Promise<void>;
 }
+
+interface LoginResponse {
+    message: string;
+}
+
 
 const useAuth = (): AuthContext => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -32,11 +39,28 @@ const useAuth = (): AuthContext => {
     const login = async (email: string, password: string, hotelName: string) => {
         setLoading(true);
         try {
-            const response = await axios.post<{ token: string; message: string }>('/api/auth/login', { email, password, hotelName });
+            const response = await axiosPost<{ token: string; message: string },LoginResponse>('/api/auth/login', { email, password, hotelName });
             Cookies.set('_session', response.data.token, { expires: 7 });
             dispatch(loginSuccess(response.data.token))
             router.push('/AddNumber');
             toast.success('Login successful!');
+        } catch (error: any) {
+            toast.error(error?.response?.data?.message || 'An unknown error occurred');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+    const signUp = async (email: string, password: string, hotelName: string) => {
+        setLoading(true);
+        try {
+            const response = await axios.post<{ token: string; message: string }>('/api/auth/signup', { email, password, hotelName });
+            console.log(response.data.token);
+            
+            Cookies.set('temp_session', response.data.token, { expires: 7 });
+            router.push('/Login');
+            toast.success('SignUp Success');
         } catch (error: any) {
             toast.error(error?.response?.data?.message || 'An unknown error occurred');
         } finally {
@@ -50,7 +74,7 @@ const useAuth = (): AuthContext => {
         router.push('/');
     };
 
-    return { isAuthenticated, loading, login, logout };
+    return { isAuthenticated, loading, login, logout, signUp };
 };
 
 export default useAuth;

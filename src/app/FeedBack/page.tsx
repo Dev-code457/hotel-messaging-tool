@@ -15,6 +15,7 @@ const CheckInOut = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     handleSubmitFeedback(feedback);
+    setFeedback("")
   };
 
   return (

@@ -24,9 +24,9 @@ export async function POST(req: Request) {
             params = jwt.verify(token, secret) as JwtPayload
         }
 
-        const hotelName = params?.params?.hotelName
-        connectToDatabase(hotelName)
-        const Customer = createCustomersModel(hotelName)
+        const hotelID = params?.params?.hotelID
+        connectToDatabase(hotelID)
+        const Customer = createCustomersModel(hotelID)
 
 
 

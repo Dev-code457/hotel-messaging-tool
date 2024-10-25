@@ -3,7 +3,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Hero from "../../app/public/assets/Logo.png";
-
+import crypto from "crypto";
+import { axiosPost, axiosPut } from "@/utils/axiosUtility";
+import ThankYouOverlay from "@/components/Thankyou";
 
 interface RazorpayOptions {
     key: string;
@@ -31,9 +33,10 @@ declare global {
 }
 
 export default function Payment() {
+    const [showThankYou, setShowThankYou] = useState(false);
     const [loading, setLoading] = useState(false);
     const [razorpayLoaded, setRazorpayLoaded] = useState(false);
-    const [error, setError] = useState<string | null>(null); // For error handling
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const loadRazorpayScript = () => {
@@ -58,34 +61,77 @@ export default function Payment() {
         loadRazorpayScript();
     }, []);
 
-    const handlePayment = async () => {
+    const verifyPayment = async (response: any) => {
+        const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = response;
+
+        const body = razorpay_order_id + "|" + razorpay_payment_id;
+        const expectedSignature = crypto.createHmac("sha256", "uconLXyRqhqru3rV3cKL12Yc")
+            .update(body)
+            .digest("hex");
+        return expectedSignature === razorpay_signature;
+    };
+
+    const saveTransaction = async (paymentData: any) => {
+        try {
+            const response = await axiosPut("/api/payments/saveTransaction", { paymentData });
+            console.log("Transaction saved successfully:", response);
+            setShowThankYou(true);
+        
+        } catch (error) {
+            console.error("Error saving transaction:", error);
+        }
+    };
+
+    const activatePlanFeatures = async (userId: string, planDetails: any) => {
+        await axios.post("/api/users/activatePlan", { userId, planDetails });
+    };
+
+    const handlePayment = async (planAmount: number) => {
         if (!razorpayLoaded) {
             console.error("Razorpay script not loaded yet");
             return;
         }
 
         setLoading(true);
-        setError(null); // Reset error state
+        setError(null);
 
         try {
-            const amount = 12000; // Amount in INR
+            const amount = planAmount;
             const { data } = await axios.post("/api/payments/createOrder", {
                 amount,
                 currency: "INR",
             });
+            console.log(data);
 
             const options: RazorpayOptions = {
                 key: "rzp_test_NXP68RJv2cSe3T",
-                amount: amount * 100, // Amount is in paise
+                amount: amount * 100,
                 currency: "INR",
                 name: "GoodPegg Touch",
                 description: "Test Transaction",
-                image: Hero.src, // Correct path to the logo
+                image: Hero.src,
                 order_id: data.order.id,
                 handler: async (response) => {
                     console.log("Payment Response:", response);
-                    // Verify payment and handle post-payment logic here
-                    // Example: await verifyPayment(response);
+
+                    const isVerified = await verifyPayment(response);
+                    if (isVerified) {
+                        await saveTransaction({
+                            orderId: response.razorpay_order_id,
+                            paymentId: response.razorpay_payment_id,
+                            amount: planAmount,
+                            status: 'success',
+                            userId: response._id,
+                        });
+
+
+                        await activatePlanFeatures('currentUserId', { planAmount });
+
+
+                        alert("Payment successful! Your plan has been activated.");
+                    } else {
+                        alert("Payment verification failed. Please contact support.");
+                    }
                 },
                 prefill: {
                     name: "John Doe",
@@ -99,9 +145,11 @@ export default function Payment() {
 
             const rzp = new window.Razorpay(options);
             rzp.open();
+
+            
         } catch (error) {
             console.error("Error during payment", error);
-            setError("Payment initiation failed. Please try again."); // Set error message
+            setError("Payment initiation failed. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -133,7 +181,7 @@ export default function Payment() {
                             "Upload CSV File",
                             "27/4 Technical Support",
                         ]}
-                        onPayment={handlePayment}
+                        onPayment={() => handlePayment(10000)}
                     />
                     <PlanCard
                         title="Standard"
@@ -148,7 +196,7 @@ export default function Payment() {
                             "Upload CSV File",
                             "27/4 Technical Support",
                         ]}
-                        onPayment={handlePayment}
+                        onPayment={() => handlePayment(12000)}
                     />
                     <PlanCard
                         title="Premium"
@@ -163,15 +211,16 @@ export default function Payment() {
                             "Upload CSV File",
                             "27/4 Technical Support",
                         ]}
-                        onPayment={handlePayment}
+                        onPayment={() => handlePayment(15000)}
                     />
                 </div>
             </div>
+            {showThankYou && <ThankYouOverlay onClose={() => setShowThankYou(false)} />}
         </section>
     );
 }
 
-const PlanCard = ({ title, description, price, features, onPayment,loading }: any) => {
+const PlanCard = ({ title, description, price, features, onPayment, loading }: any) => {
     return (
         <div className="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow xl:p-8">
             <h3 className="mb-4 text-2xl font-semibold">{title}</h3>
@@ -193,9 +242,9 @@ const PlanCard = ({ title, description, price, features, onPayment,loading }: an
             <button
                 onClick={onPayment}
                 disabled={loading}
-                className="text-black bg-gray-200 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white dark:focus:ring-primary-900"
+                className="inline-flex items-center justify-center w-full px-5 py-3 text-base font-medium text-center text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 disabled:opacity-50"
             >
-                {loading ? "Processing..." : "Get Started"}
+                {loading ? 'Processing...' : 'Choose Plan'}
             </button>
         </div>
     );

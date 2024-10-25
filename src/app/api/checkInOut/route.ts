@@ -25,10 +25,12 @@ export async function POST(req: Request) {
     }
 
     const params = jwt.verify(token, secret) as JwtPayload;
-    const hotelName = params?.params?.hotelName;
+    const hotelID = params?.params?.hotelID;
+    console.log(hotelID);
+    
 
-    await connectToDatabase(hotelName);
-    const Customer = createCustomersModel(hotelName);
+    await connectToDatabase(hotelID);
+    const Customer = createCustomersModel(hotelID);
 
     const validationErrors = validateCustomerPhoneNumber({ phoneNumber });
     if (validationErrors.length > 0) {

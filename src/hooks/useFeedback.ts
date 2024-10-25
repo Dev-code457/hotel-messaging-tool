@@ -22,6 +22,7 @@ const useFeedback = () => {
         try {
             const data = await axiosPost<FeedbackResponse, FeedbackInput>("/api/Feedback", { feedback });
             toast.success("Thank you for your valuable feedback!");
+
             return true;
         } catch (error: any) {
             toast.error(error.message);

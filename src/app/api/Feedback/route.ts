@@ -24,17 +24,20 @@ export async function POST(req: Request) {
         console.log("Yes...........");
 
         const secret = process.env.JWT_SECRET;
+        if(!secret){
+            throw new AppError(400,"Secret is not found.")
+        }
         let params;
 
         if (token) {
             params = jwt.verify(token, secret) as JwtPayload
         }
 
-        const hotelName = params?.params?.hotelName
-        connectToDatabase(hotelName)
+        const hotelID = params?.params?.hotelID
+        connectToDatabase(hotelID)
 
 
-        const Feedback = createFeedbacksModel(hotelName)
+        const Feedback = createFeedbacksModel(hotelID)
         const feedbackData = await req.json();
 
 

@@ -23,11 +23,15 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use((config) => {
     // Extract token from cookies
     const token = document.cookie.split('; ').find(row => row.startsWith('_session='))?.split('=')[1];
+    const tempToken = document.cookie.split('; ').find(row => row.startsWith('temp_session='))?.split('=')[1];
     console.log('Cookies:', document.cookie);
 
     // Check if the request URL does not contain login or signup
     if (token && !config.url?.includes('/signup') && !config.url?.includes('/login')) {
         config.headers.Authorization = `Bearer ${token}`;
+    }
+    if (tempToken && config.url?.includes('/login')) {
+        config.headers.Authorization = `Bearer ${tempToken}`;
     }
 
     // Debugging: Log the request details
@@ -68,7 +72,7 @@ const makeRequest = async <T, U>(
 ): Promise<AxiosResponse<ApiResponse<T>>> => {
     try {
         const response = await axiosInstance({ method, url, data } as AxiosRequestConfig);
-        return handleResponse<T>(response); // Return the full response
+        return handleResponse<T>(response); 
     } catch (error) {
         handleError(error);
         throw error;
