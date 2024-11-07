@@ -4,7 +4,8 @@ import storage from "redux-persist/lib/storage";
 import { persistStore, persistReducer } from "redux-persist";
 import exampleReducer from "./slices/exampleSlice";
 import authReducer from "./slices/authSlices";
-import hotelReducer from "./slices/hotelSlice";  // Import hotel slice
+import hotelReducer from "./slices/hotelSlice"; 
+import dropdownReducer from "./slices/dropDownSlice"; 
 
 const persistConfig = {
   key: "root",
@@ -14,7 +15,8 @@ const persistConfig = {
 const rootReducer = combineReducers({
   example: exampleReducer,
   auth: authReducer,
-  hotel: hotelReducer,  // Add hotel reducer
+  hotel: hotelReducer, 
+  dropdown: dropdownReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -25,7 +25,7 @@ export async function PUT(req: Request) {
       throw new AppError(401, "Invalid token. Authentication failed.");
     }
 
-    const hotelName = params?.params?.hotelName;
+    const hotelName = params?.params?.hotelID;
     const userId = params?.params?.id;
     await connectToDatabase(hotelName); // Connect to database once
     const User = createUserModel(hotelName);

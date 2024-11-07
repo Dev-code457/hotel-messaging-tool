@@ -74,7 +74,7 @@ const useAddNumber = () => {
                 toast.error(`Some entries were invalid:\n${invalidEntries.join("\n")}`);
             }
             if (existingNumbers.length > 0) {
-                toast.warn(`The following numbers already exist:\n${existingNumbers.join("\n")}`);
+                toast.error(`The following numbers already exist:\n${existingNumbers.join("\n")}`);
             } else {
                 toast.success("All valid CSV entries processed successfully!");
             }

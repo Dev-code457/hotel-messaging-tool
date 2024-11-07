@@ -1,9 +1,11 @@
 import { connectToDatabase } from "@/lib/mongodb";
+import HotelModel from "@/models/hotel";
 import { createUserModel } from "@/models/user";
 import { AppError, handleAppError } from "@/utils/errorHandler";
 import generateTokens from "@/utils/generateTokens";
 import { sendSuccessResponse } from "@/utils/responseHandler";
 import { v4 as uuidv4 } from 'uuid';
+import mongoose from "mongoose";
 
 export async function POST(req: Request) {
   interface HotelSignupRequest {
@@ -16,34 +18,48 @@ export async function POST(req: Request) {
     const { hotelName, email, password }: HotelSignupRequest = await req.json();
 
     // Generate a unique hotel ID
-    const hotelID = uuidv4(); 
+    const hotelID = uuidv4();
 
- await connectToDatabase(hotelID); 
+    // Connect to the new database// Modify the database name to replace `.` with `#`
+    const dbName = email.replace(/\./g, '#');
 
-    // Create a User model specific to this hotel using the same hotel ID
-    const User = createUserModel(hotelID);
+    // Connect to the new database for the hotel
+    await connectToDatabase(dbName);
 
-    // Check if the user already exists in the specific hotel context
+    // Dynamically create the User model for this hotel
+    const User = createUserModel(dbName);
+
+    // Check if the user already exists in the hotel-specific database
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       throw new AppError(400, "User already exists");
     }
 
-    // Create a new user with the same hotel ID
+    // Create a new user for the hotel
     const newUser = new User({ email, password, hotelName, hotelID });
-    await newUser.save();
 
-    // Generate tokens for the new user, including the hotel ID
+    // Create the hotel entry in the central hotel database
+    const newHotel = new HotelModel({ hotelName: hotelName, hotelID: hotelID, email: email });
+
+    // Save the user and hotel
+    await newUser.save();
+    await newHotel.save();
+
+    // Generate tokens (if applicable) and send success response
     const token = generateTokens({ id: newUser._id.toString(), hotelID });
 
-    // Send a success response with user details and token
+    // Send a success response
     return sendSuccessResponse(201, {
       message: "Hotel and owner registered successfully",
       User: newUser,
-      token: token
+      token,
     });
 
   } catch (error) {
     return handleAppError(error);
+  } finally {
+    // Disconnect from the current hotel database after the operation is complete
+    await mongoose.disconnect();
+    console.log("Disconnected from the hotel-specific database");
   }
 }

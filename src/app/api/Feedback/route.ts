@@ -1,4 +1,3 @@
-// app/api/feedback/route.ts
 import { connectToDatabase } from "@/lib/mongodb";
 
 import { AppError, handleAppError } from "@/utils/errorHandler";
@@ -18,15 +17,13 @@ export async function POST(req: Request) {
         const token = req.headers.get("Authorization")?.replace("Bearer ", "");
         if (!token) {
             console.log("no token found");
-
         }
-
-        console.log("Yes...........");
 
         const secret = process.env.JWT_SECRET;
-        if(!secret){
-            throw new AppError(400,"Secret is not found.")
+        if (!secret) {
+            throw new AppError(400, "Secret is not found.")
         }
+
         let params;
 
         if (token) {

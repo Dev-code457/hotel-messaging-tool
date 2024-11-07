@@ -19,12 +19,16 @@ export async function PUT(req: Request, { params }: { params: any }) {
 
         const secret = process.env.JWT_SECRET;
         let decodedToken: JwtPayload;
+        if(!secret){
+            throw new AppError(400, "JWT Secret is not found.");
+        }
 
         if (token) {
             decodedToken = jwt.verify(token, secret) as JwtPayload;
         }
 
         const id = decodedToken?.params?.id;
+        
         if (!id) {
             throw new AppError(400, "User ID not found in token");
         }

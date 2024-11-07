@@ -34,7 +34,7 @@ axiosInstance.interceptors.request.use((config) => {
         config.headers.Authorization = `Bearer ${tempToken}`;
     }
 
-    // Debugging: Log the request details
+
     console.debug(`Request: ${config.method?.toUpperCase()} ${config.url}`, {
         headers: config.headers,
         data: config.data,
@@ -48,10 +48,10 @@ axiosInstance.interceptors.request.use((config) => {
 
 const handleResponse = <T>(response: AxiosResponse<ApiResponse<T>>): AxiosResponse<ApiResponse<T>> => {
 
-    return response; // Return the full response object
+    return response; 
 };
 
-// Handle errors
+
 const handleError = (error: any): never => {
     if (error.response) {
         console.error('Response Error:', error.response.data);
@@ -72,14 +72,15 @@ const makeRequest = async <T, U>(
 ): Promise<AxiosResponse<ApiResponse<T>>> => {
     try {
         const response = await axiosInstance({ method, url, data } as AxiosRequestConfig);
-        return handleResponse<T>(response); 
+        return handleResponse<T>(response);
+
+
     } catch (error) {
         handleError(error);
         throw error;
     }
 };
 
-// Export specific request methods
 export const axiosGet = <T>(url: string): Promise<AxiosResponse<ApiResponse<T>>> =>
     makeRequest<T, null>("get", url);
 

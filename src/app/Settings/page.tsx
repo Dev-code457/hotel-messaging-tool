@@ -20,13 +20,12 @@ function ChangePassword() {
 
   const dispatch = useDispatch();
   const hotelDetail = useSelector((state: RootState) => state.hotel.details);
+  const selectedOption = useSelector((state: RootState) => state.dropdown.selectedOption);
+
 
 
 
   const id = hotelDetail?._id;
-
-
-
   const {
     password,
     setPassword,
@@ -63,101 +62,142 @@ function ChangePassword() {
   return (
     <SideLayout>
       <div className="sm:ml-64 flex justify-center">
-        <div className="flex flex-col space-y-10 justify-center py-5 items-center w-full bg-gray-50">
+        <div className="flex flex-col space-y-10 justify-center py-5 items-center w-full h-screen bg-gray-50">
 
+          {
+            selectedOption === "hotelDetails" && (
+              <Section
+                heading="Hotel Details"
+                classnames="flex-col justify-start items-center w-[50%] h-[35vh] space-x-6 mt-2"
+              >
+                <div className="grid grid-cols-2 gap-4  z-20">
+                  <div className="col-span-1">
+                    <form onSubmit={handleChangeHotelDetails}>
+                      <Input
+                        value={hotelDetails}
+                        required
+                        placeHolder={hotelDetail?.hotelName ? hotelDetail?.hotelName : null}
+                        label="Add Hotel Name"
+                        type="text"
+                        onChange={(e) => setHotelDetails(e.target.value)}
+                      />
+                      <div className="flex justify-start py-6 space-x-6">
+                        {
+                          !hotelDetail && (
+                            <Button
+                              text={isLoading ? <div className={"flex gap-2  font-bold justify-center items-center"}><Spinner /> Submitting...</div> : "Submit"}
+                              classnames={`py-4 px-8 bg-green-500 hover:bg-green-600 `}
+                              type="submit"
+                              disabled={isLoading || hotelDetail}
+                            />
+                          )
+                        }
 
-          <Section
-            heading="Hotel Details"
-            classnames="flex-col justify-start items-center w-[50%] h-[35vh] space-x-6 mt-2"
-          >
-            <div className="grid grid-cols-2 gap-4  z-20">
-              <div className="col-span-1">
-                <form onSubmit={handleChangeHotelDetails}>
-                  <Input
-                    value={hotelDetails}
-                    required
-                    placeHolder={hotelDetail?.hotelName ? hotelDetail?.hotelName : null}
-                    label="Add Hotel Name"
-                    type="text"
-                    onChange={(e) => setHotelDetails(e.target.value)}
-                  />
-                  <div className="flex justify-start py-6 space-x-6">
-                    {
-                      !hotelDetail && (
                         <Button
-                          text={isLoading ? <div className={"flex gap-2  font-bold justify-center items-center"}><Spinner /> Submitting...</div> : "Submit"}
-                          classnames={`py-4 px-8 bg-green-500 hover:bg-green-600 `}
+                          text="Edit"
+                          classnames={`py-3 px-8 bg-blue-500 hover:bg-blue-600 `}
                           type="submit"
-                          disabled={isLoading || hotelDetail}
+                          disabled={isLoading}
                         />
-                      )
-                    }
-
-                    <Button
-                      text="Edit"
-                      classnames={`py-3 px-8 bg-blue-500 hover:bg-blue-600 `}
-                      type="submit"
-                      disabled={isLoading}
-                    />
+                      </div>
+                    </form>
                   </div>
-                </form>
-              </div>
-              <div className="col-span-1 w-full">
-                <div className="flex justify-end items-end absolute">
-                  <Image
-                    src={Id}
-                    alt="setting"
-                    className="w-[60%] pt-16 mr-2"
-                  />
-                </div>
-              </div>
-            </div>
-          </Section>
-
-
-          <Section
-            heading="Reset Password"
-            classnames="flex-col justify-start items-center w-[50%%] h-[50vh] space-x-6 mt-10"
-          >
-            <div className="grid grid-cols-2 gap-4 mb-5 z-20">
-              <div className="col-span-1">
-                <form onSubmit={handleChangePassword}>
-                  <Input
-                    value={password}
-                    required
-                    placeHolder="Current Password"
-                    type="password"
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                  <Input
-                    classnames="pt-4"
-                    value={newPassword}
-                    required
-                    placeHolder="New Password"
-                    type="password"
-                    onChange={(e) => setNewPassword(e.target.value)}
-                  />
-                  <div className="flex justify-start pt-6">
-                    <Button
-                      text={loading ? <div className={"flex gap-2  font-bold justify-center items-center"}><Spinner /> Submitting...</div> : "Submit"}
-                      classnames={`py-3 px-8 bg-green-500 hover:bg-green-600 `}
-                      type="submit"
-                      disabled={loading}
-                    />
+                  <div className="col-span-1 w-full">
+                    <div className="flex justify-end items-end absolute">
+                      <Image
+                        src={Id}
+                        alt="setting"
+                        className="w-[60%] pt-16 mr-2"
+                      />
+                    </div>
                   </div>
-                </form>
-              </div>
-              <div className="col-span-1 w-full">
-                <div className="flex justify-end items-end absolute">
-                  <Image
-                    src={Hero}
-                    alt="setting"
-                    className="w-[100%] mt-28 -mr-10"
-                  />
                 </div>
-              </div>
-            </div>
-          </Section>
+              </Section>
+
+            )
+          }
+
+          {
+            selectedOption === "resetPassword" && (
+              <Section
+                heading="Reset Password"
+                classnames="flex-col justify-start items-center w-[50%%] h-[50vh] space-x-6 mt-10"
+              >
+                <div className="grid grid-cols-2 gap-4 mb-5 z-20">
+                  <div className="col-span-1">
+                    <form onSubmit={handleChangePassword}>
+                      <Input
+                        value={password}
+                        required
+                        placeHolder="Current Password"
+                        type="password"
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                      <Input
+                        classnames="pt-4"
+                        value={newPassword}
+                        required
+                        placeHolder="New Password"
+                        type="password"
+                        onChange={(e) => setNewPassword(e.target.value)}
+                      />
+                      <div className="flex justify-start pt-6">
+                        <Button
+                          text={loading ? <div className={"flex gap-2  font-bold justify-center items-center"}><Spinner /> Submitting...</div> : "Submit"}
+                          classnames={`py-3 px-8 bg-green-500 hover:bg-green-600 `}
+                          type="submit"
+                          disabled={loading}
+                        />
+                      </div>
+                    </form>
+                  </div>
+                  <div className="col-span-1 w-full">
+                    <div className="flex justify-end items-end absolute">
+                      <Image
+                        src={Hero}
+                        alt="setting"
+                        className="w-[100%] mt-28 -mr-10"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </Section>
+            )
+          }
+
+          {
+            selectedOption === 'purchases' && (
+              <>
+                <Section classnames=" text-center h-[45vh] w-[50%] " heading="Current Plan" >
+
+                  <div className="grid grid-cols-2 justify-center items-center  -mt-[30%]">
+                    <div className="col-span-1 border-b-2 border-black">
+                      <div className="">
+                        <p className="text-black underline font-bold">Your Plan</p>
+                        <p className="text-black ">{"Standard"}</p>
+                      </div>
+
+                    </div>
+                    <div className="col-span-1 border-b-2 border-black">
+                      <div className="">
+                        <p className="text-black underline font-semibold">Expiry Date</p>
+                        <p className="text-black ">{"Standard"}</p>
+                      </div>
+
+                    </div>
+                    <div className="col-span-1 text-black underline font-bold">
+                      Message Left
+                    </div>
+                    <div className="col-span-1 text-black underline font-bold">
+                      Current Plan
+                    </div>
+
+                  </div>
+                </Section>
+              </>
+            )
+          }
+
 
 
         </div>

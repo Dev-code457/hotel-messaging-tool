@@ -6,25 +6,28 @@ if (!uri) {
   throw new Error("Please add your MongoDB URI to .env.local");
 }
 
-// Type definition for connection status
-let isConnected: Record<string, boolean> = {}; // Use Record to define the type of isConnected
+// Track connection status for each database by name
+let isConnected: Record<string, boolean> = {};
 
-// Type definition for the connectToDatabase function
+// Connect to a database by name
 export const connectToDatabase = async (dbName: string): Promise<void> => {
-
+  // Check if already connected to the specified database
   if (isConnected[dbName]) {
+    console.log(`Already connected to ${dbName}`);
     return;
   }
 
   try {
-
+    // Connect to MongoDB using the database name
     await mongoose.connect(uri, {
       dbName: dbName,
     });
+
+    // Mark this database as connected
     isConnected[dbName] = true;
-    console.log(`MongoDB connected to ${dbName}`);
+    console.log(`MongoDB connected to database: ${dbName}`);
   } catch (error) {
-    console.error("MongoDB connection error:", error);
+    console.error(`Error connecting to MongoDB database: ${dbName}`, error);
     throw new Error("Could not connect to MongoDB");
   }
 };

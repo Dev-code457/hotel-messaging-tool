@@ -21,7 +21,7 @@ function Page() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    login(email, password,hotelName);
+    login(email, password);
   };
 
   useLayoutEffect(() => {
@@ -100,14 +100,14 @@ function Page() {
                 placeHolder="Enter Password"
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <Input
+              {/* <Input
                 classnames="py-1"
                 value={hotelName}
                 required
                 type="text"
                 placeHolder="Enter HotelName"
                 onChange={(e) => setHotelName(e.target.value)}
-              />
+              /> */}
               <div className="flex justify-start -mb-5 py-3">
                 <Button
                   text={loading ? <div className={"flex gap-2 font-bold justify-center items-center"}><Spinner /> Logging In...</div> : "Submit"}

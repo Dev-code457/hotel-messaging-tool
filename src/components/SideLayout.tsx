@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 import { logout } from "@/redux/slices/authSlices";
 import { useRouter } from "next/navigation";
 
+
 function SideLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -24,19 +25,36 @@ function SideLayout({ children }: { children: ReactNode }) {
     { name: "Check In/ Check Out", path: "/CheckInOut" },
     { name: "Promotions/ Offers", path: "/Promotion-Offer" },
     { name: "Feedback", path: "/FeedBack" },
-    { name: "Settings", path: "/Settings" },
+    // { name: "Settings", path: "/Settings" },
     { name: "Logout", path: "#" },
   ];
 
-  const handleLogout = () => {
-    document.cookie = "_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    dispatch(logout());
-    window.location.href = "/";
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        // Clear Redux state or any local user data
+        dispatch(logout());
+
+        window.location.reload()
+        window.location.href = "/";
+      } else {
+        console.error('Failed to logout');
+      }
+    } catch (error) {
+      console.error('An error occurred while logging out:', error);
+    }
   };
 
-  const handleWarning  = () => {
-router.push("/Payment")
-   
+  const handleWarning = () => {
+    router.push("/Payment")
+
   };
 
   return (
@@ -116,15 +134,15 @@ router.push("/Payment")
       <div className="h-screen">
         {children}
       </div>
-{
-  value < 1 && (
-    <Warning
-    isOpen={isModal}
-    onClose={() => setIsModal(false)}
-    onConfirm={handleWarning}
-  />
-  )
-}
+      {
+        value < 1 && (
+          <Warning
+            isOpen={isModal}
+            onClose={() => setIsModal(false)}
+            onConfirm={handleWarning}
+          />
+        )
+      }
 
 
       {/* Confirmation Modal */}
