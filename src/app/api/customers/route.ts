@@ -7,6 +7,7 @@ import { connectToDatabase } from "@/lib/mongodb";
 
 export async function POST(req: Request) {
     try {
+        await connectToDatabase()
         const body = await req.json();
         const { phoneNumber, name, email } = body;
         const token = req.headers.get("Authorization")?.replace("Bearer ", "");
@@ -25,7 +26,6 @@ export async function POST(req: Request) {
         }
 
         const hotelID = params?.params?.dbName
-        connectToDatabase(hotelID)
         const Customer = createCustomersModel(hotelID)
 
 

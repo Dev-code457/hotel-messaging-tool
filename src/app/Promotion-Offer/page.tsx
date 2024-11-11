@@ -11,6 +11,7 @@ import { MessagePreviewWindow } from "@/components/MessagePreviewWindow";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { SelectDefault } from "@/components/SelectTemplates";
+import Profile from '@/components/Profile'
 
 function PromotionalMessage() {
   const hotelDetail = useSelector((state: RootState) => state.hotel.details);
@@ -73,6 +74,8 @@ function PromotionalMessage() {
 
   return (
     <SideLayout>
+      
+      <Profile onSelectForm={undefined} />
       <div className="sm:ml-64 flex justify-center">
         <div className="flex flex-col justify-center items-center w-full bg-gray-50">
           <SelectDefault setSelectedTemplate={setSelectedTemplate} selectedTemplate={selectedTemplate} />

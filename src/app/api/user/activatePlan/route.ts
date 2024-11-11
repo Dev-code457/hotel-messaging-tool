@@ -8,9 +8,10 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 
 export async function POST(req: Request) {
     try {
+        await connectToDatabase();
         const body = await req.json();
         const { planDetails } = body;
-console.log(planDetails);
+
 
         if (!planDetails) {
             throw new AppError(400, "Missing required fields: userId or planDetails");
@@ -36,7 +37,6 @@ console.log(planDetails);
         }
 
         // Connect to database and create User model based on hotelID
-        await connectToDatabase(hotelID);
         const User = createUserModel(hotelID);
 
         // Find the user and update plan details

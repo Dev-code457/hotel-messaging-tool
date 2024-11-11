@@ -69,7 +69,7 @@ export default function Payment() {
     const saveTransaction = async (paymentData: any) => {
         try {
             const response = await axiosPut("/api/payments/saveTransaction", { paymentData });
-            console.log("Transaction saved successfully:", response);
+    
             setShowThankYou(true);
         } catch (error) {
             console.error("Error saving transaction:", error);

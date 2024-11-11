@@ -6,6 +6,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 
 export async function PUT(req: Request) {
     try {
+        await connectToDatabase()
 
         const token = req.headers.get("Authorization")?.replace("Bearer ", "");
         if (!token) {
@@ -23,22 +24,21 @@ export async function PUT(req: Request) {
         }
 
         const id = params?.params?.id
-        console.log(id)
+    
         const hotelID = params?.params?.hotelID
-        connectToDatabase(hotelID)
 
         const body = await req.json();
         const { paymentData } = body;
 
         const User = createUserModel(hotelID)
         const user = await User.findOne({ _id: id });
-        console.log(user, "knsadjnfjpjnasdkojfjnasdjklfjsdklja");
+
 
         if (!user) {
             return sendErrorResponse(404, "User not found");
         }
         user.transaction = paymentData; // Update the transaction in memory
-        console.log(user);
+       
 
         await user.save(); // Save the updated user
         return sendSuccessResponse(200, user);

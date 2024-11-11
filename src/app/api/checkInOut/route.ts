@@ -9,6 +9,7 @@ import jwt from 'jsonwebtoken';
 
 export async function POST(req: Request) {
   try {
+    await connectToDatabase();
     const body = await req.json();
     const { phoneNumber, messageType, isPromotionalList, spending } = body;
 
@@ -25,11 +26,11 @@ export async function POST(req: Request) {
     }
 
     const params = jwt.verify(token, secret) as JwtPayload;
-    const hotelID = params?.params?.hotelID;
-    console.log(hotelID);
+    const hotelID = params?.params?.dbName;
+ 
     
 
-    await connectToDatabase(hotelID);
+ 
     const Customer = createCustomersModel(hotelID);
 
     const validationErrors = validateCustomerPhoneNumber({ phoneNumber });

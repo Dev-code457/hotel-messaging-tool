@@ -10,7 +10,7 @@ export const validateLoginInput = ({ email, password }: LoginInput): string | nu
 }
 
 export const validateFeedbackInput = (feedback: string) => {
-  console.log(feedback);
+
 
   if (!feedback || typeof feedback !== "string" || feedback.trim() === "") {
     return "Feedback cannot be empty."

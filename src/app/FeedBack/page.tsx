@@ -7,6 +7,7 @@ import Hero from "../public/assets/feedbak.com.svg";
 import SideLayout from "@/components/SideLayout";
 import useFeedback from "@/hooks/useFeedback";
 import Spinner from "@/components/Loader";
+import Profile from "@/components/Profile";
 
 const CheckInOut = () => {
   const [feedback, setFeedback] = useState("");
@@ -20,6 +21,8 @@ const CheckInOut = () => {
 
   return (
     <SideLayout>
+      
+      <Profile onSelectForm={undefined} />
       <div className="sm:ml-64 flex justify-center">
         <div className="flex flex-col h-screen justify-center items-center w-full bg-gray-50">
           <Section
