@@ -37,8 +37,7 @@ export function ProfileInfoPopover() {
                     <Button
                         size="sm"
                         className=" bg-gray-50 hover:shadow-none shadow-none transition-all" ripple={false}
-                        aria-label="Information about required CSV format"
-                    >
+                        aria-label="Information about required CSV format"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}                    >
                         <div className="p-4 text-sm text-black bg-yellow-50 border-l-8 border-yellow-500 rounded-md shadow-md transition-all">
                             <p>Hover TO Check</p>
 
@@ -59,7 +58,7 @@ export function ProfileInfoPopover() {
                 </PopoverHandler>
 
                 {/* Popover Content */}
-                <PopoverContent className="z-[999] w-[100%] md:w-[40%] p-4 bg-white shadow-lg rounded-md transition-all">
+                <PopoverContent className="z-[999] w-[100%] md:w-[40%] p-4 bg-white shadow-lg rounded-md transition-all"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                     <div className="flex justify-center items-center">
                         <Image
                             src={Preview}
@@ -72,8 +71,8 @@ export function ProfileInfoPopover() {
             </Popover>
 
             {/* Modal for Enlarged Image */}
-            <Dialog open={openModal} handler={closeModal} size="lg" className="rounded-lg ">
-                <DialogBody className="p-0 ">
+            <Dialog open={openModal} handler={closeModal} size="lg" className="rounded-lg "  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
+                <DialogBody className="p-0 "  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
                     <Image
                         src={Preview}
                         alt="CSV Format Preview"

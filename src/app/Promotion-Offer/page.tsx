@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import React, { useState } from "react";
 import Section from "@/components/Layout";
 import Button from "@/components/Button";
@@ -17,9 +17,11 @@ function PromotionalMessage() {
   const [selectedTemplate, setSelectedTemplate] = useState("roomBooking");
   const {
     discount,
-    hotelName,
+    ownerHotelName,
     phoneNumber,
     address,
+    date,
+    time,
     loading,
     sliderValue,
     setHotelName,
@@ -27,6 +29,9 @@ function PromotionalMessage() {
     handleDiscountChange,
     handleSliderValueChange,
     handleAddressChange,
+    handleDateChange,
+    handleTimeChange,
+    handlePhoneNumberChange,
     sendBulkMessage,
   } = usePromotionalMessage(hotelDetail?.hotelName || "");
 
@@ -35,7 +40,7 @@ function PromotionalMessage() {
       <div className="sm:ml-64 flex justify-center">
         <div className="flex flex-col h-screen justify-center items-center w-full bg-gray-50">
           <SelectDefault setSelectedTemplate={setSelectedTemplate} selectedTemplate={selectedTemplate} />
-          <Section heading="Promotional Messages" classnames="flex justify-between h-[80vh] w-[70%] space-x-4">
+          <Section heading="Promotional Messages" classnames="flex justify-between h-[80vh] w-[75%] space-x-4">
             <div className="flex w-[80%] justify-between">
               <form
                 onSubmit={(e) => {
@@ -57,7 +62,7 @@ function PromotionalMessage() {
                     <Input
                       type="text"
                       classnames="mb-3"
-                      value={hotelDetail?.hotelName || hotelName || ""}
+                      value={hotelDetail?.hotelName || ownerHotelName || ""}
                       required
                       placeHolder="Enter Hotel Name"
                       onChange={(e) => setHotelName(e.target.value)}
@@ -65,10 +70,10 @@ function PromotionalMessage() {
                     <Input
                       type="number"
                       classnames="mb-3"
-                      value={phoneNumber !== undefined ? `${phoneNumber}` : ""}
+                      value={phoneNumber || ""}
                       required
                       placeHolder="Enter Phone Number"
-                      onChange={(e: React.FormEvent) => setPhoneNumber(e.target.value)}
+                      onChange={handlePhoneNumberChange}
                     />
                     <Input
                       type="text"
@@ -87,58 +92,30 @@ function PromotionalMessage() {
                       type="date"
                       classnames="pt-6 mb-3"
                       required
-                      onChange={handleDiscountChange} // Adjust as necessary
+                      value={date || ""}
+                      onChange={handleDateChange}
                       placeHolder="Select Date"
-                    />
-                    <Input
-                      type="time"
-                      classnames="pt-6 mb-3"
-                      required
-                      onChange={handleDiscountChange} // Adjust as necessary
-                      placeHolder="Select Time"
                     />
                     <Input
                       type="text"
                       classnames="mb-3"
-                      value={hotelDetail?.hotelName || hotelName || ""}
+                      value={ownerHotelName}
                       required
                       placeHolder="Enter Hotel Name"
                       onChange={(e) => setHotelName(e.target.value)}
                     />
-                  </>
-                )}
-
-                {selectedTemplate === "eventBooking" && (
-                  <Input
-                    type="text"
-                    classnames="mt-10"
-                    value={hotelDetail?.hotelName || hotelName || ""}
-                    required
-                    placeHolder="Enter Hotel Name"
-                    onChange={(e) => setHotelName(e.target.value)}
-                  />
-                )}
-
-                {selectedTemplate === "partyInvitation" && (
-                  <>
                     <Input
-                      type="date"
-                      classnames="pt-6 mb-3"
+                      type="text"
+                      classnames="mb-3"
+                      value={phoneNumber || ""}
                       required
-                      onChange={handleDiscountChange} // Adjust as necessary
-                      placeHolder="Select Date"
-                    />
-                    <Input
-                      type="time"
-                      classnames="pt-6 mb-3"
-                      required
-                      onChange={handleDiscountChange} // Adjust as necessary
-                      placeHolder="Select Time"
+                      placeHolder="Enter Phone Number"
+                      onChange={handlePhoneNumberChange}
                     />
                     <Input
                       type="text"
                       classnames="mb-3"
-                      value={address}
+                      value={address || ""}
                       required
                       placeHolder="Enter Address"
                       onChange={handleAddressChange}
@@ -159,12 +136,13 @@ function PromotionalMessage() {
                 <MessagePreviewWindow
                   address={address}
                   discount={discount}
-                  hotelName={hotelDetail?.hotelName || hotelName || ""}
+                  hotelName={hotelDetail?.hotelName || ownerHotelName || ""}
                   phoneNumber={phoneNumber}
+                  date={date}
                   selectedTemplate={selectedTemplate}
                 />
               </div>
-              <div className="w-[10%] flex items-center -mr-[21%]  absolute right-[20%] mt-[10%]">
+              <div className="w-[10%] flex items-center -mr-[21%]  absolute right-[19%] mt-[10%]">
                 <RangeSlider onValueChange={handleSliderValueChange} value={sliderValue} />
               </div>
             </div>

@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   console.log("Middleware executed");
 
-  const token = request.cookies.get("_session")?.value;
+  const token = request.cookies.get("__session")?.value;
 
   const pathname = request.nextUrl.pathname;
 

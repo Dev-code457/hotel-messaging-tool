@@ -85,7 +85,7 @@ function PromotionalNumber() {
           )}
 
           <div className="flex justify-center items-center -mt-10 w-full mb-10">
-            <Switcher11 handleCheckboxChange={handleCheckboxChange} isChecked={isChecked} setIsChecked={setIsChecked} />
+            <Switcher11 handleCheckboxChange={handleCheckboxChange} isChecked={isChecked}  />
           </div>
 
           {!isChecked ? (

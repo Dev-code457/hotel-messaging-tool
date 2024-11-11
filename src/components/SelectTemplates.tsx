@@ -16,23 +16,23 @@ export function SelectDefault({ setSelectedTemplate, selectedTemplate }: SelectD
   ];
 
   return (
-    <nav className="block w-full max-w-screen-lg mx-auto text-white bg-black shadow-md rounded-md lg:px-8 lg:py-3 -mt-3 mb-10">
-      <div className="container flex flex-wrap items-center justify-between mx-auto text-gray-100">
+    <nav className="block w-full max-w-screen-lg mx-auto text-black lg:px-8 lg:py-3 -mt-3 mb-10">
+      <div className="container flex flex-wrap items-center justify-between mx-auto text-black">
         <a
           href="#"
-          className="mr-4 block cursor-pointer text-base text-gray-100 font-semibold"
+          className="mr-4 block cursor-pointer text-base text-black font-semibold"
         >
           Templates
         </a>
         <div className="hidden lg:block">
-          <ul className="flex flex-col gap-2 mt-2 mb-4 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
+          <ul className="flex flex-col  mt-2 mb-4 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
             {templates.map((template) => (
-              <li key={template.id} className="flex items-center p-1 text-xs gap-x-2">
+              <li key={template.id} className="flex items-center p-1 text-xs ">
                 <a
                   href="#"
                   className={`flex items-center transition-colors duration-300 rounded-lg p-2 ${selectedTemplate === template.key
-                    ? "bg-gradient-to-r from-gray-500 to-neutral-500 text-white"
-                    : "text-gray-200 hover:bg-gray-700"
+                    ? "bg-black text-white"
+                    : "text-black"
                     }`}
                   onClick={() => setSelectedTemplate(template.key)}
                 >

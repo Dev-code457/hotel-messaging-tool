@@ -12,13 +12,12 @@ export async function PUT(req: Request) {
 
 
   const body = await req.json();
-  const { email, hotelName } = body;
-  connectToDatabase(hotelName)
-  const User = createUserModel(hotelName)
+  const { email, dbName } = body;
+  connectToDatabase(dbName)
+  const User = createUserModel(dbName)
 
-  // Validate the email
   const validationError = validateForgot({ email });
-  if (validationError.length > 0) { // Check for errors
+  if (validationError.length > 0) {
     throw new AppError(400, validationError.join(", "));
   }
 

@@ -26,7 +26,6 @@ const useForgotPassword = () => {
     fetchData();
   }, [dispatch]);
 
-console.log(hotelDetail,"mkasdjjksdanjkdl");
 
   const forgotPassword = async (email: string) => {
     setLoading(true);
@@ -35,12 +34,12 @@ console.log(hotelDetail,"mkasdjjksdanjkdl");
     try {
       const response = await axiosPut("/api/auth/forgot-password", {
         email,
-        hotelName: hotelDetail.hotelName,
+        dbName: hotelDetail?.HotelDetials?.dbName,
       });
       toast.success(response.data.message || "Reset link sent successfully!");
     } catch (error: any) {
       const message =
-        error.message  || "Something went wrong!";
+        error.message || "Something went wrong!";
       setError(message);
       toast.error(message);
     } finally {

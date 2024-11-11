@@ -23,9 +23,8 @@ const useHotelDetails = (hotelId?: string) => {
             // Determine whether to use POST or PUT
             const url = `/api/ChangeHotel-Details`; // Same endpoint for both POST and PUT
 
-            const response = hotelId 
-                ? await axiosPut<{ message: string }, { hotelName: string }>(url, {  hotelName: hotelDetails })
-                : await axiosPost<{ message: string }, { hotelName: string }>(url, { hotelName: hotelDetails });
+            const response = await axiosPut<{ message: string }, { hotelName: string }>(url, {  hotelName: hotelDetails })
+               
 
             toast.success(response.data.message || "Hotel details saved successfully!");
             setHotelDetails("");

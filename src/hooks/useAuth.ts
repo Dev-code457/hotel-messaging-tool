@@ -18,6 +18,8 @@ interface AuthContext {
 
 interface LoginResponse {
     message: string;
+    email: string
+    password: string
 }
 
 
@@ -38,8 +40,11 @@ const useAuth = (): AuthContext => {
     const login = async (email: string, password: string) => {
         setLoading(true);
         try {
-            const response = await axiosPost<{ token: string; message: string }, LoginResponse>('/api/auth/login', { email, password });
-            Cookies.set('_session', response.data.token, { expires: 7 });
+            const response = await axiosPost<{ token: string; message: string }, LoginResponse>('/api/auth/login', {
+                email, password,
+                message: ''
+            });
+            Cookies.set('__session', response.data.token, { expires: 7 });
             dispatch(loginSuccess(response.data.token))
             router.push('/AddNumber');
             toast.success('Login successful!');
@@ -60,7 +65,7 @@ const useAuth = (): AuthContext => {
             console.log(response.data.token);
 
             Cookies.set('temp_session', response.data.token, { expires: 7 });
-            router.push('/Login');
+            router.push('/');
             toast.success('SignUp Success');
         } catch (error: any) {
             toast.error(error?.response?.data?.message || 'An unknown error occurred');

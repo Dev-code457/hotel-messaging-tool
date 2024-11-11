@@ -10,8 +10,8 @@ const phoneNumberRegex = /^\d{10}$/;
 interface UseCheckInOutResult {
     phoneNumber: string;
     setPhoneNumber: (value: string) => void;
-    spending: any,
-    setUserSpending: () => void;
+    userSpending: string | number;
+    setUserSpending: (value: string | number) => void;
     loadingCheckIn: boolean;
     loadingCheckOut: boolean;
     handleCheckIn: (isPromotionalList: boolean) => Promise<void>;
@@ -22,7 +22,7 @@ interface UseCheckInOutResult {
 
 export const useCheckInOut = (): UseCheckInOutResult => {
     const [phoneNumber, setPhoneNumber] = useState<string>("");
-    const [userSpending, setUserSpending] = useState<string>("");
+    const [userSpending, setUserSpending] = useState<string | number>("");
     const [loadingCheckIn, setIsLoadingCheckIn] = useState<boolean>(false);
     const [loadingCheckOut, setIsLoadingCheckOut] = useState<boolean>(false);
     const [isPromotionalList, setIsPromotionalList] = useState<boolean>(false);
@@ -50,7 +50,7 @@ export const useCheckInOut = (): UseCheckInOutResult => {
         try {
             const response = await axiosPost<ApiResponse, { phoneNumber: string; messageType: string; isPromotionalList: boolean, userSpending: string }>(
                 "/api/checkInOut",
-                { phoneNumber, messageType, isPromotionalList, spending: userSpending }
+                { phoneNumber, messageType, isPromotionalList, userSpending: String(userSpending) }
             );
 
             dispatch(MessagesUsed());
@@ -65,7 +65,7 @@ export const useCheckInOut = (): UseCheckInOutResult => {
         } finally {
             // Reset both phoneNumber and isPromotionalList here
             setPhoneNumber("");
-            setUserSpending("")
+            setUserSpending("");
             setIsPromotionalList(false); // Reset checkbox state
             if (messageType === "checkin") {
                 setIsLoadingCheckIn(false);
@@ -81,8 +81,8 @@ export const useCheckInOut = (): UseCheckInOutResult => {
     return {
         phoneNumber,
         setPhoneNumber,
-        setUserSpending,
         userSpending,
+        setUserSpending,
         loadingCheckIn,
         loadingCheckOut,
         handleCheckIn,

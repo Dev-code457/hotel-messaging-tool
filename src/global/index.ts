@@ -1,4 +1,4 @@
-import { axiosDelete, axiosGet } from "@/utils/axiosUtility";
+import { axiosGet } from "@/utils/axiosUtility";
 
 export async function fetchHotelData() {
     try {

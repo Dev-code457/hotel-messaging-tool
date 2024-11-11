@@ -7,8 +7,10 @@ import { ApiResponse } from "@/types";
 
 const usePromotionalMessage = (initialHotelName: string) => {
     const [discount, setDiscount] = useState<number | null>(null);
-    const [hotelName, setHotelName] = useState<string>(initialHotelName);
-    const [phoneNumber, setPhoneNumber] = useState<number | null>(null);
+    const [date, setDate] = useState<string | null>(null);
+    const [time, setTime] = useState<string | null>(null);
+    const [ownerHotelName, setHotelName] = useState<string>(initialHotelName);
+    const [phoneNumber, setPhoneNumber] = useState<string>("");
     const [address, setAddress] = useState<string>("");
     const [sliderValue, setSliderValue] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(false);
@@ -19,27 +21,32 @@ const usePromotionalMessage = (initialHotelName: string) => {
     }, [initialHotelName]);
 
     const handleDiscountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        const numberValue = parseFloat(value);
+        const numberValue = parseFloat(e.target.value);
+        setDiscount(isNaN(numberValue) ? null : numberValue);
+    };
 
-        if (!isNaN(numberValue)) {
-            setDiscount(numberValue);
-        } else if (value === "") {
-            setDiscount(null);
-        }
+    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setDate(e.target.value);
+    };
+
+    const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setTime(e.target.value);
+    };
+
+    const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPhoneNumber(e.target.value);
+    };
+
+    const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setAddress(e.target.value.replace(/  /g, ","));
     };
 
     const handleSliderValueChange = (value: number) => {
         setSliderValue(value);
     };
 
-    const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value.replace(/  /g, ",");
-        setAddress(value);
-    };
-
     const sendBulkMessage = async () => {
-        if (!hotelName.trim()) {
+        if (!ownerHotelName.trim()) {
             toast.error("Hotel Name is required.");
             return;
         }
@@ -48,18 +55,31 @@ const usePromotionalMessage = (initialHotelName: string) => {
         try {
             const formattedDiscount = discount !== null ? `${discount}% Off` : undefined;
 
-            const response = await axiosPost<ApiResponse, { discount?: string, hotelName: string, phoneNumber: number, address: string, sliderValue: number }>("/api/Promotional", {
+            const response = await axiosPost<ApiResponse, {
+                discount?: string,
+                ownerHotelName: string,
+                phoneNumber: string,
+                address: string,
+                sliderValue: number,
+                date?: string | null,
+                time?: string | null
+            }>("/api/Promotional", {
                 discount: formattedDiscount,
-                ownerHotelName: hotelName,
+                ownerHotelName,
                 phoneNumber,
                 address,
                 sliderValue,
+                date,
+                time
             });
 
             dispatch(MessagesUsed());
-            setAddress("");
-            setPhoneNumber(null);
+            // Reset fields
             setDiscount(null);
+            setDate(null);
+            setTime(null);
+            setPhoneNumber("");
+            setAddress("");
             setSliderValue(0);
             toast.success(response.data.message || "Message sent successfully!");
         } catch (error: any) {
@@ -71,18 +91,25 @@ const usePromotionalMessage = (initialHotelName: string) => {
 
     return {
         discount,
-        hotelName,
+        ownerHotelName,
         phoneNumber,
         address,
         sliderValue,
+        date,
+        time,
         loading,
         setDiscount,
         setHotelName,
         setPhoneNumber,
+        setDate,
+        setTime,
         setAddress,
         handleDiscountChange,
         handleSliderValueChange,
         handleAddressChange,
+        handleDateChange,
+        handleTimeChange,
+        handlePhoneNumberChange,
         sendBulkMessage,
     };
 };

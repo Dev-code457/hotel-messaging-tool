@@ -4,21 +4,23 @@ import MessageBg from "@/app/public/assets/wallaper.png";
 
 interface MessagePreview {
   discount: number | undefined | null;
+  date: string | undefined | null;
   hotelName: string;
-  phoneNumber: number | undefined | null;
+  phoneNumber: number | undefined | null | string;
   address: string;
   selectedTemplate: string;
 }
 
-const messageTemplates = {
-  roomBooking: (hotelName: string, discount: number | undefined | null, phoneNumber: number | undefined | null, address: string) => (
+const messageTemplates: any = {
+  roomBooking: (hotelName: string, date: string | undefined | null, phoneNumber: number | undefined | null, address: string) => (
+
     <>
       <p>Dear Customer,</p>
-      <p>We are excited to offer you a limited-time discount on room bookings at <strong>{hotelName}</strong>! Don't miss out—call us today to reserve your stay.</p>
-      <p>📅 Offer valid until: [Insert Date]</p>
-      <p>📍 Location: {address}</p>
+      <p>We are excited to offer you a limited-time discount on room bookings at <strong>{hotelName ? `${hotelName}` : <span className="text-green-700 underline font-bold">HotelName</span>}{" "}</strong>! Don't miss out—call us today to reserve your stay.</p>
+      <p>📅 Offer valid until: {date ? `${date}` : <span className="text-green-700 underline font-bold">Insert Date</span>}{" "}</p>
+      <p>📍 Location: {address ? `${address}` : <span className="text-green-700 underline font-bold">Address</span>}{" "}</p>
       <p>We look forward to welcoming you soon!</p>
-      <p>Best regards,<br />{hotelName} Team<br />{phoneNumber}</p>
+      <p>Best regards,<br />{hotelName ? `${hotelName} Team` : <span className="text-green-700 underline font-bold">HotelName</span>}Team<br />{phoneNumber ? `${phoneNumber}` : <span className="text-green-700 underline font-bold">Phone Number</span>}{" "}</p>
     </>
   ),
 
@@ -89,21 +91,46 @@ const messageTemplates = {
 export const MessagePreviewWindow: React.FC<MessagePreview> = ({
   discount,
   hotelName,
+  date,
   phoneNumber,
   address,
   selectedTemplate,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const messageContent = messageTemplates[selectedTemplate]
-    ? messageTemplates[selectedTemplate](hotelName, discount, phoneNumber, address)
+  const messageContent: any = messageTemplates[selectedTemplate]
+    ? (() => {
+      switch (selectedTemplate) {
+        case "roomBooking":
+          return messageTemplates.roomBooking(hotelName, date, phoneNumber, address);
+        case "discounts":
+          return messageTemplates.discounts(hotelName, discount, phoneNumber, address);
+        case "partyInvitation":
+          return messageTemplates.partyInvitation(hotelName, phoneNumber);
+        case "eventBooking":
+          return messageTemplates.eventBooking(hotelName, phoneNumber);
+        default:
+          return <p>No template selected</p>;
+      }
+    })()
     : <p>No template selected</p>;
 
+
   // Convert message content to a string to check its length
-  const messageString = React.Children.toArray(messageContent).map(child => (typeof child === 'string' ? child : child.props.children.join(' '))).join(' ');
+  const messageString = React.Children.toArray(messageContent)
+  .map(child => {
+    // Check if the child is a ReactElement (it has props)
+    if (React.isValidElement(child)) {
+      return child.props.children.join(' '); // Access props.children safely
+    } else {
+      return child; // Return the child as is if it's not a React element
+    }
+  })
+  .join(' '); // Combine all children into a single string
+
 
   // Truncate long messages
-  const maxLength = 100; // Set your desired max length
+  const maxLength = 100; // Set your desired max length~
   const isLongMessage = messageString.length > maxLength;
   const displayedMessage = isLongMessage && !isExpanded
     ? React.Children.toArray(messageContent).slice(0, maxLength) // Get the truncated message content
@@ -112,7 +139,7 @@ export const MessagePreviewWindow: React.FC<MessagePreview> = ({
   return (
     <div className="flex flex-col justify-center items-center ml-10 z-0 relative">
       <div
-        className="w-[70%] max-w-[350px] flex flex-col justify-start items-start text-[10px] rounded-xl bg-white p-4 z-10 text-left font-sans overflow-y-scroll text-black"
+        className="w-[75%] max-w-[370px] flex flex-col justify-start items-start text-[11.5px] rounded-xl bg-white p-4 z-10 text-left font-sans overflow-y-scroll text-black"
         style={{
           maxHeight: "300px", // Set the maximum height
           borderRadius: "0 18px 18px 18px",
@@ -126,7 +153,7 @@ export const MessagePreviewWindow: React.FC<MessagePreview> = ({
       <Image
         src={MessageBg}
         alt="Message background"
-        className="w-[80%] -mt-[1%] h-[120%] absolute  rounded-2xl"
+        className="w-[85%] -mt-[1%] max-h-[145%] absolute  rounded-2xl"
       />
     </div>
   );

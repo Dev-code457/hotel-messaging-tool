@@ -1,5 +1,5 @@
 // hooks/usePasswordReset.ts
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import { axiosPut } from "@/utils/axiosUtility";
@@ -37,12 +37,12 @@ export const usePasswordReset = (token: string) => {
       const response = await axiosPut(`/api/auth/reset-password/${token}`, {
         password,
         confirmPassword,
-        email: hotelDetail.email,
-        hotelName: hotelDetail.hotelName,
+        email: hotelDetail?.UserDetails?.email,
+        hotelName: hotelDetail?.HotelDetials?.dbName,
       });
       toast.success(response.data.message || "Password reset successfully!");
     } catch (err: any) {
-      const message = err.data.message || "Something went wrong!";
+      const message = err?.data?.message || "Something went wrong!";
       setError(message);
       toast.error(message);
     } finally {

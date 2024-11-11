@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server';  // Correct import for App Router
 import mongoose from 'mongoose';
 import { serialize } from 'cookie';
-import { disconnectFromDatabase } from '@/lib/mongodb';
+
 
 export async function POST() {
     try {
-        // Disconnect from MongoDB
-        await disconnectFromDatabase()
+    
 
         // Clear the session cookie by setting an expiration date in the past
         const headers = new Headers();

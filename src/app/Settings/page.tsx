@@ -24,7 +24,6 @@ function ChangePassword() {
 
 
 
-
   const id = hotelDetail?._id;
   const {
     password,
@@ -76,7 +75,7 @@ function ChangePassword() {
                       <Input
                         value={hotelDetails}
                         required
-                        placeHolder={hotelDetail?.hotelName ? hotelDetail?.hotelName : null}
+                        placeHolder={hotelDetail?.UserDetails?.hotelName ? hotelDetail?.UserDetails?.hotelName : null}
                         label="Add Hotel Name"
                         type="text"
                         onChange={(e) => setHotelDetails(e.target.value)}

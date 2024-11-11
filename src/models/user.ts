@@ -29,10 +29,7 @@ export const createUserModel = (hotelID: string) => {
         type: String,
         required: true,
       },
-      hotelID: {
-        type: String,
-        required: true,
-      },
+    
       transaction: {
         type: Object,
       },

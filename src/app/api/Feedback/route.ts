@@ -30,7 +30,7 @@ export async function POST(req: Request) {
             params = jwt.verify(token, secret) as JwtPayload
         }
 
-        const hotelID = params?.params?.hotelID
+        const hotelID = params?.params?.dbName
         connectToDatabase(hotelID)
 
 

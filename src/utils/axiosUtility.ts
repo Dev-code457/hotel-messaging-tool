@@ -22,7 +22,7 @@ const axiosInstance = axios.create({
 // Add a request interceptor
 axiosInstance.interceptors.request.use((config) => {
     // Extract token from cookies
-    const token = document.cookie.split('; ').find(row => row.startsWith('_session='))?.split('=')[1];
+    const token = document.cookie.split('; ').find(row => row.startsWith('__session='))?.split('=')[1];
     const tempToken = document.cookie.split('; ').find(row => row.startsWith('temp_session='))?.split('=')[1];
     console.log('Cookies:', document.cookie);
 

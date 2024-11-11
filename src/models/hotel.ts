@@ -1,18 +1,20 @@
-// models/hotel.ts
-
-import mongoose, { Document, Model, Schema } from "mongoose";
+// HotelModel - Centralized database schema for hotel metadata
+import mongoose, { Schema, Document } from "mongoose";
 
 interface IHotel extends Document {
   hotelName: string;
-  hotelID: string;
   email: string;
+  dbName: string;  // This is the unique database for each hotel
+  hotelID: string;  // Unique ID for each hotel
 }
 
-const hotelSchema: Schema<IHotel> = new Schema({
+const hotelSchema = new Schema<IHotel>({
   hotelName: { type: String, required: true },
-  email: { type: String, unique: true, required: true },
+  email: { type: String, required: true, unique: true },
+  dbName: { type: String, required: true, unique: true },
+  hotelID: { type: String, required: true, unique: true },
 });
 
-const HotelModel: Model<IHotel> = mongoose.models.Hotel || mongoose.model<IHotel>("Hotel", hotelSchema);
+const HotelModel = mongoose.models.Hotel || mongoose.model<IHotel>("Hotel", hotelSchema);
 
 export default HotelModel;
