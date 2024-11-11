@@ -21,7 +21,7 @@ function Page() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    signUp(email, password,hotelName);
+    signUp(email, password, hotelName);
   };
 
   useLayoutEffect(() => {
@@ -77,13 +77,10 @@ function Page() {
 
       <div className="sm:ml-64 flex justify-center">
         <div className="flex flex-col h-screen pt-20 items-center w-full bg-gray-50">
-          <Section heading="SignUp" classnames="flex-col justify-start h-[65vh] w-[65%] space-x-4">
-            {/* Warning Message */}
-            <div className="w-full p-4 text-center text-red-600 bg-yellow-100 border border-yellow-300 rounded-md mb-4">
-           HotelName Is Not ChangeAble
-            </div>
+          <Section heading="SignUp" classnames="flex-col justify-start h-[60vh] w-[65%] space-x-4">
 
-            <form onSubmit={handleSubmit} className="w-[40%] -mb-6">
+
+            <form onSubmit={handleSubmit} className="w-[40%] mb-9">
               <Input
                 classnames="py-1 "
                 value={email}
@@ -124,12 +121,7 @@ function Page() {
                 />
               </div>
             </form>
-            <div
-              className="text-sm font-semibold text-[#FB5151] py-6 underline font-serif cursor-pointer w-auto"
-              onClick={() => router.push("/ForgotPassword")}
-            >
-              Forgot Password
-            </div>
+
           </Section>
         </div>
       </div>

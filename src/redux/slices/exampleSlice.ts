@@ -13,9 +13,9 @@ const exampleSlice = createSlice({
   initialState,
   reducers: {
     MessagesUsed: (state) => {
-      console.log("MessagesUsed action triggered"); // Debug log
+  
       state.value -= 1; // Logic for decrementing the value
-      console.log("New value after decrement:", state.value); // Log the new value
+
     },
   },
 });

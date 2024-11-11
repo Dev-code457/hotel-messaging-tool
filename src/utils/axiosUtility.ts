@@ -24,7 +24,7 @@ axiosInstance.interceptors.request.use((config) => {
     // Extract token from cookies
     const token = document.cookie.split('; ').find(row => row.startsWith('__session='))?.split('=')[1];
     const tempToken = document.cookie.split('; ').find(row => row.startsWith('temp_session='))?.split('=')[1];
-    console.log('Cookies:', document.cookie);
+ 
 
     // Check if the request URL does not contain login or signup
     if (token && !config.url?.includes('/signup') && !config.url?.includes('/login')) {

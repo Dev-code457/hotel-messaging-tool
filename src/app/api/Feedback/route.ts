@@ -13,6 +13,7 @@ const limiter = rateLimit(5, 15 * 60 * 1000);
 export async function POST(req: Request) {
     try {
 
+        await connectToDatabase()
         limiter(req);
         const token = req.headers.get("Authorization")?.replace("Bearer ", "");
         if (!token) {
@@ -31,7 +32,6 @@ export async function POST(req: Request) {
         }
 
         const hotelID = params?.params?.dbName
-        connectToDatabase(hotelID)
 
 
         const Feedback = createFeedbacksModel(hotelID)

@@ -9,7 +9,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  
   return (
+
     <html lang="en">
       <body className={`antialiased`}>
 
@@ -19,7 +21,6 @@ export default function RootLayout({
           
             />
 
-          <Profile onSelectForm={undefined} />
           {children}
         </ReduxProvider>
       </body>

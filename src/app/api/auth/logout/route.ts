@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';  // Correct import for App Router
-import mongoose from 'mongoose';
 import { serialize } from 'cookie';
 
 

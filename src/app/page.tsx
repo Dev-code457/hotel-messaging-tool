@@ -77,12 +77,8 @@ function Page() {
 
       <div className="sm:ml-64 flex justify-center">
         <div className="flex flex-col h-screen pt-20 items-center w-full bg-gray-50">
-          <Section heading="Login" classnames="flex-col justify-start h-[65vh] w-[65%] space-x-4">
-            {/* Warning Message */}
-            <div className="w-full p-4 text-center text-red-600 bg-yellow-100 border border-yellow-300 rounded-md mb-4">
-              HotelName Is Not ChangeAble
-            </div>
-
+          <Section heading="Login" classnames="flex-col justify-start h-[50vh] w-[65%] space-x-4">
+    
             <form onSubmit={handleSubmit} className="w-[40%] -mb-6">
               <Input
                 classnames="py-1 "

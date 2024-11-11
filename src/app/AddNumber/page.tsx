@@ -13,13 +13,14 @@ import Modal from "@/components/Modal";
 import Table from "@/components/Table";
 import Switcher11 from "@/components/Switch";
 import { ProfileInfoPopover } from "@/components/Preview";
+import Profile from "@/components/Profile"
 
 function PromotionalNumber() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [fileName, setFileName] = useState<string | null>(null);
-  const { handleSubmitFeedback, loading, handleSubmitCsvFeedback,bulkLoading } = useAddNumber();
+  const { handleSubmitFeedback, loading, handleSubmitCsvFeedback, bulkLoading } = useAddNumber();
   const [csvData, setCsvData] = useState<any[]>([]);
 
 
@@ -58,7 +59,7 @@ function PromotionalNumber() {
       skipEmptyLines: true,
     });
   };
-  const handleCSVUpload2  = async () => {
+  const handleCSVUpload2 = async () => {
 
     await handleSubmitCsvFeedback(csvData);
 
@@ -66,7 +67,7 @@ function PromotionalNumber() {
   };
   const handleCSVUpload = async () => {
 
-   setShowTable(true)
+    setShowTable(true)
 
   };
 
@@ -76,6 +77,8 @@ function PromotionalNumber() {
 
   return (
     <SideLayout>
+      <Profile onSelectForm={undefined} />
+
       <div className="sm:ml-64 flex justify-center items-center">
         <div className="flex flex-col h-screen justify-center items-center w-full bg-gray-50">
           {isChecked && (
@@ -85,7 +88,7 @@ function PromotionalNumber() {
           )}
 
           <div className="flex justify-center items-center -mt-10 w-full mb-10">
-            <Switcher11 handleCheckboxChange={handleCheckboxChange} isChecked={isChecked}  />
+            <Switcher11 handleCheckboxChange={handleCheckboxChange} isChecked={isChecked} />
           </div>
 
           {!isChecked ? (

@@ -9,6 +9,7 @@ import Hero from "../public/assets/CheckIn.svg";
 import SideLayout from "@/components/SideLayout";
 import { useCheckInOut } from "@/hooks/useCheckInOut";
 import Spinner from "@/components/Loader";
+import Profile from "@/components/Profile"
 
 function CheckInOut() {
   const {
@@ -30,6 +31,8 @@ function CheckInOut() {
 
   return (
     <SideLayout>
+      
+      <Profile onSelectForm={undefined} />
       <div className="sm:ml-64 flex justify-center">
         <div className="flex flex-col h-screen justify-center items-center w-full bg-gray-50">
           <Section

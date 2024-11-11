@@ -10,8 +10,8 @@ export async function PUT(req: Request, { params }: { params: { resetToken: stri
   try {
 
 
+    await connectToDatabase();
     const { password, confirmPassword, hotelName, email } = await req.json();
-    await connectToDatabase(hotelName);
     const User = createUserModel(hotelName)
 
     const validationErrors = validatePasswords(password, confirmPassword);
@@ -38,7 +38,7 @@ export async function PUT(req: Request, { params }: { params: { resetToken: stri
 
     // Hash the new password before saving
     user.password = password; // Use a salt round of 12
-    console.log("New hashed password:", user.password);
+  
 
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
