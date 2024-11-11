@@ -7,7 +7,6 @@ interface SelectDefaultProps {
 }
 
 export function SelectDefault({ setSelectedTemplate, selectedTemplate }: SelectDefaultProps) {
-  // Array of templates for rendering
   const templates = [
     { id: 1, name: "Discounts", key: "discounts" },
     { id: 2, name: "Room Bookings", key: "roomBooking" },
@@ -16,14 +15,14 @@ export function SelectDefault({ setSelectedTemplate, selectedTemplate }: SelectD
   ];
 
   return (
-    <nav className="block w-full max-w-screen-lg mx-auto text-black lg:px-8 lg:py-3 -mt-3 mb-10">
-      <div className="container flex flex-wrap items-center justify-between mx-auto text-black">
-        <a
-          href="#"
-          className="mr-4 block cursor-pointer text-base text-black font-semibold"
+    <nav className="block w-full max-w-screen-lg mx-auto text-black lg:px-8 lg:py-3  mb-10">
+      <div className="container flex flex-wrap items-center justify-around mx-auto text-black">
+        <p
+
+          className="mr-4 block  text-base text-black font-semibold"
         >
           Templates
-        </a>
+        </p>
         <div className="hidden lg:block">
           <ul className="flex flex-col  mt-2 mb-4 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
             {templates.map((template) => (

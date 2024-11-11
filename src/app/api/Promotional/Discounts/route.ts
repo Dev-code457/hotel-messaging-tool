@@ -10,7 +10,7 @@ import { connectToDatabase } from "@/lib/mongodb";
 
 export async function POST(req: Request) {
   try {
-
+    await connectToDatabase()
 
     const body = await req.json();
     const { ownerHotelName, discount, phoneNumber, address, sliderValue } = body;
@@ -19,15 +19,15 @@ export async function POST(req: Request) {
     if (!secret) {
       throw new AppError(500, "Internal Server Error: JWT Secret is not defined");
     }
-   
+
     let params;
 
     if (token) {
       params = jwt.verify(token, secret) as JwtPayload
     }
 
-    const hotelName = params?.params?.hotelName
-    connectToDatabase(hotelName)
+    const hotelName = params?.params?.dbName
+
 
     const validationErrors = validateCustomerInput({ ownerHotelName, discount, phoneNumber, address, sliderValue });
     if (validationErrors.length > 0) {

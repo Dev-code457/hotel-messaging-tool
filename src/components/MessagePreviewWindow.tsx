@@ -8,6 +8,7 @@ interface MessagePreview {
   hotelName: string;
   phoneNumber: number | undefined | null | string;
   address: string;
+  time: string | undefined | null
   selectedTemplate: string;
 }
 
@@ -20,7 +21,7 @@ const messageTemplates: any = {
       <p>📅 Offer valid until: {date ? `${date}` : <span className="text-green-700 underline font-bold">Insert Date</span>}{" "}</p>
       <p>📍 Location: {address ? `${address}` : <span className="text-green-700 underline font-bold">Address</span>}{" "}</p>
       <p>We look forward to welcoming you soon!</p>
-      <p>Best regards,<br />{hotelName ? `${hotelName} Team` : <span className="text-green-700 underline font-bold">HotelName</span>}Team<br />{phoneNumber ? `${phoneNumber}` : <span className="text-green-700 underline font-bold">Phone Number</span>}{" "}</p>
+      <p>Best regards,<br />{hotelName ? `${hotelName} Team` : <span className="text-green-700 underline font-bold">HotelName</span>}<br />{phoneNumber ? `${phoneNumber}` : <span className="text-green-700 underline font-bold">Phone Number</span>}{" "}</p>
     </>
   ),
 
@@ -49,7 +50,7 @@ const messageTemplates: any = {
     </p>
   ),
 
-  partyInvitation: (hotelName: string, phoneNumber: number | undefined | null) => (
+  partyInvitation: (date: string, time: string, address: string, phoneNumber: string, hotelName: string) => (
     <>
       <p>Dear Customer,</p>
       <p>You’re invited to an unforgettable night of fun and entertainment! Enjoy live music, delicious food, and exciting activities all night long!</p>
@@ -58,11 +59,11 @@ const messageTemplates: any = {
       <p>🍽️ Delicious Veg & Non-Veg Dishes</p>
       <p>🥤 Soft Drinks</p>
       <p>🎮 Fun Games</p>
-      <p>🗓️ Date: [Insert Date]</p>
-      <p>⏰ Time: [Insert Time]</p>
-      <p>📍 Location: [Insert Address]</p>
+      <p>🗓️ Date: {date ? `${date}` : <span className="text-green-700 underline font-bold">Insert Date</span>}{" "}</p>
+      <p>⏰ Time: {time ? `${time}` : <span className="text-green-700 underline font-bold">Insert Time</span>}{" "}</p>
+      <p>📍 Location: {address ? `${address}` : <span className="text-green-700 underline font-bold">Address</span>}{" "}</p>
       <p>Come dance, dine, and enjoy a great time with us! We can’t wait to see you there!</p>
-      <p>Best regards,<br />{hotelName} Team<br />{phoneNumber}</p>
+      <p>Best regards,<br />{hotelName ? `${hotelName} Team` : <span className="text-green-700 underline font-bold">HotelName</span>}<br />{phoneNumber ? `${phoneNumber}` : <span className="text-green-700 underline font-bold">PhoneNumber</span>}</p>
     </>
   ),
 
@@ -92,6 +93,7 @@ export const MessagePreviewWindow: React.FC<MessagePreview> = ({
   discount,
   hotelName,
   date,
+  time,
   phoneNumber,
   address,
   selectedTemplate,
@@ -106,7 +108,7 @@ export const MessagePreviewWindow: React.FC<MessagePreview> = ({
         case "discounts":
           return messageTemplates.discounts(hotelName, discount, phoneNumber, address);
         case "partyInvitation":
-          return messageTemplates.partyInvitation(hotelName, phoneNumber);
+          return messageTemplates.partyInvitation(date, time, address, phoneNumber, hotelName);
         case "eventBooking":
           return messageTemplates.eventBooking(hotelName, phoneNumber);
         default:
@@ -118,15 +120,15 @@ export const MessagePreviewWindow: React.FC<MessagePreview> = ({
 
   // Convert message content to a string to check its length
   const messageString = React.Children.toArray(messageContent)
-  .map(child => {
-    // Check if the child is a ReactElement (it has props)
-    if (React.isValidElement(child)) {
-      return child.props.children.join(' '); // Access props.children safely
-    } else {
-      return child; // Return the child as is if it's not a React element
-    }
-  })
-  .join(' '); // Combine all children into a single string
+    .map(child => {
+      // Check if the child is a ReactElement (it has props)
+      if (React.isValidElement(child)) {
+        return child.props.children.join(' '); // Access props.children safely
+      } else {
+        return child; // Return the child as is if it's not a React element
+      }
+    })
+    .join(' '); // Combine all children into a single string
 
 
   // Truncate long messages
