@@ -80,7 +80,7 @@ function Page() {
           <Section heading="Login" classnames="flex-col justify-start h-[65vh] w-[65%] space-x-4">
             {/* Warning Message */}
             <div className="w-full p-4 text-center text-red-600 bg-yellow-100 border border-yellow-300 rounded-md mb-4">
-           HotelName Is Not ChangeAble
+              HotelName Is Not ChangeAble
             </div>
 
             <form onSubmit={handleSubmit} className="w-[40%] -mb-6">
