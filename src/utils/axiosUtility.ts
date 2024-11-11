@@ -48,7 +48,7 @@ axiosInstance.interceptors.request.use((config) => {
 
 const handleResponse = <T>(response: AxiosResponse<ApiResponse<T>>): AxiosResponse<ApiResponse<T>> => {
 
-    return response; 
+    return response;
 };
 
 

@@ -8,9 +8,9 @@ import { AppError, handleAppError } from "@/utils/errorHandler";
 
 export async function POST(req: Request) {
   try {
+    await connectToDatabase(); 
     const { email, password } = await req.json();
 
-    // Step 1: Find hotel metadata in the central DB using the email
     const hotelMetadata = await HotelModel.findOne({ email });
 
     if (!hotelMetadata) {
@@ -18,10 +18,10 @@ export async function POST(req: Request) {
     }
 
     // Step 2: Get the dbName of the hotel from metadata
-    const { dbName, hotelID } = hotelMetadata;
+    const { dbName } = hotelMetadata;
 
     // Step 3: Connect to the hotel-specific database dynamically
-    await connectToDatabase(dbName);  // Connect to the hotel-specific DB
+ // Connect to the hotel-specific DB
 
     // Step 4: Create a dynamic user model for the hotel-specific database
     const User = createUserModel(dbName);
@@ -40,7 +40,7 @@ export async function POST(req: Request) {
     }
 
     // Step 7: Generate a token for the user
-    const token = generateTokens({ id: user._id.toString(), email, dbName});
+    const token = generateTokens({ id: user._id.toString(), email, dbName });
 
     // Return success response with the token
     return sendSuccessResponse(200, { message: "Login successful", token });

@@ -10,8 +10,8 @@ export async function POST(req: Request) {
   try {
     const { hotelName, email, password } = await req.json();
     const hotelID = uuidv4();
-    const dbName = `${hotelName.toLowerCase().replace(/\s+/g, "_")}_${hotelID.slice(0, 3)}`;
-    await connectToDatabase(dbName);
+    const dbName = `${"GoodPeggTouch".toLowerCase().replace(/\s+/g, "_")}_${hotelID.slice(0, 3)}`;
+    await connectToDatabase();
 
 
     const User = createUserModel(dbName);
