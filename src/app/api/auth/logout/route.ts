@@ -5,11 +5,11 @@ import { serialize } from 'cookie';
 
 export async function POST() {
     try {
-    
+
 
         // Clear the session cookie by setting an expiration date in the past
         const headers = new Headers();
-        headers.set('Set-Cookie', serialize('_session', '', {
+        headers.set('Set-Cookie', serialize('__session', '', {
             path: '/',
             expires: new Date(0), // Expire the cookie immediately
             httpOnly: true, // Prevent client-side access to the cookie

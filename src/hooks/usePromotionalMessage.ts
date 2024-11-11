@@ -30,8 +30,14 @@ const usePromotionalMessage = (initialHotelName: string) => {
     };
 
     const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setTime(e.target.value);
+        const [hour, minute] = e.target.value.split(":");
+        const hourNumber = parseInt(hour, 10);
+        const ampm = hourNumber >= 12 ? "PM" : "AM";
+        const formattedHour = hourNumber % 12 || 12;
+        const formattedTime = `${formattedHour}:${minute} ${ampm}`;
+        setTime(formattedTime);
     };
+
 
     const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPhoneNumber(e.target.value);
@@ -46,11 +52,6 @@ const usePromotionalMessage = (initialHotelName: string) => {
     };
 
     const sendBulkMessage = async () => {
-        if (!ownerHotelName.trim()) {
-            toast.error("Hotel Name is required.");
-            return;
-        }
-
         setLoading(true);
         try {
             const formattedDiscount = discount !== null ? `${discount}% Off` : undefined;
@@ -77,7 +78,7 @@ const usePromotionalMessage = (initialHotelName: string) => {
             // Reset fields
             setDiscount(null);
             setDate(null);
-            setTime(null);
+            // setTime(null);
             setPhoneNumber("");
             setAddress("");
             setSliderValue(0);

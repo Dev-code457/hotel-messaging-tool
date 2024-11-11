@@ -50,13 +50,13 @@ function CheckInOut() {
                   {
                     isPromotionalList && (
                       <Input
-                      classnames="py-3"
-                      type="number"
-                      value={userSpending}
-                      placeHolder="User Spending Amount"
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserSpending(e.target.value)}
-                    />
-                    
+                        classnames="py-3"
+                        type="number"
+                        value={userSpending}
+                        placeHolder="User Spending Amount"
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserSpending(e.target.value)}
+                      />
+
                     )
                   }
 

@@ -24,48 +24,74 @@ export const validateCustomerInput = ({
   phoneNumber,
   address,
   sliderValue,
+  date,
+  time
 }: {
-  ownerHotelName: string;
-  discount: string;
-  phoneNumber: string;
-  address: string;
-  sliderValue: number;
+  ownerHotelName?: string;
+  discount?: string;
+  phoneNumber?: string;
+  address?: string;
+  sliderValue?: number;
+  date?: string;
+  time?: string;
 }): string[] => {
   const errors: string[] = [];
 
-  // Check required fields
-  if (!ownerHotelName || typeof ownerHotelName !== "string" || ownerHotelName.trim() === "") {
-    errors.push("Hotel name is required.");
-  } else if (ownerHotelName.length > 100) { // Limit hotel name to 100 characters
-    errors.push("Hotel name must be less than 100 characters.");
+  if (ownerHotelName !== undefined) {
+    if (!ownerHotelName.trim()) {
+      errors.push("Hotel name is required.");
+    } else if (ownerHotelName.length > 100) {
+      errors.push("Hotel name must be less than 100 characters.");
+    }
   }
 
-  if (!discount || typeof discount !== "string" || discount.trim() === "") {
-    errors.push("Discount is required.");
-  } else if (discount.length > 10) { // Limit discount to 10 characters (e.g., "50% Off")
-    errors.push("Discount must be less than 10 characters.");
+  if (discount !== undefined) {
+    if (!discount.trim()) {
+      errors.push("Discount is required.");
+    } else if (discount.length > 10) {
+      errors.push("Discount must be less than 10 characters.");
+    }
   }
 
-  if (!phoneNumber || typeof phoneNumber !== "string" || phoneNumber.trim() === "") {
-    errors.push("Phone number is required.");
-  } else if (!/^\d{10}$/.test(phoneNumber)) { // Ensure phone number is valid (example: 10 digits)
-    errors.push("Phone number must be a 10-digit number.");
-  } else if (phoneNumber.length > 15) { // Limit phone number to 15 characters
-    errors.push("Phone number must be less than 15 characters.");
+  if (phoneNumber !== undefined) {
+    if (!phoneNumber.trim()) {
+      errors.push("Phone number is required.");
+    } else if (!/^\d{10,15}$/.test(phoneNumber)) {
+      errors.push("Phone number must be between 10 and 15 digits.");
+    }
   }
 
-  if (!address || typeof address !== "string" || address.trim() === "") {
-    errors.push("Address is required.");
-  } else if (address.length > 200) { // Limit address to 200 characters
-    errors.push("Address must be less than 200 characters.");
+  if (address !== undefined) {
+    if (!address.trim()) {
+      errors.push("Address is required.");
+    } else if (address.length > 200) {
+      errors.push("Address must be less than 200 characters.");
+    }
   }
 
-  if (typeof sliderValue !== "number" || sliderValue <= 0) {
-    errors.push("Slider value must be a positive number.");
+  if (sliderValue !== undefined) {
+    if (typeof sliderValue !== "number" || sliderValue <= 0) {
+      errors.push("Slider value must be a positive number.");
+    }
+  }
+
+  if (date !== undefined) {
+    // Date validation can be customized as needed
+    if (!date.trim()) {
+      errors.push("Date is required.");
+    }
+  }
+
+  if (time !== undefined) {
+    // Time validation can be customized as needed
+    if (!time.trim()) {
+      errors.push("Time is required.");
+    }
   }
 
   return errors;
 };
+
 
 export const validateCustomerPhoneNumber = ({
 
