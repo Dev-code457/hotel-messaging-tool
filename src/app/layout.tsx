@@ -21,6 +21,10 @@ export default function RootLayout({
           
             />
 
+<<<<<<< HEAD
+=======
+          <Profile onSelectForm={undefined} />
+>>>>>>> 3826dec (Initial Commit)
           {children}
         </ReduxProvider>
       </body>
