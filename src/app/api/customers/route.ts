@@ -1,60 +1,64 @@
-import { connectToDatabase } from "@/lib/mongodb"; // Ensure this function uses Mongoose
-import Customer from "@/models/customers"; // Adjust path as necessary
-import { NextResponse } from "next/server";
+import { validateCustomerPhoneNumber } from "@/validators/index";
+import { AppError } from "@/utils/errorHandler";
+import { sendSuccessResponse, sendErrorResponse } from "@/utils/responseHandler";
+import { createCustomersModel } from "@/models/customers";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { connectToDatabase } from "@/lib/mongodb";
 
 export async function POST(req: Request) {
-    const isValidPhoneNumber = (number: string) => {
-        const phoneRegex = /^\d{10}$/; 
-        return phoneRegex.test(number);
-    };
-    
     try {
         const body = await req.json();
-        await connectToDatabase(); // Ensure Mongoose connection is established
-
-        const { phoneNumber } = body;
-
-        if (!phoneNumber) {
-            return NextResponse.json(
-                { message: "Number is not found" },
-                { status: 404 }
-            );
+        const { phoneNumber, name, email } = body;
+        const token = req.headers.get("Authorization")?.replace("Bearer ", "");
+        if (!token) {
+            console.log("no token found")
         }
 
-        // Validate the phone number
-        if (!isValidPhoneNumber(phoneNumber)) {
-            return NextResponse.json(
-                {
-                    error: "Invalid phone number format. Please provide a valid 10-digit number.",
-                },
-                { status: 400 }
-            );
+        const secret = process.env.JWT_SECRET;
+        if (!secret) {
+            throw new AppError(500, "Internal Server Error: JWT Secret is not defined");
+        }
+        let params;
+
+        if (token) {
+            params = jwt.verify(token, secret) as JwtPayload
         }
 
-        // Check if the phone number already exists
-        const existingUser = await Customer.findOne({ phoneNumber });
-        if (existingUser) {
-            return NextResponse.json(
-                {
-                    error: "Phone number already exists.",
-                },
-                { status: 400 }
-            );
+        const hotelID = params?.params?.dbName
+        connectToDatabase(hotelID)
+        const Customer = createCustomersModel(hotelID)
+
+
+
+        const validationErrors = validateCustomerPhoneNumber({ phoneNumber });
+        if (validationErrors.length > 0) {
+            throw new AppError(400, validationErrors.join(", "));
+        }
+        const existingNumber = await Customer.findOne({ phoneNumber: phoneNumber });
+
+        if (existingNumber) {
+            throw new AppError(400, "This number is already exist");
+        }
+        try {
+
+            const newCustomer = new Customer({ phoneNumber, name, email });
+            await newCustomer.save();
+
+            return sendSuccessResponse(200, {
+                message: "Customer saved successfully",
+            });
+
+        } catch (error) {
+            console.error(`Error saving customer`, error);
+            throw new AppError(500, `Failed to save customer`);
         }
 
-        // Insert the phone number into the database using Mongoose
-        const newCustomer = new Customer({ phoneNumber });
-        const result = await newCustomer.save(); // Save the new customer to the database
+    } catch (error: unknown) {
+        console.error("Error during saving customer:", error);
+        if (error instanceof AppError) {
+            return sendErrorResponse(error.statusCode, error.message);
+        }
 
-        return NextResponse.json(
-            { message: "User added successfully", result },
-            { status: 201 }
-        );
-    } catch (error) {
-        console.error("Error during request:", error); // Log the error for debugging
-
-        const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
-        
-        return NextResponse.json({ error: errorMessage }, { status: 500 });
+        return sendErrorResponse(500, "An unknown error occurred");
     }
 }

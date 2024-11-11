@@ -1,77 +1,73 @@
-import { NextResponse } from "next/server";
-
-const isValidPhoneNumber = (number: string) => {
-  const phoneRegex = /^\d{10}$/;
-  return phoneRegex.test(number);
-};
+import { validateCustomerPhoneNumber } from "@/validators/index";
+import { AppError } from "@/utils/errorHandler";
+import { sendWhatsAppMessage } from "@/utils/whatsappApi";
+import { sendSuccessResponse, sendErrorResponse } from "@/utils/responseHandler";
+import { createCustomersModel } from "@/models/customers";
+import { connectToDatabase } from "@/lib/mongodb";
+import { JwtPayload } from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { phoneNumber } = body;
+    const { phoneNumber, messageType, isPromotionalList, spending } = body;
 
-    if (!phoneNumber) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 }
-      );
+    const token = req.headers.get("Authorization")?.replace("Bearer ", "");
+
+    if (!token) {
+      console.log("No token found");
+      throw new AppError(401, "Unauthorized access");
     }
 
-    if (!isValidPhoneNumber(phoneNumber)) {
-      return NextResponse.json(
-        {
-          error:
-            "Invalid phone number format. Please provide a valid 10-digit number.",
-        },
-        { status: 400 }
-      );
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      throw new AppError(500, "Internal Server Error: JWT Secret is not defined");
     }
 
-    const requestBody = {
-      messaging_product: "whatsapp",
-      to: `91${phoneNumber}`,
-      type: "template",
-      template: {
-        name: "checkin",
-        language: {
-          code: "en",
-        },
-      },
-    };
+    const params = jwt.verify(token, secret) as JwtPayload;
+    const hotelID = params?.params?.hotelID;
+    console.log(hotelID);
+    
 
-    // Make the API request to Facebook Graph API
-    const response = await fetch(
-      `https://graph.facebook.com/v20.0/${process.env.WHATSAPP_BUSINESS_ID}/messages`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.FACEBOOK_ACCESS_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
+    await connectToDatabase(hotelID);
+    const Customer = createCustomersModel(hotelID);
 
+    const validationErrors = validateCustomerPhoneNumber({ phoneNumber });
+    if (validationErrors.length > 0) {
+      throw new AppError(400, validationErrors.join(", "));
+    }
+
+    await sendWhatsAppMessage(phoneNumber, messageType);
+    const phoneNumberExists = await Customer.findOne({ phoneNumber });
+
+    if (isPromotionalList) {
+      if (phoneNumberExists) {
+        return sendSuccessResponse(200, {
+          message: `Message is sent to ${phoneNumber}, but the number already exists in the promotional list.`,
+        });
+      } else {
+        // Check if userSpending is provided and valid
+        if (spending) {
+          const newCustomer = new Customer({ phoneNumber, spending });
+          await newCustomer.save();
+          return sendSuccessResponse(200, {
+            message: `Message is sent and ${phoneNumber} with spending ${spending} has been added to the promotional list.`,
+          });
+        } else {
+          throw new AppError(400, "User spending is required to add to promotional list.");
+        }
       }
-    );
-
-    const responseData = await response.json();
-
-    if (!response.ok) {
-      return NextResponse.json(
-        { error: responseData.error || "Failed to send message." },
-        { status: response.status }
-      );
     }
 
-    return NextResponse.json(
-      { message: "Message sent successfully", data: responseData },
-      { status: 200 }
-    );
+    return sendSuccessResponse(200, {
+      message: `Message is sent successfully to ${phoneNumber}.`,
+    });
+
   } catch (error: unknown) {
     console.error("Error during bulk messaging:", error);
-
-    const errorMessage =
-      error instanceof Error ? error.message : "An unknown error occurred";
-
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+    if (error instanceof AppError) {
+      return sendErrorResponse(error.statusCode, error.message);
+    }
+    return sendErrorResponse(500, "An unknown error occurred");
   }
 }

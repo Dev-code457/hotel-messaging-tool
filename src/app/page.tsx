@@ -1,12 +1,36 @@
+"use client";
+
 import Image from "next/image";
-import React from "react";
-import Logo from "@/app/assets/FIRANGIPANI-logo-1 1.svg";
-import CheckInOut from "@/components/CheckInOut";
-import Link from "next/link";
-import PromotionalNumber from "@/components/PromotionalNumber";
-import PromotionalMessage from "@/components/PromotinalMessage";
+import React, { ReactNode, useLayoutEffect, useState } from "react";
+import Logo from "@/app/public/assets/Logo.svg";
+import HelperImage from "@/app/public/assets/Login.com.svg";
+import Section from "@/components/Layout";
+import Input from "@/components/Input";
+import Button from "@/components/Button";
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
+import Spinner from "@/components/Loader";
+import useAuth from "@/hooks/useAuth";
 
 function Page() {
+  const router = useRouter();
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [hotelName, setHotelName] = useState<string>("");
+  const { loading, login } = useAuth();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    login(email, password);
+  };
+
+  useLayoutEffect(() => {
+    const token = Cookies.get("_session");
+    if (token) {
+      router.push("/AddNumber");
+    }
+  }, [router]);
+
   return (
     <>
       <button
@@ -14,7 +38,7 @@ function Page() {
         data-drawer-toggle="default-sidebar"
         aria-controls="default-sidebar"
         type="button"
-        className="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+        className="inline-flex items-center p-2 mt-2 ms-3 text-sm rounded-lg sm:hidden hover:bg-gray-550 focus:outline-none focus:ring-2 dark:text-gray-400"
       >
         <span className="sr-only">Open sidebar</span>
         <svg
@@ -42,20 +66,71 @@ function Page() {
             <li>
               <a
                 href="#"
-                className="flex items-center p-6 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                className="flex items-center -mt-6 text-gray-900 rounded-lg dark:text-white hover group"
               >
-                <Image src={Logo} alt="LOGO" className="" />
+                <Image src={Logo} alt="LOGO" className="w-full h-full" />
               </a>
             </li>
           </ul>
         </div>
       </aside>
 
-      <div className="sm:ml-64 flex justify-center items-center  ">
-        <div className="flex flex-col justify-center items-center w-full bg-gray-50">
-          <CheckInOut />
-          <PromotionalNumber />
-          <PromotionalMessage />
+      <div className="sm:ml-64 flex justify-center">
+        <div className="flex flex-col h-screen pt-20 items-center w-full bg-gray-50">
+          <Section heading="Login" classnames="flex-col justify-start h-[65vh] w-[65%] space-x-4">
+            {/* Warning Message */}
+            <div className="w-full p-4 text-center text-red-600 bg-yellow-100 border border-yellow-300 rounded-md mb-4">
+           HotelName Is Not ChangeAble
+            </div>
+
+            <form onSubmit={handleSubmit} className="w-[40%] -mb-6">
+              <Input
+                classnames="py-1 "
+                value={email}
+                required
+                onChange={(e) => setEmail(e.target.value)}
+                placeHolder="Enter Email"
+                type="email"
+              />
+              <Input
+                classnames="py-1"
+                value={password}
+                required
+                type="password"
+                placeHolder="Enter Password"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              {/* <Input
+                classnames="py-1"
+                value={hotelName}
+                required
+                type="text"
+                placeHolder="Enter HotelName"
+                onChange={(e) => setHotelName(e.target.value)}
+              /> */}
+              <div className="flex justify-start -mb-5 py-3">
+                <Button
+                  text={loading ? <div className={"flex gap-2 font-bold justify-center items-center"}><Spinner /> Logging In...</div> : "Submit"}
+                  classnames="bg-green-500 hover:bg-green-600"
+                  type="submit"
+                  disabled={loading}
+                />
+              </div>
+              <div className="absolute right-0 -mt-[9%]">
+                <Image
+                  src={HelperImage}
+                  alt="Check In & Check Out"
+                  className="-mt-8 w-[70%]"
+                />
+              </div>
+            </form>
+            <div
+              className="text-sm font-semibold text-[#FB5151] py-6 underline font-serif cursor-pointer w-auto"
+              onClick={() => router.push("/ForgotPassword")}
+            >
+              Forgot Password
+            </div>
+          </Section>
         </div>
       </div>
     </>

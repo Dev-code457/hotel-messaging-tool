@@ -1,45 +1,51 @@
-import { NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/mongodb";
-import User from "@/models/user"; 
-import generateTokens from "@/utils/generateTokens";
+import { connectToDatabase } from "@/lib/mongodb"; // Utility function for connecting to DB
+import HotelModel from "@/models/hotel"; // Centralized hotel metadata model
+import { createUserModel } from "@/models/user"; // User model for the hotel
+import bcrypt from "bcryptjs"; // To compare password hashes
+import generateTokens from "@/utils/generateTokens"; // For token generation
+import { sendSuccessResponse } from "@/utils/responseHandler";
+import { AppError, handleAppError } from "@/utils/errorHandler";
 
 export async function POST(req: Request) {
-  await connectToDatabase(); 
-
-  const { email, password } = await req.json();
-
-  if (!(email && password)) {
-    return NextResponse.json(
-      { message: "All fields are mandatory." },
-      { status: 400 }
-    );
-  }
-
   try {
+    const { email, password } = await req.json();
+
+    // Step 1: Find hotel metadata in the central DB using the email
+    const hotelMetadata = await HotelModel.findOne({ email });
+
+    if (!hotelMetadata) {
+      throw new AppError(404, "Hotel not found.");
+    }
+
+    // Step 2: Get the dbName of the hotel from metadata
+    const { dbName, hotelID } = hotelMetadata;
+
+    // Step 3: Connect to the hotel-specific database dynamically
+    await connectToDatabase(dbName);  // Connect to the hotel-specific DB
+
+    // Step 4: Create a dynamic user model for the hotel-specific database
+    const User = createUserModel(dbName);
+
+    // Step 5: Find the user in the hotel-specific database
     const user = await User.findOne({ email });
-    const isValidPassword = await user.matchPassword(password);
-    console.log(user, "This is my user");
 
     if (!user) {
-      return NextResponse.json({ message: "User Not Found" }, { status: 404 });
+      throw new AppError(404, "User not found.");
     }
-    if (!isValidPassword) {
-      return NextResponse.json(
-        { message: "Invalid Password" },
-        { status: 401 }
-      );
+
+    // Step 6: Check if the provided password matches the stored hash
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new AppError(401, "Invalid Credentials");
     }
-    const token = generateTokens(user._id);
-    await user.save();
-    return NextResponse.json(
-      { message: "Login Successfull", token },
-      { status: 201 }
-    );
+
+    // Step 7: Generate a token for the user
+    const token = generateTokens({ id: user._id.toString(), email, dbName});
+
+    // Return success response with the token
+    return sendSuccessResponse(200, { message: "Login successful", token });
+
   } catch (error) {
-    console.error("Error during user creation:", error);
-    return NextResponse.json(
-      { message: "Internal server error." },
-      { status: 500 }
-    );
+    return handleAppError(error); // Error handling
   }
 }

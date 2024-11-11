@@ -1,95 +1,75 @@
-import { connectToDatabase } from "@/lib/mongodb"; // Ensure this function returns a MongoDB client
+
 import { NextResponse } from "next/server";
-import Customer from "@/models/customers"; // Ensure this path is correct
+import { createCustomersModel } from "@/models/customers";
+import { AppError, handleAppError } from "@/utils/errorHandler";
+import { validateCustomerInput } from "@/validators/index";
+import { sendWhatsAppMessage } from "@/utils/whatsappApi";
+import { sendSuccessResponse } from "@/utils/responseHandler";
+import jwt, { JwtPayload } from 'jsonwebtoken'
+import { connectToDatabase } from "@/lib/mongodb";
 
 export async function POST(req: Request) {
   try {
+
+
     const body = await req.json();
-    const { messageType } = body; // Extracting messageType from the request body
+    const { ownerHotelName, discount, phoneNumber, address, sliderValue } = body;
+    const token = req.headers.get("Authorization")?.replace("Bearer ", "");
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      throw new AppError(500, "Internal Server Error: JWT Secret is not defined");
+    }
+   
+    let params;
 
-    // Check if messageType is provided
-    if (!messageType) {
-      return NextResponse.json(
-        { error: "messageType is required" },
-        { status: 400 }
-      );
+    if (token) {
+      params = jwt.verify(token, secret) as JwtPayload
     }
 
-    await connectToDatabase(); // Establish connection to MongoDB
+    const hotelName = params?.params?.hotelName
+    connectToDatabase(hotelName)
 
-    // Fetch customers from the database using Mongoose model
-    const customers = await Customer.find({}); // Use the Customer model to find customers
-
-    // Handle case when no customers are found
+    const validationErrors = validateCustomerInput({ ownerHotelName, discount, phoneNumber, address, sliderValue });
+    if (validationErrors.length > 0) {
+      throw new AppError(400, validationErrors.join(", "));
+    }
+    const Customer = createCustomersModel(hotelName)
+    const customers = await Customer.find({});
     if (!customers || customers.length === 0) {
-      return NextResponse.json(
-        { error: "No customers found" },
-        { status: 404 }
-      );
+      throw new AppError(404, "No customers found");
     }
 
-    // Prepare sending messages
-    const sendPromises = customers.map(async (customer: any) => {
-      const requestBody = {
-        messaging_product: "whatsapp",
-        to: `91${customer.phoneNumber}`,
-        type: "template",
-        template: {
-          name: String(messageType),
-          language: {
-            code: "en",
-          },
-        },
-      };
+    const shuffledCustomers = customers.sort(() => 0.5 - Math.random());
+
+
+    const selectedCustomers = shuffledCustomers.slice(0, sliderValue);
+
+    const sendPromises = selectedCustomers.map(async (customer) => {
+
+      const parameters = [
+        { type: "TEXT", text: discount },
+        { type: "TEXT", text: hotelName },
+        { type: "TEXT", text: phoneNumber },
+        { type: "TEXT", text: address },
+      ];
 
       try {
-        const response = await fetch(
-          `https://graph.facebook.com/v20.0/${process.env.WHATSAPP_BUSINESS_ID}/messages`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${process.env.FACEBOOK_ACCESS_TOKEN}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestBody),
-          }
-        );
 
-        const responseData = await response.json();
-
-        // Check if the response is not OK
-        if (!response.ok) {
-          console.error(
-            `Failed to send message to ${customer.phoneNumber}:`,
-            responseData.error
-          );
-          throw new Error(responseData.error?.message || "Unknown error");
-        }
-
-        return responseData; // Return the successful response
+        await sendWhatsAppMessage(customer.phoneNumber, "event_rsvp_reminder_2", parameters);
+        return { success: true, phoneNumber: customer.phoneNumber };
       } catch (error) {
-        console.error(
-          `Error sending message to ${customer.phoneNumber}:`,
-          error
-        );
-        throw error; // Re-throw the error to be caught in the outer catch block
+        console.error(`Error sending message to ${customer.phoneNumber}:`, error);
+        throw new AppError(500, `Failed to send message to ${customer.phoneNumber}`);
       }
     });
 
-    // Wait for all messages to be sent
     await Promise.all(sendPromises);
 
-    return NextResponse.json(
-      {
-        message: `Messages sent successfully`,
-      },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.error("Error during bulk messaging:", error);
-    const errorMessage =
-      error instanceof Error ? error.message : "An unknown error occurred";
+    return sendSuccessResponse(200, {
+      message: `Message is sent successfully to ${sliderValue} users`,
+    });
 
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+  } catch (error) {
+    return handleAppError(error);
   }
 }
