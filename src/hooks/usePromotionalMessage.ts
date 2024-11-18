@@ -5,6 +5,7 @@ import { MessagesUsed } from "@/redux/slices/exampleSlice";
 import { axiosPost } from "@/utils/axiosUtility";
 import { ApiResponse } from "@/types";
 
+
 const usePromotionalMessage = (initialHotelName: string) => {
     const [discount, setDiscount] = useState<number | null>(null);
     const [date, setDate] = useState<string | null>(null);
@@ -25,9 +26,21 @@ const usePromotionalMessage = (initialHotelName: string) => {
         setDiscount(isNaN(numberValue) ? null : numberValue);
     };
 
-    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setDate(e.target.value);
+    const handleDateChange = (selectedDate: Date | null) => {
+        if (selectedDate) {
+            const options: Intl.DateTimeFormatOptions = {
+                weekday: 'short', // Short form of the day (e.g., Thu)
+                year: 'numeric',  // Four-digit year
+                month: 'short',   // Short form of the month (e.g., Nov)
+                day: '2-digit',   // Two-digit day
+            };
+            const formattedDate = new Intl.DateTimeFormat('en-US', options).format(selectedDate);
+            setDate(formattedDate); // Save the formatted date
+        } else {
+            setDate(null); // Handle null values
+        }
     };
+    
 
     const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const [hour, minute] = e.target.value.split(":");
@@ -51,45 +64,60 @@ const usePromotionalMessage = (initialHotelName: string) => {
         setSliderValue(value);
     };
 
-    const sendBulkMessage = async () => {
+    const sendBulkMessage = async (messageType: string) => {
         setLoading(true);
         try {
             const formattedDiscount = discount !== null ? `${discount}% Off` : undefined;
 
-            const response = await axiosPost<ApiResponse, {
-                discount?: string,
-                ownerHotelName: string,
-                phoneNumber: string,
-                address: string,
-                sliderValue: number,
-                date?: string | null,
-                time?: string | null
-            }>("/api/Promotional", {
-                discount: formattedDiscount,
-                ownerHotelName,
-                phoneNumber,
-                address,
-                sliderValue,
-                date,
-                time
-            });
+            // Define the request payload
+            const eventBooking = {
+                ownerHotelName, time, discount, date, sliderValue
+            };
+            const discountpayload = {
+                ownerHotelName, discount, phoneNumber, address, sliderValue
+            };
+            const PartyPalnning = {
+                ownerHotelName, time, date, phoneNumber, address, sliderValue
+            };
+            const roomBooking = {
+                ownerHotelName, date, phoneNumber, address, sliderValue
+            };
+
+            let response: ApiResponse;
+
+            if (messageType === "eventBooking") {
+                // API call specific for eventBooking
+                response = await axiosPost<ApiResponse, typeof eventBooking>("/api/Promotional/EventOrganization", eventBooking);
+            } else if (messageType === "partyInvitation") {
+                // API call specific for promotional
+                response = await axiosPost<ApiResponse, typeof PartyPalnning>("/api/Promotional/PartyPlanning", PartyPalnning);
+            } else if (messageType === "roomBooking") {
+                // Handle other message types if needed
+                response = await axiosPost<ApiResponse, typeof roomBooking>("/api/Promotional/RoomBooking", roomBooking);
+            }
+            else {
+                // Handle other message types if needed
+                response = await axiosPost<ApiResponse, typeof discountpayload>("/api/Promotional/Discounts", discountpayload);
+            }
 
             dispatch(MessagesUsed());
-            // Reset fields
+
+            // Reset fields after successful submission
             setDiscount(null);
             setDate(null);
-            // setTime(null);
+            setTime(null);
             setPhoneNumber("");
             setAddress("");
             setSliderValue(0);
             toast.success(response.data.message || "Message sent successfully!");
         } catch (error: any) {
-            toast.error(error.response?.data.message || error.message || "An unknown error occurred.");
+            console.log(error);
+
+            toast.error(error.message  || "An unknown error occurred.");
         } finally {
             setLoading(false);
         }
     };
-
     return {
         discount,
         ownerHotelName,

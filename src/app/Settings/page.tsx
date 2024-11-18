@@ -1,12 +1,11 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Section from "../../components/Layout";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import Image from "next/image";
 import Hero from "@/app/public/assets/forgot password.svg";
 import SideLayout from "@/components/SideLayout";
-import Id from "@/app/public/assets/id (1).svg"
 import Spinner from "@/components/Loader";
 import useChangePassword from "@/hooks/useChangePassword";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,9 +13,18 @@ import { fetchHotelData } from "@/global/index";
 import { hotelActions } from "@/redux/slices/hotelSlice";
 import { RootState } from "@/redux/store";
 import useHotelDetails from "@/hooks/useHotelDetails";
+import Profile from '@/components/Profile'
 
 function ChangePassword() {
 
+  const [initialHotelDetails, setInitialhotelDetails] = useState("");
+
+
+  useEffect(() => {
+    if (hotelDetail?.UserDetails?.hotelName) {
+      setHotelDetails(hotelDetail.UserDetails.hotelName);
+    }
+  }, [initialHotelDetails]);
 
   const dispatch = useDispatch();
   const hotelDetail = useSelector((state: RootState) => state.hotel.details);
@@ -60,6 +68,7 @@ function ChangePassword() {
 
   return (
     <SideLayout>
+      <Profile onSelectForm={undefined} />
       <div className="sm:ml-64 flex justify-center">
         <div className="flex flex-col space-y-10 justify-center py-5 items-center w-full h-screen bg-gray-50">
 
@@ -74,6 +83,7 @@ function ChangePassword() {
                     <form onSubmit={handleChangeHotelDetails}>
                       <Input
                         value={hotelDetails}
+                        defaultValue={initialHotelDetails}
                         required
                         placeHolder={hotelDetail?.UserDetails?.hotelName ? hotelDetail?.UserDetails?.hotelName : null}
                         label="Add Hotel Name"
@@ -103,11 +113,11 @@ function ChangePassword() {
                   </div>
                   <div className="col-span-1 w-full">
                     <div className="flex justify-end items-end absolute">
-                      <Image
+                      {/* <Image
                         src={Id}
                         alt="setting"
                         className="w-[60%] pt-16 mr-2"
-                      />
+                      /> */}
                     </div>
                   </div>
                 </div>
@@ -142,7 +152,7 @@ function ChangePassword() {
                       />
                       <div className="flex justify-start pt-6">
                         <Button
-                          text={loading ? <div className={"flex gap-2  font-bold justify-center items-center"}><Spinner /> Submitting...</div> : "Submit"}
+                          text={loading ? <div className={"flex gap-2  font-bold justify-center items-center"}><Spinner /> Please Wait...</div> : "Reset Password"}
                           classnames={`py-3 px-8 bg-green-500 hover:bg-green-600 `}
                           type="submit"
                           disabled={loading}

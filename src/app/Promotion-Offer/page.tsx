@@ -1,4 +1,4 @@
-"use client";
+'use client'
 import React, { useState } from "react";
 import Section from "@/components/Layout";
 import Button from "@/components/Button";
@@ -11,7 +11,11 @@ import { MessagePreviewWindow } from "@/components/MessagePreviewWindow";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { SelectDefault } from "@/components/SelectTemplates";
-import Profile from '@/components/Profile'
+import Profile from "@/components/Profile";
+import ReactDatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import DatePicker from "react-datepicker";
+
 
 function PromotionalMessage() {
   const hotelDetail = useSelector((state: RootState) => state.hotel.details);
@@ -27,7 +31,6 @@ function PromotionalMessage() {
     loading,
     sliderValue,
     setHotelName,
-    setPhoneNumber,
     handleDiscountChange,
     handleSliderValueChange,
     handleAddressChange,
@@ -42,29 +45,128 @@ function PromotionalMessage() {
       case "discounts":
         return (
           <>
-            <Input type="number" classnames="pt-6 mb-3" value={discount || ""} required onChange={handleDiscountChange} placeHolder="Enter Discount / Off" />
-            <Input type="text" classnames="mb-3" value={hotelDetail?.hotelName || ownerHotelName || ""} required placeHolder="Enter Hotel Name" onChange={(e) => setHotelName(e.target.value)} />
-            <Input type="number" classnames="mb-3" value={phoneNumber || ""} required placeHolder="Enter Phone Number" onChange={handlePhoneNumberChange} />
-            <Input type="text" classnames="mb-3" value={address || ""} required placeHolder="Enter Address" onChange={handleAddressChange} />
+            <Input
+              type="number"
+              classnames="pt-6 mb-3"
+              value={discount || ""}
+              required
+              onChange={handleDiscountChange}
+              placeHolder="Enter Discount / Off"
+            />
+            <Input
+              type="text"
+              classnames="mb-3"
+              value={hotelDetail?.hotelName || ownerHotelName || ""}
+              required
+              placeHolder="Enter Hotel Name"
+              onChange={(e) => setHotelName(e.target.value)}
+            />
+            <Input
+              type="tel"
+              classnames="mb-3"
+              value={phoneNumber || ""}
+              required
+              placeHolder="Enter Phone Number"
+              onChange={handlePhoneNumberChange}
+            />
+            <Input
+              type="text"
+              classnames="mb-3"
+              value={address || ""}
+              required
+              placeHolder="Enter Address"
+              onChange={handleAddressChange}
+            />
           </>
         );
       case "roomBooking":
         return (
           <>
-            <Input type="date" classnames="pt-6 mb-3" required value={date || ""} onChange={handleDateChange} placeHolder="Select Date" />
-            <Input type="text" classnames="mb-3" value={ownerHotelName || ""} required placeHolder="Enter Hotel Name" onChange={(e) => setHotelName(e.target.value)} />
-            <Input type="text" classnames="mb-3" value={phoneNumber || ""} required placeHolder="Enter Phone Number" onChange={handlePhoneNumberChange} />
-            <Input type="text" classnames="mb-3" value={address || ""} required placeHolder="Enter Address" onChange={handleAddressChange} />
+
+            <Input
+              type="text"
+              classnames="mb-3"
+              value={ownerHotelName || ""}
+              required
+              placeHolder="Enter Hotel Name"
+              onChange={(e) => setHotelName(e.target.value)}
+            />
+            <Input
+              type="text"
+              classnames="mb-3"
+              value={phoneNumber || ""}
+              required
+              placeHolder="Enter Phone Number"
+              onChange={handlePhoneNumberChange}
+            />
+            <Input
+              type="text"
+              classnames="mb-3"
+              value={address || ""}
+              required
+              placeHolder="Enter Address"
+              onChange={handleAddressChange}
+            />
+
+
+            <ReactDatePicker
+              selected={date}
+              onChange={handleDateChange}
+              minDate={new Date()}
+              maxDate={new Date().setMonth(new Date().getMonth() + 3)} // 3 months in the future
+              className="w-full p-2 border rounded"
+              placeholderText="Select Date"
+              dateFormat="yyyy-MM-dd"
+              inline
+            />
+
+
+
+
           </>
         );
       case "partyInvitation":
         return (
           <>
-            <Input type="date" classnames="pt-6 mb-3" required value={date || ""} onChange={handleDateChange} placeHolder="Select Date" />
-            <Input type="time" classnames="mb-3" value={time || ""} placeHolder="Select Time" onChange={handleTimeChange} />
-            <Input type="text" classnames="mb-3" value={address || ""} required placeHolder="Enter Address" onChange={handleAddressChange} />
-            <Input type="text" classnames="mb-3" value={ownerHotelName || ""} required placeHolder="Enter Hotel Name" onChange={(e) => setHotelName(e.target.value)} />
-            <Input type="text" classnames="mb-3" value={phoneNumber || ""} required placeHolder="Enter Phone Number" onChange={handlePhoneNumberChange} />
+            <Input
+              type="date"
+              classnames="pt-6 mb-3"
+              required
+              value={date || ""}
+              onChange={handleDateChange}
+              placeHolder="Select Date"
+            />
+            <Input
+              type="time"
+              classnames="mb-3"
+              value={time || ""}
+              placeHolder="Select Time"
+              onChange={handleTimeChange}
+            />
+            <Input
+              type="text"
+              classnames="mb-3"
+              value={address || ""}
+              required
+              placeHolder="Enter Address"
+              onChange={handleAddressChange}
+            />
+            <Input
+              type="text"
+              classnames="mb-3"
+              value={ownerHotelName || ""}
+              required
+              placeHolder="Enter Hotel Name"
+              onChange={(e) => setHotelName(e.target.value)}
+            />
+            <Input
+              type="text"
+              classnames="mb-3"
+              value={phoneNumber || ""}
+              required
+              placeHolder="Enter Phone Number"
+              onChange={handlePhoneNumberChange}
+            />
           </>
         );
       default:
@@ -74,17 +176,24 @@ function PromotionalMessage() {
 
   return (
     <SideLayout>
-      
       <Profile onSelectForm={undefined} />
       <div className="sm:ml-64 flex justify-center">
         <div className="flex flex-col justify-center items-center w-full bg-gray-50">
-          <SelectDefault setSelectedTemplate={setSelectedTemplate} selectedTemplate={selectedTemplate} />
+          <SelectDefault
+            setSelectedTemplate={setSelectedTemplate}
+            selectedTemplate={selectedTemplate}
+          />
           <Section heading="Promotional Messages" classnames="flex justify-between h-[100vh] w-[75%] space-x-4">
             <div className="flex w-[80%] justify-between">
-              <form onSubmit={(e) => { e.preventDefault(); sendBulkMessage(); }} className="w-[60%]">
+              <form onSubmit={(e) => { e.preventDefault(); }} className="w-[60%]">
                 {renderFormFields()}
                 <div className="flex justify-start my-4">
-                  <Button text={loading ? <Spinner /> : "Submit"} classnames="bg-green-500 hover:bg-green-600 px-8" type="submit" disabled={loading} />
+                  <Button
+                    text={loading ? <Spinner /> : "Submit"}
+                    classnames="bg-green-500 hover:bg-green-600 px-8"
+                    onClick={() => sendBulkMessage(selectedTemplate)}
+                    disabled={loading}
+                  />
                 </div>
               </form>
               <div className="absolute right-[3%] mt-[13%]">

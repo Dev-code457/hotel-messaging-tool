@@ -18,7 +18,7 @@ export function handleAppError(error: unknown) {
   }
 
   if (process.env.NODE_ENV === "development") {
- 
+
   }
   return NextResponse.json(
     { message: "Internal server error" }, { status: 500 }

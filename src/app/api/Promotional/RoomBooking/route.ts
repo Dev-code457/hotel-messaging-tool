@@ -30,6 +30,7 @@ export async function POST(req: Request) {
 
 
     const validationErrors = validateCustomerInput({ ownerHotelName, date, phoneNumber, address, sliderValue });
+    
     if (validationErrors.length > 0) {
       throw new AppError(400, validationErrors.join(", "));
     }

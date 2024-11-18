@@ -15,19 +15,20 @@ export const usePasswordReset = (token: string) => {
 
   const dispatch = useDispatch()
   const hotelDetail = useSelector((state: RootState) => state.hotel.details);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        dispatch(hotelActions.fetchHotelDetailsPending());
-        const data = await fetchHotelData();
-        dispatch(hotelActions.fetchHotelDetailsSuccess(data));
-      } catch (error: any) {
-        dispatch(hotelActions.fetchHotelDetailsFailure(error.message));
-      }
-    };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       dispatch(hotelActions.fetchHotelDetailsPending());
+  //       const data = await fetchHotelData();
+  //       dispatch(hotelActions.fetchHotelDetailsSuccess(data));
+  //     } catch (error: any) {
+  //       dispatch(hotelActions.fetchHotelDetailsFailure(error.message));
+  //     }
+  //   };
 
-    fetchData();
-  }, [dispatch]);
+  //   fetchData();
+  // }, [dispatch]);
+  console.log(hotelDetail, "mdsklfms;af");
 
   const resetPassword = async (password: string, confirmPassword: string) => {
     setLoading(true);
@@ -42,7 +43,7 @@ export const usePasswordReset = (token: string) => {
       });
       toast.success(response.data.message || "Password reset successfully!");
     } catch (err: any) {
-      const message = err?.data?.message || "Something went wrong!";
+      const message = err?.message || "Something went wrong!";
       setError(message);
       toast.error(message);
     } finally {

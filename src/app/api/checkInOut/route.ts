@@ -11,7 +11,7 @@ export async function POST(req: Request) {
   try {
     await connectToDatabase();
     const body = await req.json();
-    const { phoneNumber, messageType, isPromotionalList, spending } = body;
+    const { phoneNumber, messageType, isPromotionalList, userSpending } = body;
 
     const token = req.headers.get("Authorization")?.replace("Bearer ", "");
 
@@ -48,11 +48,11 @@ export async function POST(req: Request) {
         });
       } else {
         // Check if userSpending is provided and valid
-        if (spending) {
-          const newCustomer = new Customer({ phoneNumber, spending });
+        if (userSpending) {
+          const newCustomer = new Customer({ phoneNumber, userSpending });
           await newCustomer.save();
           return sendSuccessResponse(200, {
-            message: `Message is sent and ${phoneNumber} with spending ${spending} has been added to the promotional list.`,
+            message: `Message is sent and ${phoneNumber} with spending ${userSpending} has been added to the promotional list.`,
           });
         } else {
           throw new AppError(400, "User spending is required to add to promotional list.");

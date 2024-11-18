@@ -70,6 +70,8 @@ export async function POST(req: Request) {
     });
 
   } catch (error) {
+    console.log(error);
+
     return handleAppError(error);
   }
 }

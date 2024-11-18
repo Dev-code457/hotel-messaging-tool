@@ -15,6 +15,8 @@ interface FeedbackResponse {
 const useAddNumber = () => {
     const [loading, setLoading] = useState(false);
     const [bulkLoading, setBulkLoading] = useState(false);
+    const [progress, setProgress] = useState(0);
+    const [bulkErrors, setBulkErrors] = useState<string[]>([]); // Store errors for UI display
 
     // Helper function to validate phone number
     const isValidPhoneNumber = (phoneNumber: string): boolean => {
@@ -22,25 +24,37 @@ const useAddNumber = () => {
         return phoneRegex.test(phoneNumber);
     };
 
+    // Normalize phone number input
+    const normalizePhoneNumber = (phoneNumber: string): string => {
+        return phoneNumber;
+    };
+
     // Single customer submit
     const handleSubmitFeedback = async (phoneNumber: string, email: string, name: string) => {
-        if (!phoneNumber) {
+        const normalizedPhoneNumber = normalizePhoneNumber(phoneNumber);
+
+        if (!normalizedPhoneNumber) {
             toast.error("Phone Number cannot be empty!");
             return false;
         }
 
-        if (!isValidPhoneNumber(phoneNumber)) {
+        if (!isValidPhoneNumber(normalizedPhoneNumber)) {
             toast.error("Phone number must be a 10-digit number.");
             return false;
         }
 
         setLoading(true);
         try {
-            const data = await axiosPost<FeedbackResponse, FeedbackInput>("/api/customers", { phoneNumber, name, email });
+            await axiosPost<FeedbackResponse, FeedbackInput>("/api/customers", {
+                phoneNumber: normalizedPhoneNumber,
+                name,
+                email,
+            });
             toast.success("Customer added successfully!");
             return true;
         } catch (error: any) {
-            toast.error(error.message);
+            const errorMessage = error?.response?.data?.message || error.message || "An unexpected error occurred.";
+            toast.error(`Failed to add customer: ${errorMessage}`);
             return false;
         } finally {
             setLoading(false);
@@ -55,39 +69,77 @@ const useAddNumber = () => {
         }
 
         setBulkLoading(true);
+        setProgress(0);
+        setBulkErrors([]);
+
         const invalidEntries: string[] = [];
-        const existingNumbers: string[] = [];
+        const successfulEntries: number[] = [];
+        const processedNumbers = new Set<string>();
+        const totalEntries = csvData.length;
 
         try {
-            for (const entry of csvData) {
+            for (let i = 0; i < totalEntries; i++) {
+                const entry = csvData[i];
                 const { phoneNumber, email, name } = entry;
+                const serialNumber = i + 1;
+                const normalizedPhoneNumber = normalizePhoneNumber(phoneNumber);
 
-                if (!isValidPhoneNumber(phoneNumber)) {
-                    invalidEntries.push(`Invalid phone number for ${name}: ${phoneNumber}`);
+                // Validate phone number
+                if (!normalizedPhoneNumber || !isValidPhoneNumber(normalizedPhoneNumber)) {
+                    invalidEntries.push(
+                        `Row ${serialNumber}: Invalid phone number (${phoneNumber || "N/A"})`
+                    );
                     continue;
                 }
-                await axiosPost<FeedbackResponse, FeedbackInput>("/api/customers", { phoneNumber, name, email });
+
+                // Avoid duplicate phone numbers within the same CSV
+                if (processedNumbers.has(normalizedPhoneNumber)) {
+                    console.log("Yesafnjasf njsafnjsdnfjsdnfjskadf jsdfjskdf ");
+
+                    invalidEntries.push(`Row ${serialNumber}: Duplicate phone number (${normalizedPhoneNumber})`);
+                    continue;
+                }
+
+                try {
+                    await axiosPost<FeedbackResponse, FeedbackInput>("/api/customers", {
+                        phoneNumber: normalizedPhoneNumber,
+                        name,
+                        email,
+                    });
+                    processedNumbers.add(normalizedPhoneNumber);
+                    successfulEntries.push(serialNumber);
+                } catch (error: any) {
+                    const errorMessage = error?.response?.data?.message || "Failed to add entry.";
+                    invalidEntries.push(`Row ${serialNumber}: ${errorMessage}`);
+                }
+
+                // Update progress
+                setProgress(Math.round(((i + 1) / totalEntries) * 100));
             }
 
-            // Show feedback for invalid and existing numbers
-            if (invalidEntries.length > 0) {
-                toast.error(`Some entries were invalid:\n${invalidEntries.join("\n")}`);
+            // Update error state for UI display
+            setBulkErrors(invalidEntries);
+
+            // Summary Notifications
+            if (successfulEntries.length > 0) {
+                toast.success(`${successfulEntries.length} entries saved successfully!`);
             }
-            if (existingNumbers.length > 0) {
-                toast.error(`The following numbers already exist:\n${existingNumbers.join("\n")}`);
-            } else {
-                toast.success("All valid CSV entries processed successfully!");
+            if (invalidEntries.length > 0) {
+                toast.error(`${invalidEntries.length} entries encountered errors. Check details below.`);
             }
         } catch (error: any) {
             toast.error(`Error processing CSV: ${error.message}`);
         } finally {
             setBulkLoading(false);
+            setProgress(0); // Reset progress after completion
         }
     };
 
     return {
         loading,
         bulkLoading,
+        progress,
+        bulkErrors, // For detailed error display in UI
         handleSubmitFeedback,
         handleSubmitCsvFeedback,
     };

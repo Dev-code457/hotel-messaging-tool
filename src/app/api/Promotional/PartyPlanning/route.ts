@@ -13,7 +13,15 @@ export async function POST(req: Request) {
     await connectToDatabase()
 
     const body = await req.json();
-    const { ownerHotelName, discount, phoneNumber, address, sliderValue } = body;
+
+
+    const { ownerHotelName, time, date, phoneNumber, address, sliderValue } = body;
+    const validationErrors = validateCustomerInput({ ownerHotelName, time, date, phoneNumber, address, sliderValue });
+    if (validationErrors.length > 0) {
+      console.log(validationErrors.join(", "));
+      
+      throw new AppError(400, validationErrors.join(", "));
+    }
     const token = req.headers.get("Authorization")?.replace("Bearer ", "");
     const secret = process.env.JWT_SECRET;
     if (!secret) {
@@ -29,10 +37,7 @@ export async function POST(req: Request) {
     const hotelName = params?.params?.dbName
 
 
-    const validationErrors = validateCustomerInput({ ownerHotelName, discount, phoneNumber, address, sliderValue });
-    if (validationErrors.length > 0) {
-      throw new AppError(400, validationErrors.join(", "));
-    }
+
     const Customer = createCustomersModel(hotelName)
     const customers = await Customer.find({});
     if (!customers || customers.length === 0) {
@@ -47,10 +52,11 @@ export async function POST(req: Request) {
     const sendPromises = selectedCustomers.map(async (customer) => {
 
       const parameters = [
-        { type: "TEXT", text: discount },
+        { type: "TEXT", text: time },
         { type: "TEXT", text: hotelName },
         { type: "TEXT", text: phoneNumber },
         { type: "TEXT", text: address },
+        { type: "TEXT", text: date },
       ];
 
       try {
@@ -70,6 +76,8 @@ export async function POST(req: Request) {
     });
 
   } catch (error) {
+    console.log(error);
+    
     return handleAppError(error);
   }
 }

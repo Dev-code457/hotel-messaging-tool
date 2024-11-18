@@ -31,7 +31,7 @@ function CheckInOut() {
 
   return (
     <SideLayout>
-      
+
       <Profile onSelectForm={undefined} />
       <div className="sm:ml-64 flex justify-center">
         <div className="flex flex-col h-screen justify-center items-center w-full bg-gray-50">
@@ -44,7 +44,7 @@ function CheckInOut() {
                 <form className={`w-[100%]${isPromotionalList ? "-mt-[30%}" : "mt-16"}`} onSubmit={(e) => e.preventDefault()}>
                   <Input
                     classnames="p"
-                    type="number"
+                    type="tel"
                     value={phoneNumber}
                     required
                     placeHolder="Enter Phone Number"

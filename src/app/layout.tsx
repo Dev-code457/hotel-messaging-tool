@@ -13,7 +13,7 @@ export default function RootLayout({
 
     <html lang="en">
       <body className={`antialiased`}>
-
+      <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
         <ReduxProvider>
           <Toaster richColors />
           <NextTopLoader color="#43a047"

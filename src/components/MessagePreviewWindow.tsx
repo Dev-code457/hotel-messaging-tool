@@ -139,7 +139,7 @@ export const MessagePreviewWindow: React.FC<MessagePreview> = ({
     : messageContent;
 
   return (
-    <div className="flex flex-col justify-center items-center ml-10 z-0 relative">
+    <div className="flex flex-col justify-center items-center ml-10 z-0 relative ">
       <div
         className="w-[75%] max-w-[370px] flex flex-col justify-start items-start text-[11.5px] rounded-xl bg-white p-4 z-10 text-left font-sans overflow-y-scroll text-black"
         style={{

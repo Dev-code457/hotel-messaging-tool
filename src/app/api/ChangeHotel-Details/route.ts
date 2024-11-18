@@ -91,7 +91,7 @@ export async function GET(req: Request) {
         const dbName = params?.params?.dbName
         const User = createUserModel(dbName)
         const user = await HotelModel.findOne({ email })
-        const userDetails = await User.findOne({ _id: hotelID })
+        const userDetails = await User.findOne({ email: email })
 
   
         return sendSuccessResponse(200, {

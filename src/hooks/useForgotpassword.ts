@@ -12,20 +12,23 @@ const useForgotPassword = () => {
   const [error, setError] = useState<string | null>(null);
   const dispatch = useDispatch()
   const hotelDetail = useSelector((state: RootState) => state.hotel.details);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        dispatch(hotelActions.fetchHotelDetailsPending());
-        const data = await fetchHotelData();
-        dispatch(hotelActions.fetchHotelDetailsSuccess(data));
-      } catch (error: any) {
-        dispatch(hotelActions.fetchHotelDetailsFailure(error.message));
-      }
-    };
 
-    fetchData();
-  }, [dispatch]);
 
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       try {
+//         dispatch(hotelActions.fetchHotelDetailsPending());
+//         const data = await fetchHotelData();
+//         dispatch(hotelActions.fetchHotelDetailsSuccess(data));
+//       } catch (error: any) {
+//         dispatch(hotelActions.fetchHotelDetailsFailure(error.message));
+//       }
+//     };
+
+//     fetchData();
+//   }, [dispatch]);
+
+// console.log(hotelDetail);
 
   const forgotPassword = async (email: string) => {
     setLoading(true);
@@ -33,8 +36,7 @@ const useForgotPassword = () => {
 
     try {
       const response = await axiosPut("/api/auth/forgot-password", {
-        email,
-        dbName: hotelDetail?.HotelDetials?.dbName,
+        email
       });
       toast.success(response.data.message || "Reset link sent successfully!");
     } catch (error: any) {

@@ -123,9 +123,9 @@ function SideLayout({ children }: { children: ReactNode }) {
                   );
                 })}
 
-                <div className="text-xl text-white font-semibold absolute bottom-0">
+                {/* <div className="text-xl text-white font-semibold absolute bottom-0">
                   Messages Left: {value}
-                </div>
+                </div> */}
               </>
             ) : null}
           </ul>

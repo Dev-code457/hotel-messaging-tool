@@ -25,7 +25,7 @@ export const validateCustomerInput = ({
   address,
   sliderValue,
   date,
-  time
+  time,
 }: {
   ownerHotelName?: string;
   discount?: string;
@@ -38,7 +38,7 @@ export const validateCustomerInput = ({
   const errors: string[] = [];
 
   if (ownerHotelName !== undefined) {
-    if (!ownerHotelName.trim()) {
+    if (!ownerHotelName) {
       errors.push("Hotel name is required.");
     } else if (ownerHotelName.length > 100) {
       errors.push("Hotel name must be less than 100 characters.");
@@ -46,7 +46,7 @@ export const validateCustomerInput = ({
   }
 
   if (discount !== undefined) {
-    if (!discount.trim()) {
+    if (!discount) {
       errors.push("Discount is required.");
     } else if (discount.length > 10) {
       errors.push("Discount must be less than 10 characters.");
@@ -54,15 +54,15 @@ export const validateCustomerInput = ({
   }
 
   if (phoneNumber !== undefined) {
-    if (!phoneNumber.trim()) {
+    if (!phoneNumber) {
       errors.push("Phone number is required.");
     } else if (!/^\d{10,15}$/.test(phoneNumber)) {
-      errors.push("Phone number must be between 10 and 15 digits.");
+      errors.push("Phone number must be between 10 digits.");
     }
   }
 
   if (address !== undefined) {
-    if (!address.trim()) {
+    if (!address) {
       errors.push("Address is required.");
     } else if (address.length > 200) {
       errors.push("Address must be less than 200 characters.");
@@ -73,24 +73,35 @@ export const validateCustomerInput = ({
     if (typeof sliderValue !== "number" || sliderValue <= 0) {
       errors.push("Slider value must be a positive number.");
     }
+    // Optional: Add upper bound for slider value if needed
+    // else if (sliderValue > MAX_SLIDER_VALUE) {
+    //   errors.push("Slider value must not exceed the maximum limit.");
+    // }
   }
 
   if (date !== undefined) {
-    // Date validation can be customized as needed
-    if (!date.trim()) {
+    if (!date) {
       errors.push("Date is required.");
     }
+    // Optional: Add specific date format validation
+    // else if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    //   errors.push("Date must be in YYYY-MM-DD format.");
+    // }
   }
 
   if (time !== undefined) {
-    // Time validation can be customized as needed
-    if (!time.trim()) {
+    if (!time) {
       errors.push("Time is required.");
     }
+    // Optional: Add specific time format validation
+    // else if (!/^\d{2}:\d{2}$/.test(time)) {
+    //   errors.push("Time must be in HH:mm format.");
+    // }
   }
 
   return errors;
 };
+
 
 
 export const validateCustomerPhoneNumber = ({
@@ -122,7 +133,7 @@ export const validateCustomerPhoneNumber = ({
 export const validatePasswordInput = ({
   password,
   newPassword,
-}:{password: string, newPassword: string}): string[] => {
+}: { password: string, newPassword: string }): string[] => {
   const errors: string[] = [];
 
   // Check if passwords are provided
@@ -149,8 +160,8 @@ export const validatePasswordInput = ({
 
 
 export const validateForgot = ({
- email
-}:{email: string}): string[] => {
+  email
+}: { email: string }): string[] => {
   const errors: string[] = [];
 
   if (!email) {
@@ -203,9 +214,9 @@ export const validateHotelDetails = ({
 
   if (!hotelName) {
     errors.push("Hotel Name is required.");
-  } else if (hotelName.length < 3) { 
+  } else if (hotelName.length < 3) {
     errors.push("Hotel Name must be a 3 Characters Long");
-  } 
+  }
 
   return errors;
 };

@@ -8,20 +8,20 @@ import { AppError, handleAppError } from "@/utils/errorHandler";
 
 export async function POST(req: Request) {
   try {
-    await connectToDatabase(); 
+    await connectToDatabase();
     const { email, password } = await req.json();
 
     const hotelMetadata = await HotelModel.findOne({ email });
 
     if (!hotelMetadata) {
-      throw new AppError(404, "Hotel not found.");
+      throw new AppError(404, "User not found.");
     }
 
     // Step 2: Get the dbName of the hotel from metadata
     const { dbName } = hotelMetadata;
 
     // Step 3: Connect to the hotel-specific database dynamically
- // Connect to the hotel-specific DB
+    // Connect to the hotel-specific DB
 
     // Step 4: Create a dynamic user model for the hotel-specific database
     const User = createUserModel(dbName);
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
     // Step 6: Check if the provided password matches the stored hash
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new AppError(401, "Invalid Credentials");
+      throw new AppError(401, "Invalid Password");
     }
 
     // Step 7: Generate a token for the user

@@ -7,13 +7,20 @@ import { sendErrorResponse, sendSuccessResponse } from "@/utils/responseHandler"
 import { JwtPayload } from "jsonwebtoken";
 import { createUserModel } from "@/models/user";
 import jwt from "jsonwebtoken"
+import HotelModel from "@/models/hotel";
 
 export async function PUT(req: Request) {
 
 
+  await connectToDatabase()
   const body = await req.json();
-  const { email, dbName } = body;
-  connectToDatabase(dbName)
+  const { email } = body;
+  const hotelMetadata = await HotelModel.findOne({ email });
+
+  if (!hotelMetadata) {
+    throw new AppError(404, "User not found.");
+  }
+  const dbName = hotelMetadata?.dbName;
   const User = createUserModel(dbName)
 
   const validationError = validateForgot({ email });

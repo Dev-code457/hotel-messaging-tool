@@ -9,6 +9,7 @@ import { createUserModel } from "@/models/user";
 export async function PUT(req: Request) {
   try {
     const token = req.headers.get("Authorization")?.replace("Bearer ", "");
+    await connectToDatabase(); // Connect to database once
     if (!token) {
       throw new AppError(401, "No token found. Authentication failed.");
     }
@@ -27,7 +28,6 @@ export async function PUT(req: Request) {
 
     const dbName = params?.params?.dbName;
     const userId = params?.params?.id;
-    await connectToDatabase(dbName); // Connect to database once
     const User = createUserModel(dbName);
 
     const body = await req.json();

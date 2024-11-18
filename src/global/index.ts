@@ -4,6 +4,7 @@ export async function fetchHotelData() {
     try {
       const response = await axiosGet('/api/ChangeHotel-Details');
       const data = response.data;
+  console.log(data);
   
       return data;
     } catch (error) {

@@ -1,7 +1,8 @@
 import React from "react";
-
+import Image from "next/image";
+import gif from "@/app/public/assets/Animation - 1731931073963 (1).gif"
 export default function Confirmation({ isOpen, onClose, onConfirm }: any) {
-    if (!isOpen) return null; // Don't render if not open
+    if (!isOpen) return null; 
 
     return (
         <div
@@ -33,22 +34,8 @@ export default function Confirmation({ isOpen, onClose, onConfirm }: any) {
                         </svg>
                         <span className="sr-only">Close modal</span>
                     </button>
-                    <div className="p-4 text-center">
-                        <svg
-                            className="mx-auto mb-4 text-red-600 w-12 h-12"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 20 20"
-                        >
-                            <path
-                                stroke="currentColor"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                            />
-                        </svg>
+                    <div className="p-4 flex flex-col justify-center items-center">
+                        <Image src={gif} className="w-20 h-20 flex justify-center" alt="GIF" />
                         <h3 className="mb-5 text-lg font-normal text-gray-300">
                             Are you sure you want to log out?
                         </h3>

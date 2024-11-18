@@ -107,7 +107,7 @@ function Page() {
               />
               <div className="flex justify-start -mb-5 py-3">
                 <Button
-                  text={loading ? <div className={"flex gap-2 font-bold justify-center items-center"}><Spinner /> Logging In...</div> : "Submit"}
+                  text={loading ? <div className={"flex gap-2 font-bold justify-center items-center"}><Spinner /> Please Wait...</div> : "SignUp"}
                   classnames="bg-green-500 hover:bg-green-600"
                   type="submit"
                   disabled={loading}
