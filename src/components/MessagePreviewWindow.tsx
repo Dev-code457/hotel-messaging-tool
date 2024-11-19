@@ -28,22 +28,22 @@ const messageTemplates: any = {
   discounts: (hotelName: string, discount: number | undefined | null, phoneNumber: number | undefined | null, address: string) => (
     <p>
       🌟 <strong>
-        {discount ? `${discount}% Off` : <span className="text-gray-500 underline font-bold">Discount</span>}{" "}
+        {discount ? `${discount}% Off` : <span className="text-green-700 underline font-bold">Discount</span>}{" "}
         Food with Advance Booking! 🌟
       </strong>
       <br />
       Book your stay at{" "}
-      {hotelName || <span className="text-gray-500 underline font-bold">Hotel Name</span>}{" "}
+      {hotelName || <span className="text-green-700 underline font-bold">Hotel Name</span>}{" "}
       Hotel and enjoy{" "}
-      {discount ? `${discount}% Off` : <span className="text-gray-500 underline font-bold">Discount</span>}{" "}
+      {discount ? `${discount}% Off` : <span className="text-green-700 underline font-bold">Discount</span>}{" "}
       on all food orders!
       <br />
       <br />
       📞 <strong>Reservations:</strong> Call{" "}
-      {phoneNumber || <span className="text-gray-500 underline font-bold">Phone Number</span>}
+      {phoneNumber || <span className="text-green-700 underline font-bold">Phone Number</span>}
       <br />
       📍 <strong>Address:</strong>{" "}
-      {address || <span className="text-gray-500 underline font-bold">Address</span>}
+      {address || <span className="text-green-700 underline font-bold">Address</span>}
       <br />
       <br />
       <strong>Don’t miss out—reserve now!</strong>
@@ -83,8 +83,8 @@ const messageTemplates: any = {
       <p>💍 Engagements</p>
       <p>👩‍👧 Kitty Parties</p>
       <p>🌼 Haldi Ceremonies</p>
-      <p>Let us help you create the perfect atmosphere for your special event. For inquiries and bookings, please contact us at {phoneNumber}</p>
-      <p>Best regards,<br />{hotelName} Team</p>
+      <p>Let us help you create the perfect atmosphere for your special event. For inquiries and bookings, please contact us at <p>{phoneNumber ? `${phoneNumber}` : <span className="text-green-700 underline font-bold">PhoneNumber</span>}</p></p>
+      <p>Best regards,<br />{hotelName ? `${hotelName} Team` : <span className="text-green-700 underline font-bold">HotelName</span>}<br /></p>
     </>
   ),
 };

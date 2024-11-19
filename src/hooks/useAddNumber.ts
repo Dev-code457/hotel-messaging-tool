@@ -16,7 +16,7 @@ const useAddNumber = () => {
     const [loading, setLoading] = useState(false);
     const [bulkLoading, setBulkLoading] = useState(false);
     const [progress, setProgress] = useState(0);
-    const [bulkErrors, setBulkErrors] = useState<string[]>([]); // Store errors for UI display
+    const [bulkErrors, setBulkErrors] = useState<string[]>([]);
 
     // Helper function to validate phone number
     const isValidPhoneNumber = (phoneNumber: string): boolean => {
@@ -26,8 +26,11 @@ const useAddNumber = () => {
 
     // Normalize phone number input
     const normalizePhoneNumber = (phoneNumber: string): string => {
-        return phoneNumber;
+        return phoneNumber.trim();
     };
+
+    // Validate other fields
+
 
     // Single customer submit
     const handleSubmitFeedback = async (phoneNumber: string, email: string, name: string) => {
@@ -42,6 +45,8 @@ const useAddNumber = () => {
             toast.error("Phone number must be a 10-digit number.");
             return false;
         }
+
+    
 
         setLoading(true);
         try {
@@ -84,7 +89,7 @@ const useAddNumber = () => {
                 const serialNumber = i + 1;
                 const normalizedPhoneNumber = normalizePhoneNumber(phoneNumber);
 
-                // Validate phone number
+                // Validate fields
                 if (!normalizedPhoneNumber || !isValidPhoneNumber(normalizedPhoneNumber)) {
                     invalidEntries.push(
                         `Row ${serialNumber}: Invalid phone number (${phoneNumber || "N/A"})`
@@ -92,10 +97,10 @@ const useAddNumber = () => {
                     continue;
                 }
 
+          
+
                 // Avoid duplicate phone numbers within the same CSV
                 if (processedNumbers.has(normalizedPhoneNumber)) {
-                    console.log("Yesafnjasf njsafnjsdnfjsdnfjskadf jsdfjskdf ");
-
                     invalidEntries.push(`Row ${serialNumber}: Duplicate phone number (${normalizedPhoneNumber})`);
                     continue;
                 }
@@ -109,7 +114,7 @@ const useAddNumber = () => {
                     processedNumbers.add(normalizedPhoneNumber);
                     successfulEntries.push(serialNumber);
                 } catch (error: any) {
-                    const errorMessage = error?.response?.data?.message || "Failed to add entry.";
+                    const errorMessage = error?.message || "Failed to add entry.";
                     invalidEntries.push(`Row ${serialNumber}: ${errorMessage}`);
                 }
 
@@ -125,8 +130,12 @@ const useAddNumber = () => {
                 toast.success(`${successfulEntries.length} entries saved successfully!`);
             }
             if (invalidEntries.length > 0) {
-                toast.error(`${invalidEntries.length} entries encountered errors. Check details below.`);
+                toast.error(
+                    `${invalidEntries.length} entries encountered errors. Please review the error details below.`,
+                    { duration: 5000 }
+                );
             }
+            
         } catch (error: any) {
             toast.error(`Error processing CSV: ${error.message}`);
         } finally {
@@ -135,13 +144,18 @@ const useAddNumber = () => {
         }
     };
 
+    const resetBulkErrors = () => {
+        setBulkErrors([]);
+      };
+
     return {
         loading,
         bulkLoading,
         progress,
-        bulkErrors, // For detailed error display in UI
+        bulkErrors,
         handleSubmitFeedback,
         handleSubmitCsvFeedback,
+        resetBulkErrors,
     };
 };
 

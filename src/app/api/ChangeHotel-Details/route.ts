@@ -54,8 +54,8 @@ export async function PUT(req: Request, { params }: { params: any }) {
         }
 
         return sendSuccessResponse(200, {
-            message: "Hotel updated successfully",
-        }); 
+            message: "Hotel Name updated successfully",
+        });
     } catch (error: unknown) {
         console.error("Error during hotel update:", error);
         if (error instanceof AppError) {
@@ -93,7 +93,7 @@ export async function GET(req: Request) {
         const user = await HotelModel.findOne({ email })
         const userDetails = await User.findOne({ email: email })
 
-  
+
         return sendSuccessResponse(200, {
             HotelDetials: user, UserDetails: userDetails
         });

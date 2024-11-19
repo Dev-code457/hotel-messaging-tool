@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     await connectToDatabase()
 
     const body = await req.json();
-    const { ownerHotelName, time, discount, date, sliderValue } = body;
+    const { ownerHotelName, phoneNumber ,sliderValue} = body;
     const token = req.headers.get("Authorization")?.replace("Bearer ", "");
     const secret = process.env.JWT_SECRET;
     if (!secret) {
@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     const hotelName = params?.params?.dbName
 
 
-    const validationErrors = validateCustomerInput({ ownerHotelName, time, discount, date, sliderValue });
+    const validationErrors = validateCustomerInput({ ownerHotelName, phoneNumber,sliderValue });
     if (validationErrors.length > 0) {
       throw new AppError(400, validationErrors.join(", "));
     }
@@ -47,10 +47,10 @@ export async function POST(req: Request) {
     const sendPromises = selectedCustomers.map(async (customer) => {
 
       const parameters = [
-        { type: "TEXT", text: discount },
-        { type: "TEXT", text: hotelName },
-        { type: "TEXT", text: discount },
-        { type: "TEXT", text: date },
+      
+        { type: "TEXT", text: ownerHotelName },
+        { type: "TEXT", text: phoneNumber },
+    
       ];
 
       try {

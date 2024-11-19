@@ -65,7 +65,7 @@ function ChangePassword() {
   }, [dispatch, isLoading]);
 
 
-
+  console.log(hotelDetail)
   return (
     <SideLayout>
       <Profile onSelectForm={undefined} />
@@ -103,7 +103,7 @@ function ChangePassword() {
                         }
 
                         <Button
-                          text="Edit"
+                          text="Save"
                           classnames={`py-3 px-8 bg-blue-500 hover:bg-blue-600 `}
                           type="submit"
                           disabled={isLoading}

@@ -38,6 +38,8 @@ export async function POST(req: Request) {
     // Return success response
     return sendSuccessResponse(201, { message: "Signup successful", token });
   } catch (error) {
+    console.log(error);
+
     return handleAppError(error);  // Error handling in case of failures
   }
 }

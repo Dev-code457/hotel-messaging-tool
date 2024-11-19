@@ -30,7 +30,7 @@ export async function POST(req: Request) {
 
 
 
-        const validationErrors = validateCustomerPhoneNumber({ phoneNumber });
+        const validationErrors = validateCustomerPhoneNumber({ phoneNumber,name, email });
         if (validationErrors.length > 0) {
             throw new AppError(400, validationErrors.join(", "));
         }

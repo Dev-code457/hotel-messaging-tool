@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     const validationErrors = validateCustomerInput({ ownerHotelName, time, date, phoneNumber, address, sliderValue });
     if (validationErrors.length > 0) {
       console.log(validationErrors.join(", "));
-      
+
       throw new AppError(400, validationErrors.join(", "));
     }
     const token = req.headers.get("Authorization")?.replace("Bearer ", "");
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
 
       const parameters = [
         { type: "TEXT", text: time },
-        { type: "TEXT", text: hotelName },
+        { type: "TEXT", text: ownerHotelName },
         { type: "TEXT", text: phoneNumber },
         { type: "TEXT", text: address },
         { type: "TEXT", text: date },
@@ -77,7 +77,7 @@ export async function POST(req: Request) {
 
   } catch (error) {
     console.log(error);
-    
+
     return handleAppError(error);
   }
 }

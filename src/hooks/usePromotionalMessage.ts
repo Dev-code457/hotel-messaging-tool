@@ -40,17 +40,28 @@ const usePromotionalMessage = (initialHotelName: string) => {
             setDate(null); // Handle null values
         }
     };
-    
 
-    const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const [hour, minute] = e.target.value.split(":");
-        const hourNumber = parseInt(hour, 10);
-        const ampm = hourNumber >= 12 ? "PM" : "AM";
-        const formattedHour = hourNumber % 12 || 12;
-        const formattedTime = `${formattedHour}:${minute} ${ampm}`;
+    const handleTimeChange = (e: any) => {
+        const timeString = e.target.value; // Get the selected time in "HH:mm" format
+        const currentDate = new Date(); // Get today's date
+        const [hour, minute] = timeString.split(":"); // Split the time into hours and minutes
+
+        // Set the current date with the selected time
+        currentDate.setHours(parseInt(hour, 10));
+        currentDate.setMinutes(parseInt(minute, 10));
+        currentDate.setSeconds(0); // Set seconds to 0
+
+        // Format the date as weekday, time, and AM/PM
+        const formattedTime = new Intl.DateTimeFormat("en-GB", {
+            weekday: "short",  // Short format for the weekday (e.g., Mon, Tue)
+            hour: "2-digit",   // Hour with two digits
+            minute: "2-digit", // Minute with two digits
+            hour12: true,      // Use 12-hour format (AM/PM)
+        }).format(currentDate);
+
+        // Set the formatted time
         setTime(formattedTime);
     };
-
 
     const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPhoneNumber(e.target.value);
@@ -71,7 +82,7 @@ const usePromotionalMessage = (initialHotelName: string) => {
 
             // Define the request payload
             const eventBooking = {
-                ownerHotelName, time, discount, date, sliderValue
+                ownerHotelName, phoneNumber, sliderValue
             };
             const discountpayload = {
                 ownerHotelName, discount, phoneNumber, address, sliderValue
@@ -113,7 +124,7 @@ const usePromotionalMessage = (initialHotelName: string) => {
         } catch (error: any) {
             console.log(error);
 
-            toast.error(error.message  || "An unknown error occurred.");
+            toast.error(error.message || "An unknown error occurred.");
         } finally {
             setLoading(false);
         }

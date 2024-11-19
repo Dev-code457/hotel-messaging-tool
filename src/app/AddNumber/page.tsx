@@ -20,8 +20,9 @@ function PromotionalNumber() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [fileName, setFileName] = useState<string | null>(null);
-  const { handleSubmitFeedback, loading, handleSubmitCsvFeedback, bulkLoading } = useAddNumber();
+  const { resetBulkErrors, bulkErrors, handleSubmitFeedback, loading, handleSubmitCsvFeedback, bulkLoading } = useAddNumber();
   const [csvData, setCsvData] = useState<any[]>([]);
+
 
 
   const [showTable, setShowTable] = useState(false);
@@ -81,11 +82,11 @@ function PromotionalNumber() {
 
       <div className="sm:ml-64 flex justify-center items-center">
         <div className="flex flex-col h-screen justify-center items-center w-full bg-gray-50">
-          {isChecked && (
-            <div className="flex justify-center items-center top-0 right-0 w-full -mt-20 mb-6">
+          {/* {isChecked && (
+            <div className="flex justify-center items-center top-0 right-0 w-full  mb-6">
               <ProfileInfoPopover />
             </div>
-          )}
+          )} */}
 
           <div className="flex justify-center items-center -mt-10 w-full mb-10">
             <Switcher11 handleCheckboxChange={handleCheckboxChange} isChecked={isChecked} />
@@ -162,6 +163,59 @@ function PromotionalNumber() {
                   />
                 </div>
               </Section>
+              <div className="fixed">
+                {bulkErrors.length > 0 && (
+                  <div className="mt-6 w-full max-w-md mx-auto p-6">
+                    <div className="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-md relative">
+                      <strong className="font-bold">Error Details:</strong>
+                      <p className="mt-1">We encountered {bulkErrors.length} errors during the upload:</p>
+                      <button
+                        onClick={() => resetBulkErrors()}
+                        className="absolute top-2 right-2 text-red-600 hover:text-red-800 focus:outline-none"
+                      >
+                        <svg
+                          className="w-5 h-5"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                    <ul className="mt-3 bg-white border border-gray-200 rounded-lg shadow p-4 max-h-48 overflow-y-auto">
+                      {bulkErrors.map((error, index) => (
+                        <li
+                          key={index}
+                          className="text-sm text-red-600 flex items-start mb-2 last:mb-0"
+                        >
+                          <svg
+                            className="w-4 h-4 mr-2 text-red-500"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M12 9v2m0 4h.01M4.93 4.93l14.14 14.14m0-14.14L4.93 19.07"
+                            />
+                          </svg>
+                          {error}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
             </>
           )}
 

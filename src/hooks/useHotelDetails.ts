@@ -11,7 +11,6 @@ const useHotelDetails = (hotelId?: string) => {
     const handleChangeHotelDetails = async (e: React.FormEvent) => {
         e.preventDefault();
         
-        // Basic validation
         if (!hotelDetails) {
             toast.error("Fields are required.");
             return;
@@ -23,8 +22,7 @@ const useHotelDetails = (hotelId?: string) => {
             // Determine whether to use POST or PUT
             const url = `/api/ChangeHotel-Details`; // Same endpoint for both POST and PUT
 
-            const response = await axiosPut<{ message: string }, { hotelName: string }>(url, {  hotelName: hotelDetails })
-               
+            const response = await axiosPut<{ message: string }, { hotelName: string }>(url, { hotelName: hotelDetails })
 
             toast.success(response.data.message || "Hotel details saved successfully!");
             setHotelDetails("");

@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Section from "@/components/Layout";
 import Button from "@/components/Button";
 import SideLayout from "@/components/SideLayout";
@@ -14,12 +14,12 @@ import { SelectDefault } from "@/components/SelectTemplates";
 import Profile from "@/components/Profile";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import DatePicker from "react-datepicker";
+
 
 
 function PromotionalMessage() {
   const hotelDetail = useSelector((state: RootState) => state.hotel.details);
-  const [selectedTemplate, setSelectedTemplate] = useState("roomBooking");
+  const [selectedTemplate, setSelectedTemplate] = useState("discounts");
 
   const {
     discount,
@@ -40,6 +40,8 @@ function PromotionalMessage() {
     sendBulkMessage,
   } = usePromotionalMessage(hotelDetail?.hotelName || "");
 
+
+
   const renderFormFields = () => {
     switch (selectedTemplate) {
       case "discounts":
@@ -56,7 +58,7 @@ function PromotionalMessage() {
             <Input
               type="text"
               classnames="mb-3"
-              value={hotelDetail?.hotelName || ownerHotelName || ""}
+              value={ownerHotelName || ""}
               required
               placeHolder="Enter Hotel Name"
               onChange={(e) => setHotelName(e.target.value)}
@@ -82,11 +84,19 @@ function PromotionalMessage() {
       case "roomBooking":
         return (
           <>
+            <Input
+              type="date"
+              classnames="pt-6 mb-3"
+              required
+              value={date || ""}
+              onChange={handleDateChange}
+              placeHolder="Select Date"
+            />
 
             <Input
               type="text"
               classnames="mb-3"
-              value={ownerHotelName || ""}
+              value={hotelDetail?.UserDetails?.hotelName || ownerHotelName || ""}
               required
               placeHolder="Enter Hotel Name"
               onChange={(e) => setHotelName(e.target.value)}
@@ -109,15 +119,30 @@ function PromotionalMessage() {
             />
 
 
-            <ReactDatePicker
-              selected={date}
-              onChange={handleDateChange}
-              minDate={new Date()}
-              maxDate={new Date().setMonth(new Date().getMonth() + 3)} // 3 months in the future
-              className="w-full p-2 border rounded"
-              placeholderText="Select Date"
-              dateFormat="yyyy-MM-dd"
-              inline
+
+          </>
+        );
+
+      case "eventBooking":
+        return (
+          <>
+
+
+            <Input
+              type="text"
+              classnames="pt-6 mb-3"
+              value={hotelDetail?.UserDetails?.hotelName || ownerHotelName || ""}
+              required
+              placeHolder="Enter Hotel Name"
+              onChange={(e) => setHotelName(e.target.value)}
+            />
+            <Input
+              type="text"
+              classnames="mb-3"
+              value={phoneNumber || ""}
+              required
+              placeHolder="Enter Phone Number"
+              onChange={handlePhoneNumberChange}
             />
 
 
@@ -154,7 +179,7 @@ function PromotionalMessage() {
             <Input
               type="text"
               classnames="mb-3"
-              value={ownerHotelName || ""}
+              value={hotelDetail?.UserDetails?.hotelName || ownerHotelName || ""}
               required
               placeHolder="Enter Hotel Name"
               onChange={(e) => setHotelName(e.target.value)}
@@ -183,10 +208,12 @@ function PromotionalMessage() {
             setSelectedTemplate={setSelectedTemplate}
             selectedTemplate={selectedTemplate}
           />
-          <Section heading="Promotional Messages" classnames="flex justify-between h-[100vh] w-[75%] space-x-4">
+          <Section heading="Promotional Messages" classnames="flex mb-10 justify-between h-[95vh] w-[75%] space-x-4">
             <div className="flex w-[80%] justify-between">
               <form onSubmit={(e) => { e.preventDefault(); }} className="w-[60%]">
-                {renderFormFields()}
+                <div className="pt-2">
+                  {renderFormFields()}
+                </div>
                 <div className="flex justify-start my-4">
                   <Button
                     text={loading ? <Spinner /> : "Submit"}
@@ -217,5 +244,8 @@ function PromotionalMessage() {
     </SideLayout>
   );
 }
+
+
+
 
 export default PromotionalMessage;
