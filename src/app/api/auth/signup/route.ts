@@ -24,7 +24,7 @@ export async function POST(req: Request) {
       hotelName,      // Hotel name
       email,          // Hotel email
       dbName,         // Name of the specific database
-      hotelID,        // Unique hotel ID
+      hotelID
     });
     await newHotel.save();  // This saves the metadata in the centralized DB
 

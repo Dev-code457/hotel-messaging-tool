@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { axiosPost } from "../utils/axiosUtility";
+import * as Yup from "yup"; // Import Yup
 
 interface FeedbackInput {
     phoneNumber: string;
@@ -18,48 +19,35 @@ const useAddNumber = () => {
     const [progress, setProgress] = useState(0);
     const [bulkErrors, setBulkErrors] = useState<string[]>([]);
 
-    // Helper function to validate phone number
-    const isValidPhoneNumber = (phoneNumber: string): boolean => {
-        const phoneRegex = /^\d{10}$/;
-        return phoneRegex.test(phoneNumber);
-    };
-
-    // Normalize phone number input
-    const normalizePhoneNumber = (phoneNumber: string): string => {
-        return phoneNumber.trim();
-    };
-
-    // Validate other fields
-
+    // Define Yup validation schema
+    const validationSchema = Yup.object().shape({
+        phoneNumber: Yup.string()
+            .required("Phone number is required")
+            .matches(/^\d{10}$/, "Phone number must be a 10-digit number"),
+        email: Yup.string().email("Invalid email format"),
+        name: Yup.string().min(5, "Name Must Be 5 Characters Long"),
+    });
 
     // Single customer submit
     const handleSubmitFeedback = async (phoneNumber: string, email: string, name: string) => {
-        const normalizedPhoneNumber = normalizePhoneNumber(phoneNumber);
+        const input = { phoneNumber, email, name };
 
-        if (!normalizedPhoneNumber) {
-            toast.error("Phone Number cannot be empty!");
-            return false;
-        }
-
-        if (!isValidPhoneNumber(normalizedPhoneNumber)) {
-            toast.error("Phone number must be a 10-digit number.");
-            return false;
-        }
-
-    
-
-        setLoading(true);
         try {
-            await axiosPost<FeedbackResponse, FeedbackInput>("/api/customers", {
-                phoneNumber: normalizedPhoneNumber,
-                name,
-                email,
-            });
+            // Validate the input using Yup
+            await validationSchema.validate(input, { abortEarly: false });
+
+            setLoading(true);
+            await axiosPost<FeedbackResponse, FeedbackInput>("/api/customers", input);
             toast.success("Customer added successfully!");
             return true;
         } catch (error: any) {
-            const errorMessage = error?.response?.data?.message || error.message || "An unexpected error occurred.";
-            toast.error(`Failed to add customer: ${errorMessage}`);
+            if (error.name === "ValidationError") {
+                error.inner.forEach((err: Yup.ValidationError) => {
+                    toast.error(err.message);
+                });
+            } else {
+                toast.error(`Failed to add customer: ${error?.message || "An unexpected error occurred."}`);
+            }
             return false;
         } finally {
             setLoading(false);
@@ -87,31 +75,29 @@ const useAddNumber = () => {
                 const entry = csvData[i];
                 const { phoneNumber, email, name } = entry;
                 const serialNumber = i + 1;
-                const normalizedPhoneNumber = normalizePhoneNumber(phoneNumber);
+                const input = { phoneNumber, email, name };
 
-                // Validate fields
-                if (!normalizedPhoneNumber || !isValidPhoneNumber(normalizedPhoneNumber)) {
-                    invalidEntries.push(
-                        `Row ${serialNumber}: Invalid phone number (${phoneNumber || "N/A"})`
-                    );
+                // Validate fields using Yup
+                try {
+                    await validationSchema.validate(input, { abortEarly: false });
+                } catch (error: any) {
+                    if (error.name === "ValidationError") {
+                        invalidEntries.push(
+                            `Row ${serialNumber}: ${error.inner.map((err: Yup.ValidationError) => err.message).join(", ")}`
+                        );
+                    }
                     continue;
                 }
 
-          
-
                 // Avoid duplicate phone numbers within the same CSV
-                if (processedNumbers.has(normalizedPhoneNumber)) {
-                    invalidEntries.push(`Row ${serialNumber}: Duplicate phone number (${normalizedPhoneNumber})`);
+                if (processedNumbers.has(phoneNumber)) {
+                    invalidEntries.push(`Row ${serialNumber}: Duplicate phone number (${phoneNumber})`);
                     continue;
                 }
 
                 try {
-                    await axiosPost<FeedbackResponse, FeedbackInput>("/api/customers", {
-                        phoneNumber: normalizedPhoneNumber,
-                        name,
-                        email,
-                    });
-                    processedNumbers.add(normalizedPhoneNumber);
+                    await axiosPost<FeedbackResponse, FeedbackInput>("/api/customers", input);
+                    processedNumbers.add(phoneNumber);
                     successfulEntries.push(serialNumber);
                 } catch (error: any) {
                     const errorMessage = error?.message || "Failed to add entry.";
@@ -135,7 +121,7 @@ const useAddNumber = () => {
                     { duration: 5000 }
                 );
             }
-            
+
         } catch (error: any) {
             toast.error(`Error processing CSV: ${error.message}`);
         } finally {
@@ -146,7 +132,7 @@ const useAddNumber = () => {
 
     const resetBulkErrors = () => {
         setBulkErrors([]);
-      };
+    };
 
     return {
         loading,

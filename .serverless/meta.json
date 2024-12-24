@@ -1,0 +1,191 @@
+{
+  "D:\\HotelMessaging\\GoodPeggTouch": {
+    "versionSfCore": null,
+    "versionFramework": "4.4.13",
+    "isWithinCompose": false,
+    "isCompose": false,
+    "composeOrgName": null,
+    "composeResolverProviders": {
+      "default-aws-credential-resolver": "<REDACTED>",
+      "sls": {
+        "instance": {
+          "credentials": "<REDACTED>",
+          "serviceConfigFile": {
+            "service": "nextjs-typescript-api",
+            "frameworkVersion": "4.4.13",
+            "provider": {
+              "name": "aws",
+              "runtime": "nodejs18.x",
+              "region": "us-east-1",
+              "memorySize": 512,
+              "timeout": 10,
+              "stage": "dev",
+              "versionFunctions": true
+            },
+            "functions": {
+              "api": {
+                "handler": ".next/server/pages/api/{proxy+}.js",
+                "events": [
+                  {
+                    "httpApi": {
+                      "path": "/api/{proxy+}",
+                      "method": "ANY"
+                    }
+                  }
+                ]
+              }
+            },
+            "plugins": [
+              "serverless-nextjs-plugin",
+              "serverless-offline"
+            ],
+            "custom": {
+              "serverless-nextjs": {
+                "nextConfigDir": "./",
+                "buildDir": ".next",
+                "enableS3StaticWebsite": true,
+                "basePath": ""
+              }
+            },
+            "package": {
+              "exclude": [
+                "node_modules/**",
+                ".serverless/**",
+                ".serverless_plugins/**",
+                ".next/cache/**"
+              ]
+            }
+          },
+          "configFileDirPath": "D:\\HotelMessaging\\GoodPeggTouch",
+          "config": {
+            "type": "sls"
+          },
+          "options": {},
+          "stage": "dev",
+          "dashboard": null,
+          "logger": {
+            "namespace": "s:core:resolver:sls",
+            "prefix": null,
+            "prefixColor": null
+          },
+          "_credentialsPromise": "<REDACTED>"
+        },
+        "resolvers": {}
+      }
+    },
+    "composeServiceName": null,
+    "servicePath": "D:\\HotelMessaging\\GoodPeggTouch",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "service": "nextjs-typescript-api",
+      "frameworkVersion": "4.4.13",
+      "provider": {
+        "name": "aws",
+        "runtime": "nodejs18.x",
+        "region": "us-east-1",
+        "memorySize": 512,
+        "timeout": 10,
+        "stage": "dev",
+        "versionFunctions": true
+      },
+      "functions": {
+        "api": {
+          "handler": ".next/server/pages/api/{proxy+}.js",
+          "events": [
+            {
+              "httpApi": {
+                "path": "/api/{proxy+}",
+                "method": "ANY"
+              }
+            }
+          ]
+        }
+      },
+      "plugins": [
+        "serverless-nextjs-plugin",
+        "serverless-offline"
+      ],
+      "custom": {
+        "serverless-nextjs": {
+          "nextConfigDir": "./",
+          "buildDir": ".next",
+          "enableS3StaticWebsite": true,
+          "basePath": ""
+        }
+      },
+      "package": {
+        "exclude": [
+          "node_modules/**",
+          ".serverless/**",
+          ".serverless_plugins/**",
+          ".next/cache/**"
+        ]
+      }
+    },
+    "serviceRawFile": "service: nextjs-typescript-api # Name of your service\r\n\r\nframeworkVersion: '4.4.13'\r\n\r\nprovider:\r\n  name: aws\r\n  runtime: nodejs18.x\r\n  region: us-east-1 # Specify your desired AWS region\r\n  memorySize: 512 # Memory allocation for Lambda\r\n  timeout: 10 # Maximum execution time in seconds\r\n\r\nfunctions:\r\n  api:\r\n    handler: .next/server/pages/api/{proxy+}.js # Path to API handler\r\n    events:\r\n      - httpApi:\r\n          path: /api/{proxy+} # Proxy all API requests\r\n          method: ANY\r\n\r\nplugins:\r\n  - serverless-nextjs-plugin\r\n  - serverless-offline # Optional: For local development and testing\r\n\r\ncustom:\r\n  serverless-nextjs:\r\n    nextConfigDir: ./ # Directory for the Next.js app\r\n    buildDir: .next # Directory for the Next.js build\r\n    enableS3StaticWebsite: true # Optional: Use S3 for static files\r\n    basePath: '' # Optional: Specify a custom base path for your API\r\n\r\npackage:\r\n  exclude:\r\n    - node_modules/**\r\n    - .serverless/** # Exclude Serverless Framework files\r\n    - .serverless_plugins/** # Exclude plugins folder\r\n    - .next/cache/** # Exclude Next.js cache\r\n\r\n",
+    "command": [
+      "offline"
+    ],
+    "options": {},
+    "error": {
+      "message": "Cannot find module 'next/dist/next-server/server/config'\nRequire stack:\n- D:\\HotelMessaging\\GoodPeggTouch\\node_modules\\serverless-nextjs-plugin\\lib\\parseNextConfiguration.js\n- D:\\HotelMessaging\\GoodPeggTouch\\node_modules\\serverless-nextjs-plugin\\index.js",
+      "stack": "Error: Cannot find module 'next/dist/next-server/server/config'\nRequire stack:\n- D:\\HotelMessaging\\GoodPeggTouch\\node_modules\\serverless-nextjs-plugin\\lib\\parseNextConfiguration.js\n- D:\\HotelMessaging\\GoodPeggTouch\\node_modules\\serverless-nextjs-plugin\\index.js\n    at Module._resolveFilename (node:internal/modules/cjs/loader:1140:15)\n    at Module._load (node:internal/modules/cjs/loader:981:27)\n    at Module.require (node:internal/modules/cjs/loader:1231:19)\n    at require (node:internal/modules/helpers:177:18)\n    at Object.<anonymous> (D:\\HotelMessaging\\GoodPeggTouch\\node_modules\\serverless-nextjs-plugin\\lib\\parseNextConfiguration.js:11:20)\n    at Module._compile (node:internal/modules/cjs/loader:1364:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1422:10)\n    at Module.load (node:internal/modules/cjs/loader:1203:32)\n    at Module._load (node:internal/modules/cjs/loader:1019:12)\n    at Module.require (node:internal/modules/cjs/loader:1231:19)",
+      "code": "MODULE_NOT_FOUND"
+    },
+    "params": {},
+    "machineId": "ae7d63226455afae1cc2aea08230d259",
+    "stage": "dev",
+    "accessKeyV2": "<REDACTED>",
+    "accessKeyV1": "<REDACTED>",
+    "orgId": "fe19ad96-85d9-46e9-9f2c-4a3155db584e",
+    "orgName": "goodpegg",
+    "userId": "rdRcrNRfRCCXpqQBXw",
+    "dashboard": {
+      "isEnabledForService": false,
+      "requiredAuthentication": false,
+      "orgFeaturesInUse": null,
+      "orgObservabilityIntegrations": null,
+      "serviceAppId": null,
+      "serviceProvider": null,
+      "instanceParameters": null
+    },
+    "userName": "goodpegg",
+    "subscription": null,
+    "userEmail": "dev.goodpegg@gmail.com",
+    "serviceProviderAwsRegion": "us-east-1",
+    "serviceProviderAwsCredentials": "<REDACTED>",
+    "serviceProviderAwsAccountId": "011528274272",
+    "projectType": "traditional",
+    "versionSf": "4.4.13",
+    "serviceUniqueId": "arn:aws:cloudformation:us-east-1:011528274272:stack/express-api-dev/7cce8f10-acb3-11ef-b189-12bffcecf623",
+    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:us-east-1:011528274272:stack/express-api-dev/7cce8f10-acb3-11ef-b189-12bffcecf623",
+    "serviceProviderAwsCfStackCreated": "2024-11-27T11:33:56.589Z",
+    "serviceProviderAwsCfStackUpdated": "2024-11-27T11:48:57.582Z",
+    "serviceProviderAwsCfStackStatus": "UPDATE_COMPLETE",
+    "serviceProviderAwsCfStackOutputs": [
+      {
+        "OutputKey": "ApiLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:us-east-1:011528274272:function:express-api-dev-api:4",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-express-api-dev-ApiLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "HttpApiId",
+        "OutputValue": "f22z0lq96e",
+        "Description": "Id of the HTTP API",
+        "ExportName": "sls-express-api-dev-HttpApiId"
+      },
+      {
+        "OutputKey": "ServerlessDeploymentBucketName",
+        "OutputValue": "serverless-framework-deployments-us-east-1-8a7e5138-59bf",
+        "ExportName": "sls-express-api-dev-ServerlessDeploymentBucketName"
+      },
+      {
+        "OutputKey": "HttpApiUrl",
+        "OutputValue": "https://f22z0lq96e.execute-api.us-east-1.amazonaws.com",
+        "Description": "URL of the HTTP API",
+        "ExportName": "sls-express-api-dev-HttpApiUrl"
+      }
+    ]
+  }
+}

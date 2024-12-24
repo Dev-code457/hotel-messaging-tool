@@ -18,20 +18,9 @@ import Profile from '@/components/Profile'
 function ChangePassword() {
 
   const [initialHotelDetails, setInitialhotelDetails] = useState("");
-
-
-  useEffect(() => {
-    if (hotelDetail?.UserDetails?.hotelName) {
-      setHotelDetails(hotelDetail.UserDetails.hotelName);
-    }
-  }, [initialHotelDetails]);
-
   const dispatch = useDispatch();
   const hotelDetail = useSelector((state: RootState) => state.hotel.details);
   const selectedOption = useSelector((state: RootState) => state.dropdown.selectedOption);
-
-
-
   const id = hotelDetail?._id;
   const {
     password,
@@ -41,14 +30,21 @@ function ChangePassword() {
     handleChangePassword,
     loading,
   } = useChangePassword();
-
-
   const {
     hotelDetails,
     handleChangeHotelDetails,
     setHotelDetails,
     isLoading
   } = useHotelDetails(id as string);
+
+
+  useEffect(() => {
+    console.log("Yes..........")
+    if (hotelDetail?.UserDetails?.hotelName) {
+      setHotelDetails(hotelDetail.UserDetails.hotelName);
+      setInitialhotelDetails(hotelDetail.UserDetails.hotelName);
+    }
+  }, [initialHotelDetails, hotelDetail]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -113,11 +109,6 @@ function ChangePassword() {
                   </div>
                   <div className="col-span-1 w-full">
                     <div className="flex justify-end items-end absolute">
-                      {/* <Image
-                        src={Id}
-                        alt="setting"
-                        className="w-[60%] pt-16 mr-2"
-                      /> */}
                     </div>
                   </div>
                 </div>
@@ -206,9 +197,6 @@ function ChangePassword() {
               </>
             )
           }
-
-
-
         </div>
       </div>
     </SideLayout>

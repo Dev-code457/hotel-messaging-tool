@@ -29,37 +29,36 @@ const usePromotionalMessage = (initialHotelName: string) => {
     const handleDateChange = (selectedDate: Date | null) => {
         if (selectedDate) {
             const options: Intl.DateTimeFormatOptions = {
-                weekday: 'short', // Short form of the day (e.g., Thu)
-                year: 'numeric',  // Four-digit year
-                month: 'short',   // Short form of the month (e.g., Nov)
-                day: '2-digit',   // Two-digit day
+                weekday: 'short',
+                year: 'numeric',
+                month: 'short',
+                day: '2-digit',
             };
             const formattedDate = new Intl.DateTimeFormat('en-US', options).format(selectedDate);
-            setDate(formattedDate); // Save the formatted date
+            setDate(formattedDate);
         } else {
-            setDate(null); // Handle null values
+            setDate(null);
         }
     };
 
     const handleTimeChange = (e: any) => {
-        const timeString = e.target.value; // Get the selected time in "HH:mm" format
-        const currentDate = new Date(); // Get today's date
-        const [hour, minute] = timeString.split(":"); // Split the time into hours and minutes
+        const timeString = e.target.value;
+        const currentDate = new Date();
+        const [hour, minute] = timeString.split(":");
 
-        // Set the current date with the selected time
+
         currentDate.setHours(parseInt(hour, 10));
         currentDate.setMinutes(parseInt(minute, 10));
-        currentDate.setSeconds(0); // Set seconds to 0
+        currentDate.setSeconds(0);
 
-        // Format the date as weekday, time, and AM/PM
+
         const formattedTime = new Intl.DateTimeFormat("en-GB", {
-            weekday: "short",  // Short format for the weekday (e.g., Mon, Tue)
-            hour: "2-digit",   // Hour with two digits
-            minute: "2-digit", // Minute with two digits
-            hour12: true,      // Use 12-hour format (AM/PM)
+            weekday: "short",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
         }).format(currentDate);
 
-        // Set the formatted time
         setTime(formattedTime);
     };
 
@@ -80,12 +79,12 @@ const usePromotionalMessage = (initialHotelName: string) => {
         try {
             const formattedDiscount = discount !== null ? `${discount}% Off` : undefined;
 
-            // Define the request payload
+
             const eventBooking = {
                 ownerHotelName, phoneNumber, sliderValue
             };
             const discountpayload = {
-                ownerHotelName, discount, phoneNumber, address, sliderValue
+                ownerHotelName, formattedDiscount, phoneNumber, address, sliderValue
             };
             const PartyPalnning = {
                 ownerHotelName, time, date, phoneNumber, address, sliderValue
@@ -97,23 +96,23 @@ const usePromotionalMessage = (initialHotelName: string) => {
             let response: ApiResponse;
 
             if (messageType === "eventBooking") {
-                // API call specific for eventBooking
+
                 response = await axiosPost<ApiResponse, typeof eventBooking>("/api/Promotional/EventOrganization", eventBooking);
             } else if (messageType === "partyInvitation") {
-                // API call specific for promotional
+
                 response = await axiosPost<ApiResponse, typeof PartyPalnning>("/api/Promotional/PartyPlanning", PartyPalnning);
             } else if (messageType === "roomBooking") {
-                // Handle other message types if needed
+
                 response = await axiosPost<ApiResponse, typeof roomBooking>("/api/Promotional/RoomBooking", roomBooking);
             }
             else {
-                // Handle other message types if needed
+
                 response = await axiosPost<ApiResponse, typeof discountpayload>("/api/Promotional/Discounts", discountpayload);
             }
 
             dispatch(MessagesUsed());
 
-            // Reset fields after successful submission
+
             setDiscount(null);
             setDate(null);
             setTime(null);

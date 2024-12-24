@@ -106,22 +106,22 @@ export const validateCustomerPhoneNumber = ({
   email
 }: {
   phoneNumber: string;
-  name: string, 
-  email: string,
+  name?: string,
+  email?: string,
 }): string[] => {
   const errors: string[] = [];
 
   if (!phoneNumber) {
     errors.push("Phone number is required.");
-  } else if (!/^\d{10}$/.test(phoneNumber)) { 
+  } else if (!/^\d{10}$/.test(phoneNumber)) {
     errors.push("Phone number must be a 10-digit number.");
   } else if (phoneNumber.length > 15) {
     errors.push("Phone number must be less than 15 characters.");
   }
-  if(name.length > 20){
+  if (name && name.length > 20) {
     errors.push("Name Should Not Be Less Than 20 Characters");
   }
-  else if (email.length > 100) {
+  else if (email && email.length > 100) {
     errors.push("Email must be less than 100 characters.");
   }
 

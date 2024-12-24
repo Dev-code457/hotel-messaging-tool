@@ -2,17 +2,16 @@ import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { createUserModel } from "@/models/user";
 import crypto from "crypto";
-import bcrypt from "bcryptjs"; // Import bcrypt for hashing passwords
 import { AppError } from "@/utils/errorHandler"; // Import your AppError class
 import { validatePasswords } from "@/validators/index"; // Import your validator
 import HotelModel from "@/models/hotel";
 
 export async function PUT(req: Request, { params }: { params: { resetToken: string[] } }) {
   try {
-
-
     await connectToDatabase();
     const { password, confirmPassword, email } = await req.json();
+    console.log(email, "kdsknsdkjnsdjknfsndlf");
+
     const hotelMetadata = await HotelModel.findOne({ email });
 
     if (!hotelMetadata) {
@@ -28,6 +27,7 @@ export async function PUT(req: Request, { params }: { params: { resetToken: stri
 
     // Construct reset token
     const token = params.resetToken.join('/');
+    console.log(token, "nsdjnjdsnfkjnsdfnksmdnfkmsd")
     const resetPasswordToken = crypto
       .createHash("sha256")
       .update(token)
