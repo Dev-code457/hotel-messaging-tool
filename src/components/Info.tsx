@@ -28,7 +28,7 @@ export function ProfileInfoPopover() {
                         viewBox="0 0 24 24"
                         stroke-width="1.5"
                         stroke="currentColor"
-                        className="size-6 text-red-900 font-bold"
+                        className="size-6 text-green-700 font-bold"
                     >
                         <path
                             stroke-linecap="round"
@@ -44,7 +44,7 @@ export function ProfileInfoPopover() {
                 {...triggers} // Spread event handlers here
             >
                 <Typography variant="small" color="black" className="text-black font-bold"  placeholder={undefined} onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined}>
-                    Number of recipients with info of random customers will be sent this message
+                This message will be sent to a random set of customers, based on the number you choose
                 </Typography>
             </PopoverContent>
         </Popover>

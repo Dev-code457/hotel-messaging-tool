@@ -6,6 +6,7 @@ import { hotelActions } from "@/redux/slices/hotelSlice";
 import { fetchHotelData } from "@/global";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store"
+import { data } from "jquery";
 
 const useForgotPassword = () => {
   const [loading, setLoading] = useState(false);
@@ -32,9 +33,9 @@ const useForgotPassword = () => {
     setError(null);
 
     try {
-      const response = await axiosPut("/api/auth/forgot-password", {
+      const response = await axiosPut("http://localhost:3000/api/password/forgot-password", {
         email,
-        dbName: hotelDetail?.HotelDetials?.dbName,
+        dbName: hotelDetail?.data?.hotel?.dbName,
       });
       toast.success(response.data.message || "Reset link sent successfully!");
     } catch (error: any) {

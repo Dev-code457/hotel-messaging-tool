@@ -9,6 +9,8 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { logout } from "@/redux/slices/authSlices";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
+import { toast } from "sonner";
 
 
 function SideLayout({ children }: { children: ReactNode }) {
@@ -21,32 +23,19 @@ function SideLayout({ children }: { children: ReactNode }) {
   const value = useSelector((state: RootState) => state.example.value);
 
   const links = [
+    { name: "Check In / Check Out", path: "/CheckInOut" },
     { name: "Add Number Database", path: "/AddNumber" },
-    { name: "Check In/ Check Out", path: "/CheckInOut" },
     { name: "Promotions/ Offers", path: "/Promotion-Offer" },
     { name: "Feedback", path: "/FeedBack" },
-    // { name: "Settings", path: "/Settings" },
     { name: "Logout", path: "#" },
   ];
 
   const handleLogout = async () => {
     try {
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
 
-      if (response.ok) {
-        // Clear Redux state or any local user data
-        dispatch(logout());
-
-        window.location.reload()
-        window.location.href = "/";
-      } else {
-        console.error('Failed to logout');
-      }
+      Cookies.remove('__session', { path: '/' });
+      toast.success("Logged out successfully");
+      router.push('/');
     } catch (error) {
       console.error('An error occurred while logging out:', error);
     }
@@ -87,11 +76,11 @@ function SideLayout({ children }: { children: ReactNode }) {
         aria-label="Sidebar"
       >
         <div className="h-full px-3 overflow-y-auto bg-black">
-          <ul className="space-y-4">
+          <ul className="space-y-4 ml-2">
             <li>
               <Link
                 href="/"
-                className="flex items-center justify-center rounded-lg hover group"
+                className="flex items-center mr-4 justify-center rounded-lg hover group"
               >
                 <Image src={Logo} alt="LOGO" className="w-[60%]" />
               </Link>
@@ -104,10 +93,10 @@ function SideLayout({ children }: { children: ReactNode }) {
                     return null; // Do not render this link
                   }
                   return (
-                    <li key={link.path}>
+                    <li key={link.path} className="ml-2">
                       <Link
                         href={link.path}
-                        className={`flex items-center justify-start rounded-lg group ${pathname === link.path ? " text-[#EF5C5C] " : "text-white "}`}
+                        className={`flex items-center justify-start rounded-lg group font-bold  ${pathname === link.path ? " text-green-600 shadow-2xl shadow-blue-600" : "text-white "}`}
                         onClick={
                           link.name === "Logout"
                             ? (e) => {
@@ -123,9 +112,9 @@ function SideLayout({ children }: { children: ReactNode }) {
                   );
                 })}
 
-                <div className="text-xl text-white font-semibold absolute bottom-0">
+                {/* <div className="text-xl text-white font-semibold absolute bottom-0">
                   Messages Left: {value}
-                </div>
+                </div> */}
               </>
             ) : null}
           </ul>

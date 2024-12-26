@@ -37,7 +37,7 @@ function ChangePassword() {
             classnames="flex-col justify-start items-center w-[70%] h-[50vh] space-x-4"
           >
             <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-1">
+              <div className="col-span-1 mt-12">
                 <form onSubmit={handleSubmit}>
                   <Input
                     classnames="pt-10"
@@ -54,7 +54,7 @@ function ChangePassword() {
                     type="password"
                   />
 
-                  <div className="flex justify-start space-x-11 mt-8">
+                  <div className="flex justify-start space-x-11 ">
                     <Button
                       text={loading ? <div className={"flex gap-2  font-bold justify-center items-center"}><Spinner /> Submitting...</div> : "Submit"}
                       classnames="bg-green-500 hover:bg-green-600 py-4"
@@ -63,7 +63,7 @@ function ChangePassword() {
                     />
                   </div>
                   <div
-                    className="text-sm font-semibold text-[#FB5151] py-6 underline font-serif cursor-pointer"
+                    className="text-sm font-semibold text-[#FB5151] p-3 underline font-serif cursor-pointer"
                     onClick={() => router.push("/")}
                   >
                     Login
@@ -75,7 +75,7 @@ function ChangePassword() {
                   <Image
                     src={Hero}
                     alt="Reset Password Illustration"
-                    className="w-[100%] h-[100%]"
+                    className="w-[90%]"
                   />
                 </div>
               </div>

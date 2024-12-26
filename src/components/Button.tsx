@@ -16,7 +16,7 @@ function Button({
   return (
     <button
       type={type}
-      className={` text-white font-medium text-xs rounded-full  px-5 py-3 text-center ${classnames}`}
+      className={` text-white font-semibold text-xs rounded-full  px-5 py-3 text-center ${classnames}`}
       onClick={onClick}
       disabled={disabled}
     >

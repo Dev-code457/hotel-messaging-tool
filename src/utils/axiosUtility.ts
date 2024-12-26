@@ -9,11 +9,12 @@ interface ApiResponse<T> {
 
 interface ErrorResponse {
     message: string;
+    
 }
 
 // Create an instance of Axios
 const axiosInstance = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+    // baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
     headers: {
         "Content-Type": "application/json",
     },
@@ -54,8 +55,17 @@ const handleResponse = <T>(response: AxiosResponse<ApiResponse<T>>): AxiosRespon
 
 const handleError = (error: any): never => {
     if (error.response) {
-        console.error('Response Error:', error.response.data);
-        throw new Error(error.response.data.message || "Something went wrong!");
+        // Check if the response contains validation errors
+        const errorData = error.response.data;
+        console.error('Response Error:', errorData);
+
+        if (errorData.errors && Array.isArray(errorData.errors)) {
+            // Throw an error with the validation errors
+            throw new Error(errorData.errors.join(', '));  // Join errors as a single string or handle them separately
+        } else {
+            // Fallback to generic message if no validation errors are present
+            throw new Error(errorData.message || "Something went wrong!");
+        }
     } else if (error.request) {
         console.error('No response received from server:', error);
         throw new Error("No response received from server");
@@ -64,6 +74,7 @@ const handleError = (error: any): never => {
         throw new Error(error.message || "An unexpected error occurred");
     }
 };
+
 
 const makeRequest = async <T, U>(
     method: "get" | "post" | "put" | "delete",

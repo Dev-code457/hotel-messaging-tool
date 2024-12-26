@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { axiosPost, axiosPut } from "@/utils/axiosUtility"; // Adjust the import path according to your file structure
-
+import { axiosPost, axiosPut } from "@/utils/axiosUtility"; 
 const useHotelDetails = (hotelId?: string) => {
     const router = useRouter();
     const [hotelDetails, setHotelDetails] = useState("");
@@ -21,7 +20,7 @@ const useHotelDetails = (hotelId?: string) => {
 
         try {
             // Determine whether to use POST or PUT
-            const url = `/api/ChangeHotel-Details`; // Same endpoint for both POST and PUT
+            const url = `http://localhost:3000/api/hotel/change-hotel-details`; // Same endpoint for both POST and PUT
 
             const response = await axiosPut<{ message: string }, { hotelName: string }>(url, {  hotelName: hotelDetails })
                

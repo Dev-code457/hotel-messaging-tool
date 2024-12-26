@@ -21,16 +21,16 @@ const CheckInOut = () => {
 
   return (
     <SideLayout>
-      
+
       <Profile onSelectForm={undefined} />
       <div className="sm:ml-64 flex justify-center">
         <div className="flex flex-col h-screen justify-center items-center w-full bg-gray-50">
           <Section
             heading="Feedback"
-            classnames="flex-col justify-start items-center w-[65%] h-[50vh]"
+            classnames="flex-col justify-start items-center w-[65%] h-[35vh]"
           >
             <div className=" ">
-              <div className="col-span-2 mb-10">
+              <div className="col-span-2 ">
                 <form
                   onSubmit={handleSubmit}
                 >
@@ -69,7 +69,7 @@ const CheckInOut = () => {
                   <Image
                     src={Hero}
                     alt="Check In & Check Out"
-                    className=" w-[40%]  -mt-28 ml-10"
+                    className=" w-[25%]  -mt-24 ml-10"
                   />
                 </div>
               </div>

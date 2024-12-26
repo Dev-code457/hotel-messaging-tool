@@ -28,7 +28,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ onValueChange, value }) => {
     <div className="relative flex w-full items-center justify-center space-x-4">
       {/* Vertical label */}
       <div className="flex  items-center -rotate-90 space-x-2 absolute mr-5">
-      
+
         <span className="text-center text-sm font-semibold text-black">
           Number
         </span>
@@ -36,7 +36,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ onValueChange, value }) => {
         <span className="text-center text-sm font-semibold text-black">
           recipients
         </span>
-        <ProfileInfoPopover/>
+        <ProfileInfoPopover />
       </div>
 
       {/* Slider and value display */}
@@ -56,14 +56,16 @@ const RangeSlider: React.FC<RangeSliderProps> = ({ onValueChange, value }) => {
           value={value}
           min="0"
           max="500"
+          color="black"
           step="1"
           onChange={handleSliderChange}
           className="w-4 h-full bg-gray-300 rounded-lg appearance-none cursor-pointer focus:outline-none"
           style={{
             // writingMode: "bt-lr",
             WebkitAppearance: "slider-vertical",
-            background: "lightgreen",
+            background: "green",
             height: "300px", // Adjusted for better vertical height
+            color: "black"
           }}
         />
       </div>

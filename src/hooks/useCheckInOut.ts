@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { useDispatch } from "react-redux";
-import { MessagesUsed } from "@/redux/slices/exampleSlice";
 import { axiosPost } from "@/utils/axiosUtility";
 import { ApiResponse } from "@/types";
+import * as yup from "yup"
 
-const phoneNumberRegex = /^\d{10}$/;
+
 
 interface UseCheckInOutResult {
     phoneNumber: string;
@@ -26,47 +25,39 @@ export const useCheckInOut = (): UseCheckInOutResult => {
     const [loadingCheckIn, setIsLoadingCheckIn] = useState<boolean>(false);
     const [loadingCheckOut, setIsLoadingCheckOut] = useState<boolean>(false);
     const [isPromotionalList, setIsPromotionalList] = useState<boolean>(false);
-    const dispatch = useDispatch();
-
-    const validatePhoneNumber = (phone: string): string | null => {
-        if (!phone) return "Phone number is required.";
-        if (!phoneNumberRegex.test(phone)) return "Please enter a valid 10-digit phone number.";
-        return null;
-    };
-
     const handleSubmit = async (messageType: "checkin" | "checkout", isPromotionalList: boolean) => {
-        const validationError = validatePhoneNumber(phoneNumber);
-        if (validationError) {
-            toast.error(validationError);
-            return;
-        }
-
         if (messageType === "checkin") {
             setIsLoadingCheckIn(true);
         } else {
             setIsLoadingCheckOut(true);
         }
-
+    
         try {
             const response = await axiosPost<ApiResponse, { phoneNumber: string; messageType: string; isPromotionalList: boolean, userSpending: string }>(
-                "/api/checkInOut",
+                "http://localhost:3000/api/message/check-in-out",
                 { phoneNumber, messageType, isPromotionalList, userSpending: String(userSpending) }
             );
-
-            dispatch(MessagesUsed());
+    
             if (response) {
+                console.log(response, "Response from server");
                 toast.success(response.data.message || "Message sent successfully!");
             } else {
                 toast.error("No response from server.");
             }
         } catch (error: any) {
-            const errorMessage = error?.message || "Something went wrong!";
-            toast.error(errorMessage);
+            console.log("Error details:", error);  // Log the entire error to inspect its structure
+    
+            if (error?.response?.data?.errors) {
+                error.response.data.errors.forEach((err: string) => {
+                    toast.error(err);
+                });
+            } else {
+                toast.error(error?.message || "Something went wrong!");
+            }
         } finally {
-            // Reset both phoneNumber and isPromotionalList here
             setPhoneNumber("");
             setUserSpending("");
-            setIsPromotionalList(false); // Reset checkbox state
+            setIsPromotionalList(false);
             if (messageType === "checkin") {
                 setIsLoadingCheckIn(false);
             } else {
@@ -74,6 +65,7 @@ export const useCheckInOut = (): UseCheckInOutResult => {
             }
         }
     };
+    
 
     const handleCheckIn = async (isPromotionalList: boolean): Promise<void> => handleSubmit("checkin", isPromotionalList);
     const handleCheckOut = async (isPromotionalList: boolean): Promise<void> => handleSubmit("checkout", isPromotionalList);

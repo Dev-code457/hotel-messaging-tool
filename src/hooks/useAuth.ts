@@ -16,12 +16,17 @@ interface AuthContext {
     signUp: (email: string, password: string, hotelName: string) => Promise<void>;
 }
 
+
 interface LoginResponse {
     message: string;
     email: string
     password: string
 }
-
+interface SignUpResponse {
+    hotelName: string;
+    email: string
+    password: string
+}
 
 const useAuth = (): AuthContext => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -32,7 +37,7 @@ const useAuth = (): AuthContext => {
     useEffect(() => {
         const token = Cookies.get('_session');
         if (token) {
-            dispatch(loginSuccess(token))
+            dispatch(loginSuccess(token));
         }
         setLoading(false);
     }, []);
@@ -40,30 +45,32 @@ const useAuth = (): AuthContext => {
     const login = async (email: string, password: string) => {
         setLoading(true);
         try {
-            const response = await axiosPost<{ token: string; message: string }, LoginResponse>('/api/auth/login', {
+            const response = await axiosPost<{ token: string; message: string }, LoginResponse>('http://localhost:3000/api/auth/login', {
                 email, password,
                 message: ''
             });
-            Cookies.set('__session', response.data.token, { expires: 7 });
-            dispatch(loginSuccess(response.data.token))
+            console.log(response);
+            
+            Cookies.set('__session', response.data.data.token, { expires: 7 });
+            dispatch(loginSuccess(response.data.token));
             router.push('/AddNumber');
-            toast.success('Login successful!');
+            toast.success(response.data.message);
         } catch (error: any) {
             console.log(error);
-
             toast.error(error.message || 'An unknown error occurred');
         } finally {
             setLoading(false);
         }
     };
 
-
     const signUp = async (email: string, password: string, hotelName: string) => {
         setLoading(true);
         try {
-            const response = await axios.post<{ token: string; message: string }>('/api/auth/signup', { email, password, hotelName });
-            console.log(response.data.token);
-
+            const response = await axiosPost<{ token: string; message: string }, SignUpResponse>('http://localhost:3000/api/auth/signup', {
+                email,
+                password,
+                hotelName,
+            });
             Cookies.set('temp_session', response.data.token, { expires: 7 });
             router.push('/');
             toast.success('SignUp Success');

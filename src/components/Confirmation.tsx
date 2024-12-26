@@ -1,7 +1,8 @@
 import React from "react";
-
+import Image from "next/image";
+import gif from "@/app/public/assets/Animation - 1731931073963 (1).gif"
 export default function Confirmation({ isOpen, onClose, onConfirm }: any) {
-    if (!isOpen) return null; // Don't render if not open
+    if (!isOpen) return null;
 
     return (
         <div
@@ -33,22 +34,11 @@ export default function Confirmation({ isOpen, onClose, onConfirm }: any) {
                         </svg>
                         <span className="sr-only">Close modal</span>
                     </button>
-                    <div className="p-4 text-center">
-                        <svg
-                            className="mx-auto mb-4 text-red-600 w-12 h-12"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 20 20"
-                        >
-                            <path
-                                stroke="currentColor"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                            />
+                    <div className="p-4 flex flex-col justify-center items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-14 text-yellow-600">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
                         </svg>
+
                         <h3 className="mb-5 text-lg font-normal text-gray-300">
                             Are you sure you want to log out?
                         </h3>
@@ -138,6 +128,3 @@ export function Warning({ isOpen, onClose, onConfirm }: any) {
         </div>
     );
 }
-
-
-

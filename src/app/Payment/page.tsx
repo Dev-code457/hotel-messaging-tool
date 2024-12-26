@@ -17,7 +17,7 @@ interface RazorpayOptions {
     order_id: string;
     handler: (response: any) => void;
     prefill: {
-        name: string;   
+        name: string;
         email: string;
         contact: string;
     };
@@ -69,7 +69,7 @@ export default function Payment() {
     const saveTransaction = async (paymentData: any) => {
         try {
             const response = await axiosPut("/api/payments/saveTransaction", { paymentData });
-    
+
             setShowThankYou(true);
         } catch (error) {
             console.error("Error saving transaction:", error);
@@ -168,40 +168,40 @@ export default function Payment() {
 
 
                 <div className="space-y-8 lg:space-y-0 lg:grid lg:grid-cols-2  justify-center items-center">
-    <PlanCard
-        title="Basic"
-        description="The perfect option for small business outlets and carts."
-        price={10000}
-        features={[
-            "500 Marketing Messages",
-            "500 Utility Messages",
-            "Customers Limit: 50 Customers",
-            "Auto Add to Promotions",
-            "Templates: 3",
-            "Upload CSV File",
-            "24/7 Technical Support",
-        ]}
-        onPayment={() => handlePayment(10000, "user_id_123", "Basic")}
-        loading={loadingPlan === "Basic"}
-    />
+                    <PlanCard
+                        title="Basic"
+                        description="The perfect option for small business outlets and carts."
+                        price={10000}
+                        features={[
+                            "500 Marketing Messages",
+                            "500 Utility Messages",
+                            "Customers Limit: 50 Customers",
+                            "Auto Add to Promotions",
+                            "Templates: 3",
+                            "Upload CSV File",
+                            "24/7 Technical Support",
+                        ]}
+                        onPayment={() => handlePayment(10000, "user_id_123", "Basic")}
+                        loading={loadingPlan === "Basic"}
+                    />
 
-    <PlanCard
-        title="Premium"
-        description="Best suited for large enterprises with advanced requirements."
-        price={15000}
-        features={[
-            "Unlimited Marketing Messages",
-            "Unlimited Utility Messages",
-            "Customers Limit: Unlimited",
-            "Auto Add to Promotions",
-            "Templates: Unlimited",
-            "Upload CSV File",
-            "24/7 Technical Support",
-        ]}
-        onPayment={() => handlePayment(15000, "user_id_123", "Premium")}
-        loading={loadingPlan === "Premium"}
-    />
-</div>
+                    <PlanCard
+                        title="Premium"
+                        description="Best suited for large enterprises with advanced requirements."
+                        price={15000}
+                        features={[
+                            "Unlimited Marketing Messages",
+                            "Unlimited Utility Messages",
+                            "Customers Limit: Unlimited",
+                            "Auto Add to Promotions",
+                            "Templates: Unlimited",
+                            "Upload CSV File",
+                            "24/7 Technical Support",
+                        ]}
+                        onPayment={() => handlePayment(15000, "user_id_123", "Premium")}
+                        loading={loadingPlan === "Premium"}
+                    />
+                </div>
 
             </div>
             {showThankYou && <ThankYouOverlay onClose={() => setShowThankYou(false)} />}
