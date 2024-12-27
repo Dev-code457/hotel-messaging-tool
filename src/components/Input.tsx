@@ -1,7 +1,7 @@
-
 import React, { useState } from "react";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { FaAsterisk } from "react-icons/fa";
 
 interface InputProps {
   classnames?: string;
@@ -50,10 +50,10 @@ export default function Input({
       {/* Label */}
       <label
         htmlFor="input-field"
-        className="block text-sm font-medium text-gray-700 mb-1"
+        className="block text-lg font-medium text-gray-700 mb-1"
       >
         {label ? label : placeHolder}
-        {required && <span className="text-red-500 text-xl">*</span>}
+        {required && <span className="text-red-500  absolute -mt-1"><FaAsterisk size={8} /></span>}
       </label>
 
       {/* Input Field */}

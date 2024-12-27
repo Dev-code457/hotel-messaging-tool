@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import React, { useState } from "react";
 import Hero from "../public/assets/PromotionalMessage.svg";
 import Image from "next/image";
@@ -13,7 +13,8 @@ import Modal from "@/components/Modal";
 import Table from "@/components/Table";
 import Switcher11 from "@/components/Switch";
 import { ProfileInfoPopover } from "@/components/Preview";
-import Profile from "@/components/Profile"
+import Profile from "@/components/Profile";
+import * as yup from "yup";
 
 function PromotionalNumber() {
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -22,63 +23,183 @@ function PromotionalNumber() {
   const [fileName, setFileName] = useState<string | null>(null);
   const { handleSubmitFeedback, loading, handleSubmitCsvFeedback, bulkLoading } = useAddNumber();
   const [csvData, setCsvData] = useState<any[]>([]);
-
-
   const [showTable, setShowTable] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const [errors, setErrors] = useState({
+    phoneNumber: "",
+    email: "",
+    name: "",
+    csvData: "",
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const success = await handleSubmitFeedback(phoneNumber, email, name);
-    if (success) {
-      setPhoneNumber("");
-      setEmail("");
-      setName("");
+  // Get validation schema based on current input values
+  const getValidationSchema = () => {
+    const schema: { phoneNumber: yup.StringSchema, email?: yup.StringSchema, name?: yup.StringSchema } = {
+      phoneNumber: yup
+        .string()
+        .required("Phone Number is required")
+        .matches(/^\d{10}$/, "Phone Number must be exactly 10 digits"),
+    };
+
+    // Only add email validation if there's an email value
+    if (email.trim()) {
+      schema.email = yup
+        .string()
+        .email("Invalid email format");
+    }
+
+    // Only add name validation if there's a name value
+    if (name.trim()) {
+      schema.name = yup
+        .string()
+        .min(2, "Name must be at least 2 characters")
+        .matches(/^[a-zA-Z\s]+$/, "Name can only contain letters and spaces");
+    }
+
+    return yup.object().shape(schema);
+  };
+
+  // CSV row validation schema - same conditional logic
+  const getCsvRowSchema = (row: any) => {
+    const schema = {
+      phoneNumber: yup
+        .string()
+        .required("Phone Number is required")
+        .matches(/^\d{10}$/, "Phone Number must be exactly 10 digits"),
+    };
+
+    if (row.email?.trim()) {
+      schema.email = yup
+        .string()
+        .email("Invalid email format");
+    }
+
+    if (row.name?.trim()) {
+      schema.name = yup
+        .string()
+        .min(2, "Name must be at least 2 characters")
+        .matches(/^[a-zA-Z\s]+$/, "Name can only contain letters and spaces");
+    }
+
+    return yup.object().shape(schema);
+  };
+
+  const validateSingleEntry = async () => {
+    try {
+      const schema = getValidationSchema();
+      await schema.validate(
+        { phoneNumber, email, name },
+        { abortEarly: false }
+      );
+      setErrors({ phoneNumber: "", email: "", name: "", csvData: "" });
+      return true;
+    } catch (validationErrors) {
+      const newErrors: { [key: string]: string } = {
+        phoneNumber: "",
+        email: "",
+        name: "",
+        csvData: "",
+      };
+
+      (validationErrors as yup.ValidationError).inner.forEach((error) => {
+        if (error.path) {
+          newErrors[error.path] = error.message;
+        }
+      });
+
+      setErrors({
+        phoneNumber: newErrors.phoneNumber || "",
+        email: newErrors.email || "",
+        name: newErrors.name || "",
+        csvData: newErrors.csvData || ""
+      });
+      return false;
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const validateCSVData = async (data: any[]) => {
+    try {
+      const validationPromises = data.map((row) => {
+        const schema = getCsvRowSchema(row);
+        return schema.validate(row, { abortEarly: false });
+      });
+
+      await Promise.all(validationPromises);
+      setErrors({ phoneNumber: "", email: "", name: "", csvData: "" });
+      return true;
+    } catch (error) {
+      setErrors({
+        ...errors,
+        csvData: "Invalid data in CSV file. Please check phone numbers and any provided emails/names."
+      });
+      return false;
+    }
+  };
+
+  // Rest of the component remains the same...
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const isValid = await validateSingleEntry();
+    if (isValid) {
+      const success = await handleSubmitFeedback(phoneNumber, email, name);
+      if (success) {
+        setPhoneNumber("");
+        setEmail("");
+        setName("");
+      }
+    }
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setFileName(file.name);
       parseCSV(file);
     }
   };
+
   const parseCSV = (file: File) => {
     Papa.parse(file, {
-      complete: (result) => {
+      complete: async (result) => {
         const formattedData = result.data.map((row: any) => ({
           phoneNumber: row["phoneNumber"],
           email: row["email"],
           name: row["name"],
         }));
-
         setCsvData(formattedData);
       },
       header: true,
       skipEmptyLines: true,
     });
   };
+
   const handleCSVUpload2 = async () => {
-
-    await handleSubmitCsvFeedback(csvData);
-
-
+    const isValid = await validateCSVData(csvData);
+    if (isValid) {
+      await handleSubmitCsvFeedback(csvData);
+    }
   };
+
   const handleCSVUpload = async () => {
-
-    setShowTable(true)
-
+    if (csvData.length === 0) {
+      setErrors({ ...errors, csvData: "Please upload a CSV file first" });
+      return;
+    }
+    const isValid = await validateCSVData(csvData);
+    if (isValid) {
+      setShowTable(true);
+      setErrors({ ...errors, csvData: "" });
+    }
   };
 
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
+    setErrors({ phoneNumber: "", email: "", name: "", csvData: "" });
   };
 
   return (
     <SideLayout>
       <Profile onSelectForm={undefined} />
-
       <div className="sm:ml-64 flex justify-center items-center">
         <div className="flex flex-col h-screen justify-center items-center w-full bg-gray-50">
           {isChecked && (
@@ -95,32 +216,49 @@ function PromotionalNumber() {
             <Section heading="Add Promotional Number" classnames="flex-col w-[70%] h-[40vh]">
               <form onSubmit={handleSubmit} className="w-full">
                 <div className="flex justify-center">
-                  <div className="flex items-center space-x-4 w-full p-2">
-                    <Input
-                      placeHolder="Enter Number"
-                      required
-                      value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
-                      type="number"
-                    />
-                    <Input
-                      placeHolder="Enter Name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      type="text"
-                    />
-                    <Input
-                      placeHolder="Enter Email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      type="email"
-                    />
+                  <div className="flex flex-col w-full p-2">
+                    <div className="flex items-center space-x-4 w-full">
+                      <div className="flex-1">
+                        <Input
+                          placeHolder="Enter Number"
+                          required
+                          value={phoneNumber}
+                          onChange={(e) => setPhoneNumber(e.target.value)}
+                          type="tel"
+                        />
+                        {errors.phoneNumber && (
+                          <p className="text-red-500 text-sm mt-1 fixed">{errors.phoneNumber}</p>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <Input
+                          placeHolder="Enter Name"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          type="text"
+                        />
+                        {errors.name && (
+                          <p className="text-red-500 text-sm mt-1 fixed">{errors.name}</p>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <Input
+                          placeHolder="Enter Email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          type="email"
+                        />
+                        {errors.email && (
+                          <p className="text-red-500 text-sm mt-1 fixed">{errors.email}</p>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div className="px-6 max-w-sm mt-4">
                   <Button
                     text={loading ? <div className="flex gap-2 font-bold justify-center items-center"><Spinner /> Submitting...</div> : "Submit"}
-                    classnames="py-4 px-8 bg-green-500 hover:bg-green-600"
+                    classnames="py-4 px-8 bg-green-500 hover:bg-green-600 mt-8"
                     type="submit"
                     disabled={loading}
                   />
@@ -136,7 +274,7 @@ function PromotionalNumber() {
             </Section>
           ) : (
             <>
-              <Section heading="Add Promotional Number" classnames="flex w-[70%] h-[40vh] justify-center items-end">
+              <Section heading="Add Promotional Number" classnames="flex-col w-[70%] h-[40vh]">
                 <div className="flex items-center justify-center w-auto">
                   <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-[30vh] rounded-lg cursor-pointer">
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
@@ -148,14 +286,17 @@ function PromotionalNumber() {
                       </p>
                       <p className="text-xs text-black dark:text-gray-400">CSV (MAX. 2MB)</p>
                       {fileName && <p className="text-xs text-green-500 mt-2">Selected file: {fileName}</p>}
+                      {errors.csvData && (
+                        <p className="text-red-500 text-sm mt-2">{errors.csvData}</p>
+                      )}
                     </div>
-                    <input id="dropzone-file" type="file" accept=".csv, .xls, .xlsx" className="hidden" onChange={handleFileChange} />
+                    <input id="dropzone-file" type="file" accept=".csv" className="hidden" onChange={handleFileChange} />
                   </label>
                 </div>
-                <div className="px-6 max-w-sm -mt-10 right-0 absolute">
+                <div className="px-6 max-w-sm mt-4">
                   <Button
                     text={loading ? <div className="flex gap-2 font-bold justify-center items-center"><Spinner /> Uploading...</div> : "Upload"}
-                    classnames="py-4 px-8 bg-blue-500 hover:bg-blue-600"
+                    classnames="py-4 px-8 bg-blue-500 hover:bg-blue-600 mb-10"
                     type="button"
                     onClick={handleCSVUpload}
                     disabled={loading}

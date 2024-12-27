@@ -50,9 +50,10 @@ const useAuth = (): AuthContext => {
                 message: ''
             });
             console.log(response);
-            
+
             Cookies.set('__session', response.data.data.token, { expires: 7 });
-            dispatch(loginSuccess(response.data.token));
+            localStorage.setItem('__temp', response.data.data.token);
+            dispatch(loginSuccess(response.data.data.token));
             router.push('/AddNumber');
             toast.success(response.data.message);
         } catch (error: any) {

@@ -46,6 +46,28 @@ const useAddNumber = () => {
     setFieldErrors({});
   };
 
+  const handleSubmitFeedback = async (phoneNumber: string, email: string, name: string) => {
+
+
+    setLoading(true);
+    try {
+        await axiosPost<FeedbackResponse, FeedbackInput>("http://localhost:3000/api/hotel/add-customer", {
+            phoneNumber,
+            name,
+            email,
+        });
+        toast.success("Customer added successfully!");
+        return true;
+    } catch (error: any) {
+        const errorMessage = error?.response?.data?.message || error.message || "An unexpected error occurred.";
+        toast.error(`Failed to add customer: ${errorMessage}`);
+        return false;
+    } finally {
+        setLoading(false);
+    }
+};
+
+
 
   // Bulk customer submit from CSV
   const handleSubmitCsvFeedback = async (csvData: FeedbackInput[]) => {
@@ -126,6 +148,7 @@ toast.error(error.data?.message || "An error occurred");
     fieldErrors,
     handleSubmitCsvFeedback,
     resetErrors,
+    handleSubmitFeedback
   };
 };
 

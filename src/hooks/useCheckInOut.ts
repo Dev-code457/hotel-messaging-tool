@@ -2,7 +2,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { axiosPost } from "@/utils/axiosUtility";
 import { ApiResponse } from "@/types";
-import * as yup from "yup"
+
 
 
 
@@ -45,7 +45,7 @@ export const useCheckInOut = (): UseCheckInOutResult => {
                 toast.error("No response from server.");
             }
         } catch (error: any) {
-            console.log("Error details:", error);  // Log the entire error to inspect its structure
+            console.log("Error details:", error); 
     
             if (error?.response?.data?.errors) {
                 error.response.data.errors.forEach((err: string) => {

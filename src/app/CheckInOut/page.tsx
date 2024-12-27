@@ -1,5 +1,4 @@
-"use client"; // This ensures that the component is treated as a client-side component
-
+'use client'
 import React, { useEffect, useState } from "react";
 import Section from "../../components/Layout";
 import Input, { Checkbox } from "../../components/Input";
@@ -14,7 +13,7 @@ import Profile from "@/components/Profile";
 import { RootState } from "@/redux/store";
 import { hotelActions } from "@/redux/slices/hotelSlice";
 import { fetchHotelData } from "@/global";
-import * as yup from "yup"
+import * as yup from "yup";
 
 function CheckInOut() {
   const {
@@ -30,16 +29,80 @@ function CheckInOut() {
     setIsPromotionalList,
   } = useCheckInOut();
 
-  const handleCheckboxChange = () => {
-    setIsPromotionalList(!isPromotionalList);
+  const [errors, setErrors] = useState({
+    phoneNumber: "",
+    userSpending: "",
+  });
+
+  const getValidationSchema = () => {
+    const baseSchema = {
+      phoneNumber: yup
+        .string()
+        .required("Phone Number is required")
+        .matches(/^\d{10}$/, "Phone Number must be exactly 10 digits"),
+    };
+
+    if (isPromotionalList) {
+      return yup.object({
+        ...baseSchema,
+        userSpending: yup
+          .number()
+          .required("User Spending Amount is required")
+          .positive("User Spending must be positive")
+          .typeError("User Spending must be a number"),
+      });
+    }
+
+    return yup.object(baseSchema);
   };
 
-  const schema = yup.object({
-    phoneNumber: yup.string().required('Phone Number is required').min(10, "PhoneNumber must be 10 digits long"),
-    userSpending: yup.number().when('isPromotionalList', (isPromotionalList, schema) =>
-      isPromotionalList ? schema.required('User Spending Amount is required') : schema
-    )
-  })
+  const validateForm = async () => {
+    const schema = getValidationSchema();
+    try {
+      await schema.validate(
+        { phoneNumber, userSpending },
+        { abortEarly: false }
+      );
+      setErrors({ phoneNumber: "", userSpending: "" });
+      return true;
+    } catch (validationErrors) {
+      const newErrors: Record<string, string> = {
+        phoneNumber: "",
+        userSpending: "",
+      };
+
+      (validationErrors as yup.ValidationError).inner.forEach((error) => {
+        if (error.path) {
+          newErrors[error.path] = error.message;
+        }
+      });
+
+      setErrors(newErrors);
+      return false;
+    }
+  };
+
+  const handleCheckInWithValidation = async () => {
+    const isValid = await validateForm();
+    if (isValid) {
+      handleCheckIn(isPromotionalList);
+    }
+  };
+
+  const handleCheckOutWithValidation = async () => {
+    const isValid = await validateForm();
+    if (isValid) {
+      handleCheckOut(isPromotionalList);
+    }
+  };
+
+  const handleCheckboxChange = () => {
+    setIsPromotionalList(!isPromotionalList);
+    setErrors((prev) => ({ ...prev, userSpending: "" }));
+    if (isPromotionalList) {
+      setUserSpending("");
+    }
+  };
 
   const dispatch = useDispatch();
   const hotelDetail = useSelector((state: RootState) => state.hotel.details);
@@ -49,8 +112,6 @@ function CheckInOut() {
       try {
         dispatch(hotelActions.fetchHotelDetailsPending());
         const data = await fetchHotelData();
-        console.log(data, "Fetched hotel data");
-
         dispatch(hotelActions.fetchHotelDetailsSuccess(data));
       } catch (error: any) {
         dispatch(hotelActions.fetchHotelDetailsFailure(error.message));
@@ -59,9 +120,6 @@ function CheckInOut() {
 
     fetchData();
   }, []);
-
-  console.log(hotelDetail?.data?.hotel?.hotelName, "Hotel details fetched");
-
 
   if (!hotelDetail?.data?.hotel?.hotelName) {
     return (
@@ -91,33 +149,41 @@ function CheckInOut() {
             <div className="grid grid-cols-5 gap-4">
               <div className="col-span-3">
                 <form
-                  className={`w-[100%]${isPromotionalList ? "-mt-[30%}" : "mt-16"
+                  className={`w-[100%] ${isPromotionalList ? "-mt-[30%]" : "mt-16"
                     }`}
                   onSubmit={(e) => e.preventDefault()}
                 >
-                  <Input
-                    classnames="p"
-                    type="tel"
-                    value={phoneNumber}
-                    required
-                    placeHolder="Enter Phone Number"
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                  />
-                  
-                  {isPromotionalList && (
+                  <div className="mb-4">
                     <Input
-                      classnames="py-3"
-                      type="number"
-                      value={userSpending}
-                      placeHolder="User Spending Amount"
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setUserSpending(e.target.value)
-                      }
+                      classnames="p"
+                      type="tel"
+                      value={phoneNumber}
+                      required
+                      placeHolder="Enter Phone Number"
+                      onChange={(e) => setPhoneNumber(e.target.value)}
                     />
+                    {errors.phoneNumber && (
+                      <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>
+                    )}
+                  </div>
+
+                  {isPromotionalList && (
+                    <div className="mb-4">
+                      <Input
+                        classnames="py-3"
+                        type="number"
+                        value={userSpending}
+                        placeHolder="User Spending Amount"
+                        onChange={(e) => setUserSpending(e.target.value)}
+                      />
+                      {errors.userSpending && (
+                        <p className="text-red-500 text-sm mt-1">{errors.userSpending}</p>
+                      )}
+                    </div>
                   )}
 
                   <Checkbox
-                    checked={isPromotionalList} // Use the hook's checkbox state
+                    checked={isPromotionalList}
                     classnames="-mb-10 py-5"
                     label="Want to add this Number to the Promotional List?"
                     onChange={handleCheckboxChange}
@@ -126,11 +192,7 @@ function CheckInOut() {
                     <Button
                       text={
                         loadingCheckIn ? (
-                          <div
-                            className={
-                              "flex gap-2 font-bold justify-center items-center"
-                            }
-                          >
+                          <div className="flex gap-2 font-bold justify-center items-center">
                             <Spinner /> Sending...
                           </div>
                         ) : (
@@ -139,17 +201,13 @@ function CheckInOut() {
                       }
                       classnames="bg-green-500 hover:bg-green-600 py-3"
                       type="submit"
-                      onClick={() => handleCheckIn(isPromotionalList)}
+                      onClick={handleCheckInWithValidation}
                       disabled={loadingCheckIn}
                     />
                     <Button
                       text={
                         loadingCheckOut ? (
-                          <div
-                            className={
-                              "flex gap-2 font-bold justify-center items-center"
-                            }
-                          >
+                          <div className="flex gap-2 font-bold justify-center items-center">
                             <Spinner /> Sending...
                           </div>
                         ) : (
@@ -158,7 +216,7 @@ function CheckInOut() {
                       }
                       classnames="bg-blue-500 hover:bg-blue-600"
                       type="submit"
-                      onClick={() => handleCheckOut(isPromotionalList)}
+                      onClick={handleCheckOutWithValidation}
                       disabled={loadingCheckOut}
                     />
                   </div>

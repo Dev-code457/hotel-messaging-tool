@@ -7,7 +7,6 @@ import Confirmation, { Warning } from "@/components/Confirmation";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { logout } from "@/redux/slices/authSlices";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
@@ -19,7 +18,7 @@ function SideLayout({ children }: { children: ReactNode }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModal, setIsModal] = useState(true);
   const dispatch = useDispatch();
-  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  // const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const value = useSelector((state: RootState) => state.example.value);
 
   const links = [
@@ -29,10 +28,10 @@ function SideLayout({ children }: { children: ReactNode }) {
     { name: "Feedback", path: "/FeedBack" },
     { name: "Logout", path: "#" },
   ];
+  
 
   const handleLogout = async () => {
     try {
-
       Cookies.remove('__session', { path: '/' });
       toast.success("Logged out successfully");
       router.push('/');
@@ -40,6 +39,7 @@ function SideLayout({ children }: { children: ReactNode }) {
       console.error('An error occurred while logging out:', error);
     }
   };
+  const isAuthenticated = Cookies.get("__session");
 
   const handleWarning = () => {
     router.push("/Payment")
@@ -88,9 +88,9 @@ function SideLayout({ children }: { children: ReactNode }) {
             {isAuthenticated ? (
               <>
                 {links.map((link) => {
-                  // Hide links related to message-sending if value is less than 1
+
                   if (value < 1 && ["Check In/ Check Out", "Promotions/ Offers", "Feedback"].includes(link.name)) {
-                    return null; // Do not render this link
+                    return null;
                   }
                   return (
                     <li key={link.path} className="ml-2">
@@ -100,8 +100,8 @@ function SideLayout({ children }: { children: ReactNode }) {
                         onClick={
                           link.name === "Logout"
                             ? (e) => {
-                              e.preventDefault(); // Prevent default link behavior
-                              setIsModalOpen(true); // Open confirmation modal
+                              e.preventDefault();
+                              setIsModalOpen(true);
                             }
                             : undefined
                         }
@@ -111,10 +111,6 @@ function SideLayout({ children }: { children: ReactNode }) {
                     </li>
                   );
                 })}
-
-                {/* <div className="text-xl text-white font-semibold absolute bottom-0">
-                  Messages Left: {value}
-                </div> */}
               </>
             ) : null}
           </ul>

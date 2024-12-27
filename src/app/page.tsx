@@ -11,18 +11,69 @@ import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import Spinner from "@/components/Loader";
 import useAuth from "@/hooks/useAuth";
+import * as yup from "yup";
 
 function Page() {
   const router = useRouter();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [hotelName, setHotelName] = useState<string>("");
   const { loading, login } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    login(email, password);
+
+  const [errors, setErrors] = useState({
+    email: '',
+    password: '',
+
+  });
+
+  const getValidationSchema = () => {
+    const baseSchema = {
+      email: yup.string().email("Invalid email format").required("Email is required"),
+      password: yup.string().min(8, "Password must be at least 8 characters").required("Password is required"),
+    };
+
+    return yup.object().shape(baseSchema);
   };
+
+
+
+  const validateForm = async () => {
+    const schema = getValidationSchema();
+    try {
+      await schema.validate(
+        { email, password },
+        { abortEarly: false }
+      );
+      setErrors({ email: "", password: "" });
+      return true;
+    } catch (validationErrors) {
+      const newErrors: Record<string, string> = {
+        email: '',
+        password: ''
+      };
+
+      (validationErrors as yup.ValidationError).inner.forEach((error) => {
+        if (error.path) {
+          newErrors[error.path] = error.message;
+        }
+      });
+
+      setErrors(newErrors);
+      return false;
+    }
+  };
+
+
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault(); // Prevent default form submission
+
+    const isValid = await validateForm();
+    if (isValid) {
+      login(email, password);
+    }
+  };
+
 
   useLayoutEffect(() => {
     const token = Cookies.get("_session");
@@ -78,33 +129,37 @@ function Page() {
       <div className="sm:ml-64 flex justify-center">
         <div className="flex flex-col h-screen pt-20 items-center w-full bg-gray-50">
           <Section heading="Login" classnames="flex-col justify-start h-[50vh] w-[65%] space-x-4">
-    
-            <form onSubmit={handleSubmit} className="w-[40%] -mb-6">
-              <Input
-                classnames="py-1 "
-                value={email}
-                required
-                onChange={(e) => setEmail(e.target.value)}
-                placeHolder="Enter Email"
-                type="email"
-              />
-              <Input
-                classnames="py-1"
-                value={password}
-                required
-                type="password"
-                placeHolder="Enter Password"
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              {/* <Input
-                classnames="py-1"
-                value={hotelName}
-                required
-                type="text"
-                placeHolder="Enter HotelName"
-                onChange={(e) => setHotelName(e.target.value)}
-              /> */}
-              <div className="flex justify-start -mb-5 py-3">
+
+            <form onSubmit={handleSubmit} className="w-[40%] mb-20">
+              <div className="flex-1 mb-6">
+                <Input
+                  classnames="py-1"
+                  value={email}
+                  required
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeHolder="Enter Email"
+                  type="email"
+                />
+                {errors.email && (
+                  <p className="text-red-500 text-sm mt-1 fixed">{errors.email}</p>
+                )}
+              </div>
+
+              <div className="flex-1 mb-10">
+                <Input
+                  classnames="py-1"
+                  value={password}
+                  required
+                  type="password"
+                  placeHolder="Enter Password"
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                {errors.password && (
+                  <p className="text-red-500 text-sm mt-1 fixed">{errors.password}</p>
+                )}
+              </div>
+
+              <div className="flex justify-start py-3">
                 <Button
                   text={loading ? <div className={"flex gap-2 font-bold justify-center items-center"}><Spinner /> Logging In...</div> : "Submit"}
                   classnames="bg-green-500 hover:bg-green-600"
@@ -121,7 +176,7 @@ function Page() {
               </div>
             </form>
             <div
-              className="text-sm font-semibold text-[#FB5151] py-6 underline font-serif cursor-pointer w-auto"
+              className="text-sm font-semibold text-[#FB5151] py-6 underline font-serif cursor-pointer w-[10%]"
               onClick={() => router.push("/ForgotPassword")}
             >
               Forgot Password
