@@ -69,7 +69,7 @@ function PromotionalNumber() {
 
 
 
-  const getCsvRowSchema = (row: any) => {
+  const getCsvRowSchema = (row: { email?: string; name?: string; phoneNumber: string }) => {
     // Define schema as a mutable object with string keys and Yup schemas as values
     const schema: Record<string, yup.AnySchema> = {
       phoneNumber: yup
