@@ -13,14 +13,10 @@ export default function RootLayout({
 
     <html lang="en">
       <body className={`antialiased`}>
-
         <ReduxProvider>
           <Toaster richColors />
           <NextTopLoader color="#43a047"
-
           />
-
-
           {children}
         </ReduxProvider>
       </body>

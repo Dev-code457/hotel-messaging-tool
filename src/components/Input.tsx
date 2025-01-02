@@ -6,7 +6,7 @@ import { FaAsterisk } from "react-icons/fa";
 interface InputProps {
   classnames?: string;
   label?: string;
-  value: string | number;
+  value?: string | number;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeHolder: string;
   required?: boolean;
@@ -39,7 +39,32 @@ export default function Input({
     if (type === "date") {
       setIsOpen(true);
     }
+    if (type === "time") {
+      setIsOpen(true);
+    }
   };
+
+  const handleTimeChange = (date: Date | null) => {
+    if (date) {
+      const timeString = date.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
+      onChange({ target: { value: timeString } } as React.ChangeEvent<HTMLInputElement>);
+    }
+    setIsOpen(false);
+  };
+
+  const handleDateChange = (date: Date | null) => {
+    if (date) {
+      const formattedDate = date.toISOString().split("T")[0]; // Format as "yyyy-MM-dd"
+      onChange({
+        target: { value: formattedDate },
+      } as React.ChangeEvent<HTMLInputElement>);
+    }
+  };
+
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -47,7 +72,6 @@ export default function Input({
 
   return (
     <div className={`w-full ${classnames}`}>
-      {/* Label */}
       <label
         htmlFor="input-field"
         className="block text-lg font-medium text-gray-700 mb-1"
@@ -56,13 +80,12 @@ export default function Input({
         {required && <span className="text-red-500  absolute -mt-1"><FaAsterisk size={8} /></span>}
       </label>
 
-      {/* Input Field */}
       <div className="relative">
         <input
           type={
             type === "password" && showPassword
               ? "text"
-              : type === "date" ? "text" : type
+              : type === "date" ? "text" : type === "time" ? "text" : type
           }
           id="input-field"
           value={value}
@@ -76,36 +99,47 @@ export default function Input({
           disabled={disabled}
           defaultValue={defaultValue}
           onClick={() => handleOpen(type)}
-          readOnly={type === 'date'}
+          readOnly={type === 'date' || type === 'time'}
         />
 
-        {/* Date/Time Picker */}
-        <div className="fixed z-50 shadow-2xl">
+        <div className="fixed z-50">
           {isOpen && (type === "date") && (
             <ReactDatePicker
-              selected={value}
-              onChange={onChange}
+              selected={value ? new Date(value as string) : null}
+              onChange={handleDateChange}
               inline
-              minDate={type === "date" ? new Date() : null} // Only set minDate if it's a date picker
-              maxDate={type === "date" ? new Date().setMonth(new Date().getMonth() + 3) : null} // 3 months ahead only for date type
-              dateFormat={"yyyy-MM-dd"} // Show only time format for time type
-              // Show time picker only if type is 'time'
-
+              minDate={type === "date" ? new Date() : undefined}
+              maxDate={type === "date" ? new Date(new Date().setMonth(new Date().getMonth() + 3)) : undefined}
+              dateFormat={"yyyy-MM-dd"}
               locale="en-GB"
               onClickOutside={() => setIsOpen(false)}
-              shouldCloseOnSelect={false} // Keep calendar open after selecting a date/time
-              // Make sure no calendar is shown when type is 'time'
-              showMonthDropdown={false} // Hide month dropdown
-              showYearDropdown={false} // Hide year dropdown
+              shouldCloseOnSelect={false}
+              showMonthDropdown={false}
+              showYearDropdown={false}
               showPopperArrow={false}
             />
-
-
-
           )}
+
+          {isOpen && type === "time" && (
+            <div className="absolute mt-2 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
+              <ReactDatePicker
+                selected={value ? new Date(`2000/01/01 ${value}`) : null}
+                onChange={handleTimeChange}
+                inline
+                showTimeSelect
+                showTimeSelectOnly
+                timeIntervals={1} // Show 15-minute intervals for easier selection
+                timeCaption="Select Time"
+                timeFormat="h:mm aa"
+                onClickOutside={() => setIsOpen(false)}
+                shouldCloseOnSelect={true}
+                popperClassName="react-datepicker-popper"
+              />
+            </div>
+          )}
+
         </div>
 
-        {/* Password Toggle Icon */}
         {type === "password" && (
           <button
             type="button"
@@ -126,12 +160,10 @@ export default function Input({
         )}
       </div>
 
-      {/* Error Message */}
       {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
     </div>
   );
 }
-
 
 
 interface CheckboxProps {

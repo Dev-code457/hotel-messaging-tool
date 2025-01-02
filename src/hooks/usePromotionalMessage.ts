@@ -34,9 +34,11 @@ const usePromotionalMessage = (initialHotelName: string) => {
         const numberValue = parseFloat(e.target.value);
         setDiscount(isNaN(numberValue) ? null : numberValue);
     };
-
-    const handleDateChange = (selectedDate: Date | null) => {
-        if (selectedDate) {
+    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedDateValue = e.target.value; // Extract the value
+        const selectedDate = new Date(selectedDateValue); // Convert to a Date object
+    
+        if (selectedDate instanceof Date && !isNaN(selectedDate.getTime())) {
             const options: Intl.DateTimeFormatOptions = {
                 weekday: 'short',
                 year: 'numeric',
@@ -46,15 +48,17 @@ const usePromotionalMessage = (initialHotelName: string) => {
             const formattedDate = new Intl.DateTimeFormat('en-US', options).format(selectedDate);
             setDate(formattedDate);
         } else {
+            console.warn("Invalid date selected:", selectedDateValue);
             setDate(null);
         }
     };
+    
     const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const [hour, minute] = e.target.value.split(":");
         const hourNumber = parseInt(hour, 10);
-        const ampm = hourNumber >= 12 ? "PM" : "AM";
+        // const ampm = hourNumber >= 12 ? "PM" : "AM";
         const formattedHour = hourNumber % 12 || 12;
-        const formattedTime = `${formattedHour}:${minute} ${ampm}`;
+        const formattedTime = `${formattedHour}:${minute}`;
         setTime(formattedTime);
     };
 
@@ -96,7 +100,7 @@ const usePromotionalMessage = (initialHotelName: string) => {
                     break;
 
                 case 'roomBooking':
-                    if (!time || !date) {
+                    if (!date) {
                         throw new Error('date is required for this message');
                     }
                     endpoint = 'http://localhost:3000/api/message/bulk-messaging/room-booking';
@@ -110,7 +114,7 @@ const usePromotionalMessage = (initialHotelName: string) => {
                     break;
 
                 case 'partyPlanning':
-                    if (!date) {
+                    if (!time || !date) {
                         throw new Error('Date and Time are required for date-based messages');
                     }
                     endpoint = 'http://localhost:3000/api/message/bulk-messaging/party-planning';
@@ -141,7 +145,7 @@ const usePromotionalMessage = (initialHotelName: string) => {
                     throw new Error('Invalid template selected');
             }
 
-            const response = await axiosPost<ApiResponse>(endpoint, payload);
+            const response = await axiosPost<ApiResponse, BulkMessagePayload>(endpoint, payload);
 
             if (response.data) {
                 dispatch(MessagesUsed());

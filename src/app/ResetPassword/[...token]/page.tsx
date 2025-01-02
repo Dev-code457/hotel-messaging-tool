@@ -14,8 +14,6 @@ import Spinner from "@/components/Loader";
 function ChangePassword() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
-  // Extract the token from the URL
   const pathname = usePathname();
   const token = pathname.split("/").slice(-1)[0];
   const router = useRouter();

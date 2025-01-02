@@ -40,6 +40,7 @@ function PromotionalMessage() {
   } = usePromotionalMessage(hotelDetail?.hotelName || "");
 
 
+console.log(time,"dnasjfndsjkfnksdnfl");
 
   const getValidationSchema = () => {
     switch (selectedTemplate) {
@@ -406,3 +407,4 @@ function PromotionalMessage() {
 }
 
 export default PromotionalMessage;
+  

@@ -6,10 +6,10 @@ import Link from "next/link";
 import Confirmation, { Warning } from "@/components/Confirmation";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
+import { IoIosLock } from "react-icons/io";
 
 
 function SideLayout({ children }: { children: ReactNode }) {
@@ -17,9 +17,8 @@ function SideLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModal, setIsModal] = useState(true);
-  const dispatch = useDispatch();
-  // const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const value = useSelector((state: RootState) => state.example.value);
+  const userDetail = useSelector((state: RootState) => state.hotel.details);
 
   const links = [
     { name: "Check In / Check Out", path: "/CheckInOut" },
@@ -28,7 +27,7 @@ function SideLayout({ children }: { children: ReactNode }) {
     { name: "Feedback", path: "/FeedBack" },
     { name: "Logout", path: "#" },
   ];
-  
+
 
   const handleLogout = async () => {
     try {
@@ -76,6 +75,7 @@ function SideLayout({ children }: { children: ReactNode }) {
         aria-label="Sidebar"
       >
         <div className="h-full px-3 overflow-y-auto bg-black">
+
           <ul className="space-y-4 ml-2">
             <li>
               <Link
@@ -85,7 +85,60 @@ function SideLayout({ children }: { children: ReactNode }) {
                 <Image src={Logo} alt="LOGO" className="w-[60%]" />
               </Link>
             </li>
-            {isAuthenticated ? (
+
+            {!userDetail?.data?.User?.planType && (
+  <div className="relative ml-2">
+    {/* Links */}
+    <ul className="bg-black p-4 rounded-lg space-y-4">
+      {links.map((link) => {
+        if (
+          value < 1 &&
+          ["Check In/ Check Out", "Promotions/ Offers", "Feedback"].includes(link.name)
+        ) {
+          return null;
+        }
+        return (
+          <li key={link.path}>
+            <Link
+                        href={link.path}
+                        className={"flex items-center justify-start rounded-lg group font-bold text-white "}
+                        onClick={
+                          link.name === "Logout"
+                            ? (e) => {
+                              e.preventDefault();
+                              setIsModalOpen(true);
+                            }
+                            : undefined
+                        }
+                      >
+                        <p>{link.name}</p>
+                      </Link>
+          </li>
+        );
+      })}
+    </ul>
+
+    {/* Lock Overlay */}
+    <div className="absolute inset-0 bg-black bg-opacity-75 shadow-lg flex items-center justify-center rounded-lg">
+      <div className="text-center text-white">
+        <div className="flex items-center justify-center mb-4 shadow-2xl">
+        <IoIosLock size={50}/>
+        </div>
+       
+        <button
+          onClick={() => router.push("/Payment")}
+          className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition duration-300"
+        >
+          Unlock Now
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
+
+            {(isAuthenticated && userDetail?.data?.User?.planType) ? (
               <>
                 {links.map((link) => {
 
@@ -113,6 +166,9 @@ function SideLayout({ children }: { children: ReactNode }) {
                 })}
               </>
             ) : null}
+
+
+
           </ul>
         </div>
       </aside>

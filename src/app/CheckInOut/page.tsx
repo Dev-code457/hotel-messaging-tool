@@ -29,10 +29,10 @@ function CheckInOut() {
     setIsPromotionalList,
   } = useCheckInOut();
 
-  const [errors, setErrors] = useState({
-    phoneNumber: "",
-    userSpending: "",
-  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const userDetail = useSelector((state: RootState) => state.hotel.details);
+
+  
 
   const getValidationSchema = () => {
     const baseSchema = {
@@ -63,24 +63,22 @@ function CheckInOut() {
         { phoneNumber, userSpending },
         { abortEarly: false }
       );
-      setErrors({ phoneNumber: "", userSpending: "" });
+      setErrors({});
       return true;
     } catch (validationErrors) {
-      const newErrors: Record<string, string> = {
-        phoneNumber: "",
-        userSpending: "",
-      };
-
+      const newErrors: Record<string, string> = {};
       (validationErrors as yup.ValidationError).inner.forEach((error) => {
         if (error.path) {
           newErrors[error.path] = error.message;
         }
       });
-
       setErrors(newErrors);
       return false;
     }
   };
+
+  
+
 
   const handleCheckInWithValidation = async () => {
     const isValid = await validateForm();
@@ -143,13 +141,13 @@ function CheckInOut() {
           </h1>
           <Section
             heading="Check In & Check Out"
-            classnames={`flex-col justify-start w-[65%] space-x-4 ${isPromotionalList ? "h-[50vh]" : "h-[35vh]"
+            classnames={`flex-col justify-start w-[65%] space-x-4 ${isPromotionalList ? "h-[40vh]" : "h-[25vh]"
               }`}
           >
             <div className="grid grid-cols-5 gap-4">
               <div className="col-span-3">
                 <form
-                  className={`w-[100%] ${isPromotionalList ? "-mt-[30%]" : "mt-16"
+                  className={`w-[100%] ${isPromotionalList ? "-mt-[10%]" : "mt-16"
                     }`}
                   onSubmit={(e) => e.preventDefault()}
                 >
@@ -199,10 +197,10 @@ function CheckInOut() {
                           "Send Check In Message"
                         )
                       }
-                      classnames="bg-green-500 hover:bg-green-600 py-3"
+                      classnames={`bg-green-500 hover:bg-green-600 py-3 ${!userDetail?.data?.User?.planType ? "cursor-not-allowed": "cursor-pointer"}`}
                       type="submit"
                       onClick={handleCheckInWithValidation}
-                      disabled={loadingCheckIn}
+                      disabled={!userDetail?.data?.User?.planType || loadingCheckIn}
                     />
                     <Button
                       text={
@@ -214,10 +212,10 @@ function CheckInOut() {
                           "Send Check Out Message"
                         )
                       }
-                      classnames="bg-blue-500 hover:bg-blue-600"
+                      classnames={`bg-blue-500 hover:bg-blue-600 py-3 ${!userDetail?.data?.User?.planType ? "cursor-not-allowed": "cusrsor-pointer"}`}
                       type="submit"
                       onClick={handleCheckOutWithValidation}
-                      disabled={loadingCheckOut}
+                      disabled={!userDetail?.data?.User?.planType || loadingCheckOut}
                     />
                   </div>
                 </form>
@@ -227,7 +225,7 @@ function CheckInOut() {
                 <Image
                   src={Hero}
                   alt="Check In & Check Out"
-                  className={`h-[100%] ${isPromotionalList ? "-mb-36 w-[100%]" : "-mb-20"
+                  className={`h-[100%] ${isPromotionalList ? "-mb-36 w-[100%]" : "-mb-32"
                     }`}
                 />
               </div>

@@ -32,61 +32,74 @@ function PromotionalNumber() {
     csvData: "",
   });
 
-  // Get validation schema based on current input values
-  const getValidationSchema = () => {
-    const schema: { phoneNumber: yup.StringSchema, email?: yup.StringSchema, name?: yup.StringSchema } = {
+
+
+  const getValidationSchema = (email: string, name: string) => {
+    const schema: Partial<{
+      phoneNumber: yup.StringSchema<string>;
+      email: yup.StringSchema<string | undefined>;
+      name: yup.StringSchema<string | undefined>;
+    }> = {
       phoneNumber: yup
         .string()
         .required("Phone Number is required")
         .matches(/^\d{10}$/, "Phone Number must be exactly 10 digits"),
     };
-
+  
     // Only add email validation if there's an email value
     if (email.trim()) {
       schema.email = yup
         .string()
-        .email("Invalid email format");
+        .email("Invalid email format")
+        .required("Email is required");
     }
-
+  
     // Only add name validation if there's a name value
     if (name.trim()) {
       schema.name = yup
         .string()
         .min(2, "Name must be at least 2 characters")
-        .matches(/^[a-zA-Z\s]+$/, "Name can only contain letters and spaces");
+        .matches(/^[a-zA-Z\s]+$/, "Name can only contain letters and spaces")
+        .defined();
     }
-
+  
     return yup.object().shape(schema);
   };
+  
 
-  // CSV row validation schema - same conditional logic
+
+
   const getCsvRowSchema = (row: any) => {
-    const schema = {
+    // Define schema as a mutable object with string keys and Yup schemas as values
+    const schema: Record<string, yup.AnySchema> = {
       phoneNumber: yup
         .string()
         .required("Phone Number is required")
         .matches(/^\d{10}$/, "Phone Number must be exactly 10 digits"),
     };
-
+  
     if (row.email?.trim()) {
       schema.email = yup
         .string()
-        .email("Invalid email format");
+        .email("Invalid email format")
+        .nullable()
+        .default(null); // Allows null for optional email
     }
-
+  
     if (row.name?.trim()) {
       schema.name = yup
         .string()
         .min(2, "Name must be at least 2 characters")
         .matches(/^[a-zA-Z\s]+$/, "Name can only contain letters and spaces");
     }
-
+  
     return yup.object().shape(schema);
   };
+  
 
   const validateSingleEntry = async () => {
     try {
-      const schema = getValidationSchema();
+      const schema = getValidationSchema(email, name);
       await schema.validate(
         { phoneNumber, email, name },
         { abortEarly: false }
@@ -213,7 +226,7 @@ function PromotionalNumber() {
           </div>
 
           {!isChecked ? (
-            <Section heading="Add Promotional Number" classnames="flex-col w-[70%] h-[40vh]">
+            <Section heading="Add Promotional Number" classnames="flex-col w-[70%] h-[30vh]">
               <form onSubmit={handleSubmit} className="w-full">
                 <div className="flex justify-center">
                   <div className="flex flex-col w-full p-2">
@@ -268,15 +281,15 @@ function PromotionalNumber() {
                 <Image
                   src={Hero}
                   alt="Promotional Message"
-                  className="w-[30%] h-[100%] -mt-24 -mb-8"
+                  className="w-[20%] h-[70%] -mt-24 -mb-8"
                 />
               </div>
             </Section>
           ) : (
             <>
-              <Section heading="Add Promotional Number" classnames="flex-col w-[70%] h-[40vh]">
+              <Section heading="Add Promotional Number" classnames="flex-col w-[70%] h-[30vh]">
                 <div className="flex items-center justify-center w-auto">
-                  <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-[30vh] rounded-lg cursor-pointer">
+                  <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full rounded-lg cursor-pointer">
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
                       <svg className="w-8 h-8 mb-4 text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
@@ -293,7 +306,7 @@ function PromotionalNumber() {
                     <input id="dropzone-file" type="file" accept=".csv" className="hidden" onChange={handleFileChange} />
                   </label>
                 </div>
-                <div className="px-6 max-w-sm mt-4">
+                <div className="px-6 max-w-sm mt-4 justify-end">
                   <Button
                     text={loading ? <div className="flex gap-2 font-bold justify-center items-center"><Spinner /> Uploading...</div> : "Upload"}
                     classnames="py-4 px-8 bg-blue-500 hover:bg-blue-600 mb-10"

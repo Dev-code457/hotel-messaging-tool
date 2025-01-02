@@ -20,11 +20,7 @@ function Page() {
   const { loading, login } = useAuth();
 
 
-  const [errors, setErrors] = useState({
-    email: '',
-    password: '',
-
-  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const getValidationSchema = () => {
     const baseSchema = {
@@ -36,7 +32,6 @@ function Page() {
   };
 
 
-
   const validateForm = async () => {
     const schema = getValidationSchema();
     try {
@@ -44,25 +39,19 @@ function Page() {
         { email, password },
         { abortEarly: false }
       );
-      setErrors({ email: "", password: "" });
+      setErrors({});
       return true;
     } catch (validationErrors) {
-      const newErrors: Record<string, string> = {
-        email: '',
-        password: ''
-      };
-
+      const newErrors: Record<string, string> = {};
       (validationErrors as yup.ValidationError).inner.forEach((error) => {
         if (error.path) {
           newErrors[error.path] = error.message;
         }
       });
-
       setErrors(newErrors);
       return false;
     }
   };
-
 
 
   const handleSubmit = async (event: React.FormEvent) => {

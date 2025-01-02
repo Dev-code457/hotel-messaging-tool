@@ -1,7 +1,6 @@
 // hooks/useAuth.ts
 import { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
-import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { loginSuccess } from '@/redux/slices/authSlices';
@@ -54,7 +53,7 @@ const useAuth = (): AuthContext => {
             Cookies.set('__session', response.data.data.token, { expires: 7 });
             localStorage.setItem('__temp', response.data.data.token);
             dispatch(loginSuccess(response.data.data.token));
-            router.push('/AddNumber');
+            router.push('/CheckInOut');
             toast.success(response.data.message);
         } catch (error: any) {
             console.log(error);

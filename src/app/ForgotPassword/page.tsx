@@ -15,10 +15,7 @@ function ChangePassword() {
   const { forgotPassword, loading } = useForgotPassword();
 
   
-    const [errors, setErrors] = useState({
-      email: '',
-  
-    });
+  const [errors, setErrors] = useState<Record<string, string>>({});
   
     const getValidationSchema = () => {
       const baseSchema = {
@@ -31,31 +28,26 @@ function ChangePassword() {
   
   
   
-    const validateForm = async () => {
-      const schema = getValidationSchema();
-      try {
-        await schema.validate(
-          { email},
-          { abortEarly: false }
-        );
-        setErrors({ email: ""});
-        return true;
-      } catch (validationErrors) {
-        const newErrors: Record<string, string> = {
-          email: '',
-          password: ''
-        };
-  
-        (validationErrors as yup.ValidationError).inner.forEach((error) => {
-          if (error.path) {
-            newErrors[error.path] = error.message;
-          }
-        });
-  
-        setErrors(newErrors);
-        return false;
-      }
-    };
+  const validateForm = async () => {
+    const schema = getValidationSchema();
+    try {
+      await schema.validate(
+        { email },
+        { abortEarly: false }
+      );
+      setErrors({});
+      return true;
+    } catch (validationErrors) {
+      const newErrors: Record<string, string> = {};
+      (validationErrors as yup.ValidationError).inner.forEach((error) => {
+        if (error.path) {
+          newErrors[error.path] = error.message;
+        }
+      });
+      setErrors(newErrors);
+      return false;
+    }
+  };
   
   
   

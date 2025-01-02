@@ -14,6 +14,7 @@ import { hotelActions } from "@/redux/slices/hotelSlice";
 import { RootState } from "@/redux/store";
 import useHotelDetails from "@/hooks/useHotelDetails";
 import Profile from '@/components/Profile'
+import { useRouter } from "next/navigation";
 
 function ChangePassword() {
 
@@ -36,15 +37,23 @@ function ChangePassword() {
     setHotelDetails,
     isLoading
   } = useHotelDetails(id as string);
-
+  const router = useRouter()
 
   useEffect(() => {
     console.log("Yes..........")
-    if (hotelDetail?.UserDetails?.hotelName) {
-      setHotelDetails(hotelDetail.UserDetails.hotelName);
-      setInitialhotelDetails(hotelDetail.UserDetails.hotelName);
+    if (hotelDetail?.data?.User?.hotelName) {
+      setInitialhotelDetails(hotelDetail?.data?.User?.hotelName);
     }
   }, [initialHotelDetails, hotelDetail]);
+
+  const user = hotelDetail?.data?.User
+  console.log(user);
+
+const handleUpgrade = () => { 
+  router.push("/Payment");
+}
+
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,16 +81,16 @@ function ChangePassword() {
             selectedOption === "hotelDetails" && (
               <Section
                 heading="Hotel Details"
-                classnames="flex-col justify-start items-center w-[50%] h-[35vh] space-x-6 mt-2"
+                classnames="flex-col justify-start items-center w-[50%] h-[20vh] space-x-6 mt-2"
               >
                 <div className="grid grid-cols-2 gap-4  z-20">
                   <div className="col-span-1">
                     <form onSubmit={handleChangeHotelDetails}>
                       <Input
-                        value={hotelDetails}
-                        defaultValue={initialHotelDetails}
+                        // value={hotelDetails}
+                        defaultValue={initialHotelDetails} 
                         required
-                        placeHolder={hotelDetail?.UserDetails?.hotelName ? hotelDetail?.UserDetails?.hotelName : null}
+                        placeHolder={hotelDetail?.data?.User?.hotelName ? hotelDetail?.data?.User?.hotelName : null}
                         label="Add Hotel Name"
                         type="text"
                         onChange={(e) => setHotelDetails(e.target.value)}
@@ -121,7 +130,7 @@ function ChangePassword() {
             selectedOption === "resetPassword" && (
               <Section
                 heading="Reset Password"
-                classnames="flex-col justify-start items-center w-[50%%] h-[50vh] space-x-6 mt-10"
+                classnames="flex-col justify-start items-center w-[50%] h-[32vh] space-x-6 mt-10"
               >
                 <div className="grid grid-cols-2 gap-4 mb-5 z-20">
                   <div className="col-span-1">
@@ -156,7 +165,7 @@ function ChangePassword() {
                       <Image
                         src={Hero}
                         alt="setting"
-                        className="w-[100%] mt-28 -mr-10"
+                        className="w-[80%] mt-32 -mr-16"
                       />
                     </div>
                   </div>
@@ -165,8 +174,100 @@ function ChangePassword() {
             )
           }
 
+
+
+          {(selectedOption === 'purchases' && user.planType) ? (
+            <Section
+              classnames="text-center h-auto w-[90%] max-w-4xl mx-auto bg-white p-16 rounded-lg shadow-2xl"
+              heading="Current Plan"
+            >
+              <div className="grid grid-cols-2 gap-10 justify-center items-start">
+                {/* User Plan Section */}
+                <div className="col-span-1 border-b-[1px] border-gray-300 pb-6">
+                  <h3 className="text-2xl font-semibold text-green-600 mb-3">Your Plan</h3>
+                  <p className="text-lg font-bold text-black">{user.planType}</p>
+                </div>
+
+                {/* Expiry Date Section */}
+                <div className="col-span-1 border-b-[1px] border-gray-300 pb-6">
+                  <h3 className="text-2xl font-semibold text-blue-600 mb-3">Templates</h3>
+                  <p className="text-lg font-bold text-black">{user.templates}</p>
+                </div>
+
+
+                {/* Messages Left Section */}
+                <div className="col-span-1">
+                  <h3 className="text-2xl font-semibold text-blue-600 mb-3">Messages Left</h3>
+                  <p className="text-lg font-bold text-black">{user.messageLimit}</p>
+                </div>
+
+                {user.planType === "Basic" && (
+                  <div className="col-span-1 ">
+                    <h3 className="text-2xl font-semibold text-green-600 mb-3">Upgrade Plan</h3>
+                    <Button
+                      text="Upgrade Now"
+                      classnames="py-3 px-8 bg-blue-500 hover:bg-blue-600"
+                      type="button"
+                      disabled={false}
+                      onClick={() => handleUpgrade()}
+                    />
+                  </div>
+                )}
+
+                {user.planType === "Premium" && (
+                  <div className="col-span-1 ">
+                    <h3 className="text-2xl font-semibold text-green-600 mb-3">Customer's Upload Limit</h3>
+                    <p className="text-lg font-bold text-black">{user.customerLimit}</p>
+                  </div>
+                )}
+
+              </div>
+
+
+              {/* Conditional Message */}
+              {!user.planType ? (
+                <p className="mt-8 text-gray-500 text-lg">
+                  You currently don't have a plan. Please purchase a relevant plan to get started.
+                </p>
+              ) : user.PlanType === "Basic" ? (
+                <p className="mt-8 text-gray-500 text-lg">
+                  You are on the <strong className="text-blue-500">Basic Plan</strong>. Consider upgrading for
+                  more features and benefits.
+                </p>
+              ) : null}
+            </Section>
+          ) :
+            (selectedOption === "purchases") ?
+              <Section
+                classnames="text-center h-auto w-[90%] max-w-4xl mx-auto bg-white p-16 rounded-lg shadow-2xl"
+                heading="Current Plan"
+              >
+
+
+
+                {/* Conditional Message */}
+                {!user.planType && (
+                  <div className="bg-red-50 border border-red-200 p-6 rounded-lg shadow-lg max-w-xl mx-auto text-center">
+                    <p className="text-red-600 text-2xl font-semibold mb-2">
+                      You currently don't have a plan.
+                    </p>
+                    <p className="text-gray-800 text-lg">
+                      Please purchase a relevant plan to get{' '}
+                      <span className="underline text-blue-600 font-medium hover:text-blue-800 transition-colors" onClick={() => router.push("/Payment")}>
+                        started
+                      </span>.
+                    </p>
+                  </div>
+                )}
+
+              </Section> : null
+          }
+
+
+
+
           {
-            selectedOption === 'purchases' && (
+            selectedOption === 'top-ups' && (
               <>
                 <Section classnames=" text-center h-[45vh] w-[50%] " heading="Current Plan" >
 

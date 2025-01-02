@@ -65,6 +65,8 @@ export default function Confirmation({ isOpen, onClose, onConfirm }: any) {
         </div>
     );
 }
+
+
 export function Warning({ isOpen, onClose, onConfirm }: any) {
     if (!isOpen) return null;
     return (
