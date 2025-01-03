@@ -119,13 +119,6 @@ function CheckInOut() {
     fetchData();
   }, []);
 
-  if (!hotelDetail?.data?.hotel?.hotelName) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center bg-gray-100 z-50">
-        <Spinner />
-      </div>
-    );
-  }
 
   return (
     <SideLayout>
