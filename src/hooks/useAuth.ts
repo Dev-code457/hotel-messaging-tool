@@ -46,7 +46,7 @@ const useAuth = (): AuthContext => {
         try {
             console.log("Hello");
             
-            const response = await axiosPost<{ token: string; message: string }, LoginResponse>('http://goodpeggtouch-loadbalanacer-1737380281.ap-south-1.elb.amazonaws.com/api/auth/login', {
+            const response = await axiosPost<{ token: string; message: string }, LoginResponse>('https://dc0uc29zl4vtv.cloudfront.net/api/auth/login', {
                 email, password,
                 message: ''
             });
@@ -68,7 +68,7 @@ const useAuth = (): AuthContext => {
     const signUp = async (email: string, password: string, hotelName: string) => {
         setLoading(true);
         try {
-            const response = await axiosPost<{ token: string; message: string }, SignUpResponse>('http://goodpeggtouch-loadbalanacer-1737380281.ap-south-1.elb.amazonaws.com/api/auth/signup', {
+            const response = await axiosPost<{ token: string; message: string }, SignUpResponse>('https://dc0uc29zl4vtv.cloudfront.net/api/auth/signup', {
                 email,
                 password,
                 hotelName,

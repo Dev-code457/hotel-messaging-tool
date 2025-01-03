@@ -29,7 +29,7 @@ const useChangePassword = () => {
 
     try {
       const response = await axiosPut(
-        "http://goodpeggtouch-loadbalanacer-1737380281.ap-south-1.elb.amazonaws.com/api/password/change-password",
+        "https://dc0uc29zl4vtv.cloudfront.net/api/password/change-password",
         { password, newPassword },
       );
 

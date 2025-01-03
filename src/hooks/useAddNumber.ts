@@ -51,7 +51,7 @@ const useAddNumber = () => {
 
     setLoading(true);
     try {
-        await axiosPost<FeedbackResponse, FeedbackInput>("http://goodpeggtouch-loadbalanacer-1737380281.ap-south-1.elb.amazonaws.com/api/hotel/add-customer", {
+        await axiosPost<FeedbackResponse, FeedbackInput>("https://dc0uc29zl4vtv.cloudfront.net/api/hotel/add-customer", {
             phoneNumber,
             name,
             email,
@@ -98,7 +98,7 @@ const useAddNumber = () => {
 
         try {
           const response = await axiosPost<FeedbackResponse, BulkInput>(
-            "http://goodpeggtouch-loadbalanacer-1737380281.ap-south-1.elb.amazonaws.com/api/hotel/add-bulk-customer",
+            "https://dc0uc29zl4vtv.cloudfront.net/api/hotel/add-bulk-customer",
             { customers: [entry] }
           );
 
