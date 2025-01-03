@@ -6,7 +6,7 @@ import exampleReducer from "./slices/exampleSlice"; // your existing example sli
 // Configuration for redux-persist
 const persistConfig = {
   key: "root", // the key for the persisted reducer
-  storage, // use localStorage
+  storage, 
 };
 
 // Combine reducers if you have more than one
