@@ -44,7 +44,7 @@ export const usePasswordReset = (token: string) => {
 
 
     try {
-      const response = await axiosPost(`http://localhost:3000/api/password/reset-password/${token}`, {
+      const response = await axiosPost(`http://goodpeggtouch-loadbalanacer-1737380281.ap-south-1.elb.amazonaws.com/api/password/reset-password/${token}`, {
         password,
         confirmPassword,
         email: hotelDetail?.data?.User?.email,

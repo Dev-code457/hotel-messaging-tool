@@ -87,54 +87,54 @@ function SideLayout({ children }: { children: ReactNode }) {
             </li>
 
             {!userDetail?.data?.User?.planType && (
-  <div className="relative ml-2">
-    {/* Links */}
-    <ul className="bg-black p-4 rounded-lg space-y-4">
-      {links.map((link) => {
-        if (
-          value < 1 &&
-          ["Check In/ Check Out", "Promotions/ Offers", "Feedback"].includes(link.name)
-        ) {
-          return null;
-        }
-        return (
-          <li key={link.path}>
-            <Link
-                        href={link.path}
-                        className={"flex items-center justify-start rounded-lg group font-bold text-white "}
-                        onClick={
-                          link.name === "Logout"
-                            ? (e) => {
-                              e.preventDefault();
-                              setIsModalOpen(true);
-                            }
-                            : undefined
-                        }
-                      >
-                        <p>{link.name}</p>
-                      </Link>
-          </li>
-        );
-      })}
-    </ul>
+              <div className="relative ml-2">
+                {/* Links */}
+                <ul className="bg-black p-4 rounded-lg space-y-4">
+                  {links.map((link) => {
+                    if (
+                      value < 1 &&
+                      ["Check In/ Check Out", "Promotions/ Offers", "Feedback"].includes(link.name)
+                    ) {
+                      return null;
+                    }
+                    return (
+                      <li key={link.path}>
+                        <Link
+                          href={link.path}
+                          className={"flex items-center justify-start rounded-lg group font-bold text-white "}
+                          onClick={
+                            link.name === "Logout"
+                              ? (e) => {
+                                e.preventDefault();
+                                setIsModalOpen(true);
+                              }
+                              : undefined
+                          }
+                        >
+                          <p>{link.name === "Logout" ? null : link.name}</p>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
 
-    {/* Lock Overlay */}
-    <div className="absolute inset-0 bg-black bg-opacity-75 shadow-lg flex items-center justify-center rounded-lg">
-      <div className="text-center text-white">
-        <div className="flex items-center justify-center mb-4 shadow-2xl">
-        <IoIosLock size={50}/>
-        </div>
-       
-        <button
-          onClick={() => router.push("/Payment")}
-          className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition duration-300"
-        >
-          Unlock Now
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+                {/* Lock Overlay */}
+                <div className="absolute inset-0 bg-black bg-opacity-75 shadow-lg flex items-center justify-center rounded-lg">
+                  <div className="text-center text-white">
+                    <div className="flex items-center justify-center mb-4 shadow-2xl">
+                      <IoIosLock size={50} />
+                    </div>
+
+                    <button
+                      onClick={() => router.push("/Payment")}
+                      className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition duration-300"
+                    >
+                      Unlock Now
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
 
 

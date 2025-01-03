@@ -7,7 +7,7 @@ const ThankYouOverlay = ({ onClose }: { onClose: () => void }) => {
     useEffect(() => {
         const timer = setTimeout(() => {
             onClose();
-        }, 6000);
+        }, 5000);
 
         return () => clearTimeout(timer);
     }, [onClose]);

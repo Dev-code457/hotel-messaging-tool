@@ -20,7 +20,7 @@ const useFeedback = () => {
         }
         setLoading(true);
         try {
-            const data = await axiosPost<FeedbackResponse, FeedbackInput>("http://localhost:3000/api/user/user-feedback", { feedback });
+            const data = await axiosPost<FeedbackResponse, FeedbackInput>("http://goodpeggtouch-loadbalanacer-1737380281.ap-south-1.elb.amazonaws.com/api/user/user-feedback", { feedback });
             toast.success("Thank you for your valuable feedback!");
 
             return true;

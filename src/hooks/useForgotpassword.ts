@@ -19,7 +19,7 @@ const useForgotPassword = () => {
 
     try {
 
-      const response = await axiosPut("http://localhost:3000/api/password/forgot-password", {
+      const response = await axiosPut("http://goodpeggtouch-loadbalanacer-1737380281.ap-south-1.elb.amazonaws.com/api/password/forgot-password", {
         email,
         token: localStorage.getItem("__temp"),
       });

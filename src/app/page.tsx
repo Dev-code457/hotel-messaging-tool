@@ -12,6 +12,7 @@ import Cookies from "js-cookie";
 import Spinner from "@/components/Loader";
 import useAuth from "@/hooks/useAuth";
 import * as yup from "yup";
+import Link from "next/link";
 
 function Page() {
   const router = useRouter();
@@ -103,14 +104,15 @@ function Page() {
       >
         <div className="h-full px-3 py-4 overflow-y-auto bg-black">
           <ul className="space-y-2 font-medium">
-            <li>
-              <a
-                href="#"
-                className="flex items-center -mt-6 text-gray-900 rounded-lg dark:text-white hover group"
+          <li>
+              <Link
+                href="/"
+                className="flex items-center mr-4 justify-center rounded-lg hover group"
               >
-                <Image src={Logo} alt="LOGO" className="w-full h-full" />
-              </a>
+                <Image src={Logo} alt="LOGO" className="w-[60%]" />
+              </Link>
             </li>
+
           </ul>
         </div>
       </aside>

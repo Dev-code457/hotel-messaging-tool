@@ -269,32 +269,13 @@ const handleUpgrade = () => {
           {
             selectedOption === 'top-ups' && (
               <>
-                <Section classnames=" text-center h-[45vh] w-[50%] " heading="Current Plan" >
-
-                  <div className="grid grid-cols-2 justify-center items-center  -mt-[30%]">
-                    <div className="col-span-1 border-b-2 border-black">
-                      <div className="">
-                        <p className="text-black underline font-bold">Your Plan</p>
-                        <p className="text-black ">{"Standard"}</p>
-                      </div>
-
-                    </div>
-                    <div className="col-span-1 border-b-2 border-black">
-                      <div className="">
-                        <p className="text-black underline font-semibold">Expiry Date</p>
-                        <p className="text-black ">{"Standard"}</p>
-                      </div>
-
-                    </div>
-                    <div className="col-span-1 text-black underline font-bold">
-                      Message Left
-                    </div>
-                    <div className="col-span-1 text-black underline font-bold">
-                      Current Plan
-                    </div>
-
-                  </div>
-                </Section>
+         <Section classnames="text-center h-auto p-10 w-1/2" heading="Top-Ups">
+  <div className="bg-white border border-green-600 p-6 rounded-lg shadow-lg max-w-xl mx-auto text-center">
+    <p className="text-blue-600 text-2xl font-semibold mb-2">
+      Coming Soon...
+    </p>
+  </div>
+</Section>
               </>
             )
           }

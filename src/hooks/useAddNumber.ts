@@ -51,7 +51,7 @@ const useAddNumber = () => {
 
     setLoading(true);
     try {
-        await axiosPost<FeedbackResponse, FeedbackInput>("http://localhost:3000/api/hotel/add-customer", {
+        await axiosPost<FeedbackResponse, FeedbackInput>("http://goodpeggtouch-loadbalanacer-1737380281.ap-south-1.elb.amazonaws.com/api/hotel/add-customer", {
             phoneNumber,
             name,
             email,
@@ -98,7 +98,7 @@ const useAddNumber = () => {
 
         try {
           const response = await axiosPost<FeedbackResponse, BulkInput>(
-            "http://localhost:3000/api/hotel/add-bulk-customer",
+            "http://goodpeggtouch-loadbalanacer-1737380281.ap-south-1.elb.amazonaws.com/api/hotel/add-bulk-customer",
             { customers: [entry] }
           );
 
@@ -109,6 +109,8 @@ const useAddNumber = () => {
             data.data.duplicateNumbers.forEach((duplicate) => {
               const { phoneNumber, existingCustomer } = duplicate;
               toast.error(`Duplicate found: Phone number ${phoneNumber} already exists. Existing customer: ${existingCustomer.name} (${existingCustomer.email})`);
+              console.log
+              (`Duplicate found: Phone number ${phoneNumber} already exists. Existing customer: ${existingCustomer.name} (${existingCustomer.email})`);
               existingNumbers.push(phoneNumber); // Track existing numbers for final report
             });
           }
@@ -130,6 +132,8 @@ const useAddNumber = () => {
       }
       if (existingNumbers.length > 0) {
         toast.error(`Existing phone numbers found:\n${existingNumbers.join("\n")}`);
+        console.log(`Existing phone numbers found:\n${existingNumbers.join("\n")}`);
+        
       }
       if (invalidEntries.length === 0 && invalidEmails.length === 0 && existingNumbers.length === 0) {
         toast.success("All valid CSV entries processed successfully!");

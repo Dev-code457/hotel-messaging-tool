@@ -73,7 +73,7 @@ function DropdownMenu({ onSelectForm }: { onSelectForm: any }) {
             Purchases
           </li>
           <li
-            onClick={() => handleSelect("top-up")}
+            onClick={() => handleSelect("top-ups")}
             className="px-5 hover:bg-gray-200 font-semibold flex py-2 items-center text-[#333] text-sm cursor-pointer transition-colors duration-200"
           >
             Top-Ups

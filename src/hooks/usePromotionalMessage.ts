@@ -89,7 +89,7 @@ const usePromotionalMessage = (initialHotelName: string) => {
 
             switch (selectedTemplate) {
                 case 'discounts':
-                    endpoint = 'http://localhost:3000/api/message/bulk-messaging/discount';
+                    endpoint = 'http://goodpeggtouch-loadbalanacer-1737380281.ap-south-1.elb.amazonaws.com/api/message/bulk-messaging/discount';
                     payload = {
                         ownerHotelName,
                         discount: formattedDiscount,
@@ -103,7 +103,7 @@ const usePromotionalMessage = (initialHotelName: string) => {
                     if (!date) {
                         throw new Error('date is required for this message');
                     }
-                    endpoint = 'http://localhost:3000/api/message/bulk-messaging/room-booking';
+                    endpoint = 'http://http://goodpeggtouch-loadbalanacer-1737380281.ap-south-1.elb.amazonaws.com/api/message/bulk-messaging/room-booking';
                     payload = {
                         ownerHotelName,
                         phoneNumber,
@@ -117,7 +117,7 @@ const usePromotionalMessage = (initialHotelName: string) => {
                     if (!time || !date) {
                         throw new Error('Date and Time are required for date-based messages');
                     }
-                    endpoint = 'http://localhost:3000/api/message/bulk-messaging/party-planning';
+                    endpoint = 'http://http://goodpeggtouch-loadbalanacer-1737380281.ap-south-1.elb.amazonaws.com/api/message/bulk-messaging/party-planning';
                     payload = {
                         ownerHotelName,
                         date,
@@ -131,7 +131,7 @@ const usePromotionalMessage = (initialHotelName: string) => {
                     if (!date) {
                         throw new Error('Date and Time are required for date-based messages');
                     }
-                    endpoint = 'http://localhost:3000/api/message/bulk-messaging/event-booking';
+                    endpoint = 'http://http://goodpeggtouch-loadbalanacer-1737380281.ap-south-1.elb.amazonaws.com/api/message/bulk-messaging/event-booking';
                     payload = {
                         ownerHotelName,
 
