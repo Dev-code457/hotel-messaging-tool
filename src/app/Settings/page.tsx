@@ -81,7 +81,7 @@ const handleUpgrade = () => {
             selectedOption === "hotelDetails" && (
               <Section
                 heading="Hotel Details"
-                classnames="flex-col justify-start items-center w-[50%] h-[20vh] space-x-6 mt-2"
+                classnames="flex-col justify-start items-center w-[50%] h-[24vh] space-x-6 mt-2"
               >
                 <div className="grid grid-cols-2 gap-4  z-20">
                   <div className="col-span-1">
