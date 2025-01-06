@@ -75,9 +75,9 @@ const Feedback = () => {
       <Profile onSelectForm={undefined} />
       <div className="sm:ml-64 flex justify-center">
         <div className="flex flex-col h-screen justify-center items-center w-full bg-gray-50">
-          <Section
+        <Section
             heading="Feedback"
-            classnames="flex-col justify-start items-center w-[65%] h-[32vh]"
+            classnames="flex-col justify-start items-center w-[65%] h-[35vh]"
           >
             <div className="">
               <div className="col-span-2 z-50">
@@ -109,10 +109,10 @@ const Feedback = () => {
 
                     </div>
                   </div>
-                  <div className="px-10 max-w-sm -mt-3">
+                  <div className="px-10 max-w-sm mb-1">
                     <Button
                       text={loading ? <div className={"flex gap-2  font-bold justify-center items-center"}><Spinner /> Submitting...</div> : "Submit"}
-                      classnames="bg-green-500 hover:bg-green-600 py-3 px-8 cursor-pointer"
+                      classnames="bg-green-500 hover:bg-green-600 py-3 px-8"
                       type="submit"
                       disabled={loading}
                     />

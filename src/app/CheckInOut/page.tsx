@@ -134,7 +134,7 @@ function CheckInOut() {
           </h1>
           <Section
             heading="Check In & Check Out"
-            classnames={`flex-col justify-start w-[65%] space-x-4 ${isPromotionalList ? "h-[40vh]" : "h-[25vh]"
+            classnames={`flex-col justify-start w-[65%] space-x-4 ${isPromotionalList ? "h-[50vh]" : "h-[35vh]"
               }`}
           >
             <div className="grid grid-cols-5 gap-4">
@@ -218,7 +218,7 @@ function CheckInOut() {
                 <Image
                   src={Hero}
                   alt="Check In & Check Out"
-                  className={`h-[100%] ${isPromotionalList ? "-mb-36 w-[100%]" : "-mb-32"
+                  className={`h-[100%] ${isPromotionalList ? "-mb-36 w-[100%]" : "-mb-20"
                     }`}
                 />
               </div>

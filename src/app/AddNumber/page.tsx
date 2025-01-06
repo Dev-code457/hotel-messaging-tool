@@ -226,7 +226,7 @@ function PromotionalNumber() {
           </div>
 
           {!isChecked ? (
-            <Section heading="Add Promotional Number" classnames="flex-col w-[70%] h-[30vh]">
+            <Section heading="Add Promotional Number" classnames="flex-col w-[70%] h-[35vh]">
               <form onSubmit={handleSubmit} className="w-full">
                 <div className="flex justify-center">
                   <div className="flex flex-col w-full p-2">
@@ -281,13 +281,13 @@ function PromotionalNumber() {
                 <Image
                   src={Hero}
                   alt="Promotional Message"
-                  className="w-[20%] h-[70%] -mt-24 -mb-8"
+                  className="w-[25%] h-[100%] -mt-24 -mb-8"
                 />
               </div>
             </Section>
           ) : (
             <>
-              <Section heading="Add Promotional Number" classnames="flex-col w-[70%] h-[30vh]">
+   <Section heading="Add Promotional Number" classnames="flex w-[70%] h-[35vh] justify-center items-end">
                 <div className="flex items-center justify-center w-auto">
                   <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full rounded-lg cursor-pointer">
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">

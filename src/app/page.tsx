@@ -104,7 +104,7 @@ function Page() {
       >
         <div className="h-full px-3 py-4 overflow-y-auto bg-black">
           <ul className="space-y-2 font-medium">
-          <li>
+            <li>
               <Link
                 href="/"
                 className="flex items-center mr-4 justify-center rounded-lg hover group"
@@ -119,10 +119,10 @@ function Page() {
 
       <div className="sm:ml-64 flex justify-center">
         <div className="flex flex-col h-screen pt-20 items-center w-full bg-gray-50">
-          <Section heading="Login" classnames="flex-col justify-start h-[50vh] w-[65%] space-x-4">
+          <Section heading="Login" classnames="flex-col h-[45vh] w-[85%] space-x-4">
 
-            <form onSubmit={handleSubmit} className="w-[40%] mb-20">
-              <div className="flex-1 mb-6">
+            <form onSubmit={handleSubmit} className="w-[40%]">
+              <div className="flex-1">
                 <Input
                   classnames="py-1"
                   value={email}
@@ -136,7 +136,7 @@ function Page() {
                 )}
               </div>
 
-              <div className="flex-1 mb-10">
+              <div className="flex-1">
                 <Input
                   classnames="py-1"
                   value={password}
@@ -150,15 +150,22 @@ function Page() {
                 )}
               </div>
 
-              <div className="flex justify-start py-3">
+              <div className="flex justify-start items-center  py-3 gap-6">
                 <Button
                   text={loading ? <div className={"flex gap-2 font-bold justify-center items-center"}><Spinner /> Logging In...</div> : "Submit"}
                   classnames="bg-green-500 hover:bg-green-600"
                   type="submit"
                   disabled={loading}
                 />
+                <p>|</p>
+                <div
+                  className="text-xs font-semibold text-[#FB5151] underline font-serif cursor-pointer "
+                  onClick={() => router.push("/ForgotPassword")}
+                >
+                  Forgot Password
+                </div>
               </div>
-              <div className="absolute right-0 -mt-[9%]">
+              <div className="absolute -right-24 -mt-16">
                 <Image
                   src={HelperImage}
                   alt="Check In & Check Out"
@@ -166,12 +173,7 @@ function Page() {
                 />
               </div>
             </form>
-            <div
-              className="text-sm font-semibold text-[#FB5151] py-6 underline font-serif cursor-pointer w-[10%]"
-              onClick={() => router.push("/ForgotPassword")}
-            >
-              Forgot Password
-            </div>
+
           </Section>
         </div>
       </div>

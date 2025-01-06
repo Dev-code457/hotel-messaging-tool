@@ -360,10 +360,7 @@ console.log(time,"dnasjfndsjkfnksdnfl");
             setSelectedTemplate={setSelectedTemplate}
             selectedTemplate={selectedTemplate}
           />
-          <Section
-            heading="Promotional Messages"
-            classnames="flex mb-10 justify-between h-[70vh] w-[75%] space-x-4"
-          >
+          <Section heading="Promotional Messages" classnames="flex mb-10 justify-between h-[95vh] w-[75%] space-x-4">
             <div className="flex w-[80%] justify-between">
               <form
                 onSubmit={(e) => {
