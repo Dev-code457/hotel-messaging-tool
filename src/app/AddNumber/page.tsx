@@ -226,7 +226,7 @@ function PromotionalNumber() {
           </div>
 
           {!isChecked ? (
-            <Section heading="Add Promotional Number" classnames="flex-col w-[70%] h-[35vh]">
+            <Section heading="Add Promotional Number" classnames="flex-col w-[75%] h-[35vh]">
               <form onSubmit={handleSubmit} className="w-full">
                 <div className="flex justify-center">
                   <div className="flex flex-col w-full p-2">

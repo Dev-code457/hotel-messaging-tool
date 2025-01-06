@@ -355,7 +355,7 @@ console.log(time,"dnasjfndsjkfnksdnfl");
     <SideLayout>
       <Profile onSelectForm={undefined} />
       <div className="sm:ml-64 flex justify-center">
-        <div className="flex h-screen flex-col justify-center items-center w-full bg-gray-50">
+        <div className="flex flex-col justify-center items-center w-full bg-gray-50">
           <SelectDefault
             setSelectedTemplate={setSelectedTemplate}
             selectedTemplate={selectedTemplate}
