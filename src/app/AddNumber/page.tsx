@@ -227,7 +227,7 @@ function PromotionalNumber() {
 
           {!isChecked ? (
             <Section heading="Add Promotional Number" classnames="flex-col w-[75%] h-[35vh]">
-              <form onSubmit={handleSubmit} className="w-full">
+              <form onSubmit={handleSubmit} className="w-full -mb-6">
                 <div className="flex justify-center">
                   <div className="flex flex-col w-full p-2">
                     <div className="flex items-center space-x-4 w-full">
