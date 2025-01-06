@@ -58,12 +58,14 @@ export default function Input({
 
   const handleDateChange = (date: Date | null) => {
     if (date) {
-      const formattedDate = date.toISOString().split("T")[0]; // Format as "yyyy-MM-dd"
-      onChange({
-        target: { value: formattedDate },
-      } as React.ChangeEvent<HTMLInputElement>);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+      const day = String(date.getDate()).padStart(2, "0");
+      const formattedDate = `${year}-${month}-${day}`;
+      onChange({ target: { value: formattedDate } } as React.ChangeEvent<HTMLInputElement>);
     }
   };
+  
 
 
   const togglePasswordVisibility = () => {

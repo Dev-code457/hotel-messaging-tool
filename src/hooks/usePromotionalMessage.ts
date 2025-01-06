@@ -89,7 +89,7 @@ const usePromotionalMessage = (initialHotelName: string) => {
 
             switch (selectedTemplate) {
                 case 'discounts':
-                    endpoint = 'https://dc0uc29zl4vtv.cloudfront.net/api/message/bulk-messaging/discount';
+                    endpoint = '/message/bulk-messaging/discount';
                     payload = {
                         ownerHotelName,
                         discount: formattedDiscount,
@@ -103,7 +103,7 @@ const usePromotionalMessage = (initialHotelName: string) => {
                     if (!date) {
                         throw new Error('date is required for this message');
                     }
-                    endpoint = 'http://https://dc0uc29zl4vtv.cloudfront.net/api/message/bulk-messaging/room-booking';
+                    endpoint = '/message/bulk-messaging/room-booking';
                     payload = {
                         ownerHotelName,
                         phoneNumber,
@@ -113,11 +113,11 @@ const usePromotionalMessage = (initialHotelName: string) => {
                     };
                     break;
 
-                case 'partyPlanning':
+                case 'partyInvitation':
                     if (!time || !date) {
                         throw new Error('Date and Time are required for date-based messages');
                     }
-                    endpoint = 'http://https://dc0uc29zl4vtv.cloudfront.net/api/message/bulk-messaging/party-planning';
+                    endpoint = '/message/bulk-messaging/party-planning';
                     payload = {
                         ownerHotelName,
                         date,
@@ -131,7 +131,7 @@ const usePromotionalMessage = (initialHotelName: string) => {
                     if (!date) {
                         throw new Error('Date and Time are required for date-based messages');
                     }
-                    endpoint = 'http://https://dc0uc29zl4vtv.cloudfront.net/api/message/bulk-messaging/event-booking';
+                    endpoint = '/message/bulk-messaging/event-booking';
                     payload = {
                         ownerHotelName,
 

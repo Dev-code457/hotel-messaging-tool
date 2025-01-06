@@ -81,7 +81,7 @@ export default function Payment() {
     setLoadingPlan(planType);
 
     try {
-      const { data } = await axiosPost<CreateOrderResponse, any>("https://dc0uc29zl4vtv.cloudfront.net/api/payment/create-order", {
+      const { data } = await axiosPost<CreateOrderResponse, any>("/payment/create-order", {
         amount: planAmount,
         currency: "INR",
       });
@@ -101,14 +101,14 @@ export default function Payment() {
         handler: async (response: RazorpayResponse) => {
           try {
             // Verify payment
-            await axiosPost("https://dc0uc29zl4vtv.cloudfront.net/api/payment/verify-payment", {
+            await axiosPost("/payment/verify-payment", {
               orderId: response.razorpay_order_id,
               paymentId: response.razorpay_payment_id,
               signature: response.razorpay_signature,
             });
 
             // Save transaction
-            await axiosPost("https://dc0uc29zl4vtv.cloudfront.net/api/payment/save-transaction", {
+            await axiosPost("/payment/save-transaction", {
               paymentData: {
                 orderId: response.razorpay_order_id,
                 paymentId: response.razorpay_payment_id,
@@ -119,7 +119,7 @@ export default function Payment() {
             });
 
             // Activate plan
-            await axiosPost("https://dc0uc29zl4vtv.cloudfront.net/api/user/activate-plan", {
+            await axiosPost("/user/activate-plan", {
               userId,
               planDetails: getPlanFeatures(planAmount)
             });

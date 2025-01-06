@@ -34,7 +34,7 @@ export const useCheckInOut = (): UseCheckInOutResult => {
     
         try {
             const response = await axiosPost<ApiResponse, { phoneNumber: string; messageType: string; isPromotionalList: boolean, userSpending: string }>(
-                "https://dc0uc29zl4vtv.cloudfront.net/api/message/check-in-out",
+                "/message/check-in-out",
                 { phoneNumber, messageType, isPromotionalList, userSpending: String(userSpending) }
             );
     
