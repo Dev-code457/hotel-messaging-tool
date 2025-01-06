@@ -81,7 +81,7 @@ const handleUpgrade = () => {
             selectedOption === "hotelDetails" && (
               <Section
                 heading="Hotel Details"
-                classnames="flex-col justify-start items-center w-[50%] h-[25vh] space-x-6 mt-2"
+                classnames="flex-col justify-start items-center w-[50%] h-[27vh] space-x-6 mt-2"
               >
                 <div className="grid grid-cols-2 gap-4  z-20">
                   <div className="col-span-1">
@@ -130,7 +130,7 @@ const handleUpgrade = () => {
             selectedOption === "resetPassword" && (
               <Section
                 heading="Reset Password"
-                classnames="flex-col justify-start items-center w-[50%] h-[35vh] space-x-6 mt-10"
+                classnames="flex-col justify-start items-center w-[50%] h-[38vh] space-x-6 mt-10"
               >
                 <div className="grid grid-cols-2 gap-4 mb-5 z-20">
                   <div className="col-span-1">
