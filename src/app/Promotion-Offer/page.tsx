@@ -37,7 +37,7 @@ function PromotionalMessage() {
     handleTimeChange,
     handlePhoneNumberChange,
     sendBulkMessage,
-  } = usePromotionalMessage(hotelDetail?.hotelName || "");
+  } = usePromotionalMessage(hotelDetail?.data.User.hotelName || "");
 
 
 console.log(time,"dnasjfndsjkfnksdnfl");
@@ -137,6 +137,7 @@ console.log(time,"dnasjfndsjkfnksdnfl");
                 required
                 value={ownerHotelName || ""}
                 placeHolder="Enter Hotel Name"
+                disabled
                 onChange={(e) => setHotelName(e.target.value)}
               />
               {errors.ownerHotelName && (
@@ -197,6 +198,7 @@ console.log(time,"dnasjfndsjkfnksdnfl");
                 required
                 value={ownerHotelName || ""}
                 placeHolder="Enter Hotel Name"
+                disabled
                 onChange={(e) => setHotelName(e.target.value)}
               />
               {errors.ownerHotelName && (
@@ -287,6 +289,7 @@ console.log(time,"dnasjfndsjkfnksdnfl");
                 required
                 value={ownerHotelName || ""}
                 placeHolder="Enter Hotel Name"
+                disabled
                 onChange={(e) => setHotelName(e.target.value)}
               />
               {errors.ownerHotelName && (
@@ -322,6 +325,7 @@ console.log(time,"dnasjfndsjkfnksdnfl");
                 required
                 value={ownerHotelName || ""}
                 placeHolder="Enter Hotel Name"
+                disabled
                 onChange={(e) => setHotelName(e.target.value)}
               />
               {errors.ownerHotelName && (
