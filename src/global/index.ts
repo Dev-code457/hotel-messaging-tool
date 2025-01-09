@@ -1,26 +1,32 @@
-// global.ts
 import { axiosGet } from "@/utils/axiosUtility";
-import { store } from '@/redux/store';
-import { hotelActions } from '@/redux/slices/hotelSlice';
+import { hotelActions } from "@/redux/slices/hotelSlice"; // Update with your slice path
 
-export async function fetchHotelData() {
-    try {
-      const response = await axiosGet('/hotel/get-user-hotel');
-      
-      // Get fresh data from API response
-      const freshData = response.data;
-      
-      // Immediately update Redux with fresh data
-      store.dispatch(hotelActions.fetchHotelDetailsSuccess(freshData));
-      
-      return freshData;
-    } catch (error) {
-      console.error("Error fetching hotel data:", error);
-      if (error instanceof Error) {
-        store.dispatch(hotelActions.fetchHotelDetailsFailure(error.message));
-      } else {
-        store.dispatch(hotelActions.fetchHotelDetailsFailure("An unknown error occurred"));
-      }
-      throw error;
-    }
+interface FetchHotelDataResponse {
+  data: any; // Replace 'any' with the actual data type if known
+}
+
+interface FetchHotelDataError {
+  message: string;
+}
+
+export async function fetchHotelData(dispatch: (action: any) => void): Promise<any> { // Replace 'any' with the actual data type if known
+  try {
+    // Dispatch pending action
+    dispatch(hotelActions.fetchHotelDetailsPending());
+
+    const response: FetchHotelDataResponse = await axiosGet("/hotel/get-user-hotel");
+    const data = response.data;
+
+    // Dispatch success action to update Redux state
+    dispatch(hotelActions.fetchHotelDetailsSuccess(data));
+
+    return data; // Return the data in case it's needed
+  } catch (error: any) {
+    console.error("Error fetching hotel data:", error);
+
+    // Dispatch failure action
+    dispatch(hotelActions.fetchHotelDetailsFailure((error as FetchHotelDataError).message));
+
+    throw error; // Re-throw the error for further handling
+  }
 }

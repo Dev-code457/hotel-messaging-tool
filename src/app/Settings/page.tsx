@@ -21,8 +21,21 @@ function ChangePassword() {
   const [initialHotelDetails, setInitialhotelDetails] = useState("");
   const dispatch = useDispatch();
   const hotelDetail = useSelector((state: RootState) => state.hotel.details);
-  const selectedOption = useSelector((state: RootState) => state.dropdown.selectedOption);
+
   const id = hotelDetail?._id;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await fetchHotelData(dispatch);
+      } catch (error) {
+        console.error("Failed to fetch hotel data:", error);
+      }
+    };
+
+    fetchData();
+  }, [dispatch]);
+  const selectedOption = useSelector((state: RootState) => state.dropdown.selectedOption);
+
   const {
     password,
     setPassword,
@@ -46,12 +59,10 @@ function ChangePassword() {
     }
   }, [initialHotelDetails, hotelDetail]);
 
-  useEffect(() => {
-    fetchHotelData();
-  }, [dispatch]);
-
   const user = hotelDetail?.data?.User
   console.log(user);
+
+ 
 
 const handleUpgrade = () => { 
   router.push("/Payment");
@@ -59,19 +70,7 @@ const handleUpgrade = () => {
 
 
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        dispatch(hotelActions.fetchHotelDetailsPending());
-        const data = await fetchHotelData();
-        dispatch(hotelActions.fetchHotelDetailsSuccess(data));
-      } catch (error: any) {
-        dispatch(hotelActions.fetchHotelDetailsFailure(error.message));
-      }
-    };
-
-    fetchData();
-  }, [dispatch, isLoading]);
+ 
 
 
   console.log(hotelDetail)
