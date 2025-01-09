@@ -32,8 +32,6 @@ function PromotionalNumber() {
     csvData: "",
   });
 
-
-
   const getValidationSchema = (email: string, name: string) => {
     const schema: Partial<{
       phoneNumber: yup.StringSchema<string>;
@@ -45,7 +43,7 @@ function PromotionalNumber() {
         .required("Phone Number is required")
         .matches(/^\d{10}$/, "Phone Number must be exactly 10 digits"),
     };
-  
+
     // Only add email validation if there's an email value
     if (email.trim()) {
       schema.email = yup
@@ -53,7 +51,7 @@ function PromotionalNumber() {
         .email("Invalid email format")
         .required("Email is required");
     }
-  
+
     // Only add name validation if there's a name value
     if (name.trim()) {
       schema.name = yup
@@ -62,10 +60,10 @@ function PromotionalNumber() {
         .matches(/^[a-zA-Z\s]+$/, "Name can only contain letters and spaces")
         .defined();
     }
-  
+
     return yup.object().shape(schema);
   };
-  
+
 
 
 
@@ -77,7 +75,7 @@ function PromotionalNumber() {
         .required("Phone Number is required")
         .matches(/^\d{10}$/, "Phone Number must be exactly 10 digits"),
     };
-  
+
     if (row.email?.trim()) {
       schema.email = yup
         .string()
@@ -85,17 +83,17 @@ function PromotionalNumber() {
         .nullable()
         .default(null); // Allows null for optional email
     }
-  
+
     if (row.name?.trim()) {
       schema.name = yup
         .string()
         .min(2, "Name must be at least 2 characters")
         .matches(/^[a-zA-Z\s]+$/, "Name can only contain letters and spaces");
     }
-  
+
     return yup.object().shape(schema);
   };
-  
+
 
   const validateSingleEntry = async () => {
     try {
@@ -227,7 +225,7 @@ function PromotionalNumber() {
 
           {!isChecked ? (
             <Section heading="Add Promotional Number" classnames="flex-col w-[75%] h-[35vh]">
-              <form onSubmit={handleSubmit} className="w-full -mb-6">
+              <form onSubmit={handleSubmit} className="w-full ">
                 <div className="flex justify-center">
                   <div className="flex flex-col w-full p-2">
                     <div className="flex items-center space-x-4 w-full">
@@ -271,7 +269,7 @@ function PromotionalNumber() {
                 <div className="px-6 max-w-sm mt-4">
                   <Button
                     text={loading ? <div className="flex gap-2 font-bold justify-center items-center"><Spinner /> Submitting...</div> : "Submit"}
-                    classnames="py-4 px-8 bg-green-500 hover:bg-green-600 mt-8"
+                    classnames="py-4 px-8 bg-green-500 hover:bg-green-600 "
                     type="submit"
                     disabled={loading}
                   />
@@ -281,13 +279,13 @@ function PromotionalNumber() {
                 <Image
                   src={Hero}
                   alt="Promotional Message"
-                  className="w-[25%] h-[100%] -mt-24 -mb-8"
+                  className="w-[23%] h-[100%] -mt-24 -mb-8"
                 />
               </div>
             </Section>
           ) : (
             <>
-   <Section heading="Add Promotional Number" classnames="flex w-[70%] h-[35vh] justify-center items-end">
+              <Section heading="Add Promotional Number" classnames="flex w-[70%] h-[35vh] justify-center items-end">
                 <div className="flex items-center justify-center w-auto">
                   <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full rounded-lg cursor-pointer">
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">

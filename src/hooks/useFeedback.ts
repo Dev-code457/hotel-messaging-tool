@@ -20,7 +20,7 @@ const useFeedback = () => {
         }
         setLoading(true);
         try {
-            const data = await axiosPost<FeedbackResponse, FeedbackInput>("https://dc0uc29zl4vtv.cloudfront.net/api/user/user-feedback", { feedback });
+            const data = await axiosPost<FeedbackResponse, FeedbackInput>("/user/user-feedback", { feedback });
             toast.success("Thank you for your valuable feedback!");
 
             return true;

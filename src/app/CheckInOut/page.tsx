@@ -32,7 +32,7 @@ function CheckInOut() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const userDetail = useSelector((state: RootState) => state.hotel.details);
 
-  
+
 
   const getValidationSchema = () => {
     const baseSchema = {
@@ -77,7 +77,7 @@ function CheckInOut() {
     }
   };
 
-  
+
 
 
   const handleCheckInWithValidation = async () => {
@@ -190,7 +190,7 @@ function CheckInOut() {
                           "Send Check In Message"
                         )
                       }
-                      classnames={`bg-green-500 hover:bg-green-600 py-3 ${!userDetail?.data?.User?.planType ? "cursor-not-allowed": "cursor-pointer"}`}
+                      classnames={`bg-green-500 hover:bg-green-600 py-3 ${!userDetail?.data?.User?.planType ? "cursor-not-allowed" : "cursor-pointer"}`}
                       type="submit"
                       onClick={handleCheckInWithValidation}
                       disabled={!userDetail?.data?.User?.planType || loadingCheckIn}
@@ -205,7 +205,7 @@ function CheckInOut() {
                           "Send Check Out Message"
                         )
                       }
-                      classnames={`bg-blue-500 hover:bg-blue-600 py-3 ${!userDetail?.data?.User?.planType ? "cursor-not-allowed": "cusrsor-pointer"}`}
+                      classnames={`bg-blue-500 hover:bg-blue-600 py-3 ${!userDetail?.data?.User?.planType ? "cursor-not-allowed" : "cusrsor-pointer"}`}
                       type="submit"
                       onClick={handleCheckOutWithValidation}
                       disabled={!userDetail?.data?.User?.planType || loadingCheckOut}

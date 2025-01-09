@@ -4,6 +4,8 @@ import { axiosPost } from "@/utils/axiosUtility";
 import Hero from "../../app/public/assets/Logo.png";
 import ThankYouOverlay from "@/components/Thankyou";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import Spinner from "@/components/Loader";
 
 // Type definitions
 interface RazorpayResponse {
@@ -48,6 +50,7 @@ export default function Payment() {
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [razorpayLoaded, setRazorpayLoaded] = useState(false);
 
+  const router = useRouter();
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
@@ -126,6 +129,11 @@ export default function Payment() {
 
             setShowThankYou(true);
             toast.success("Payment successful!");
+
+            setTimeout(()=>{
+              router.push("/CheckInOut")
+            },6000)
+
           } catch (error) {
             toast.error("Payment verification failed. Please contact support.");
             console.error("Payment verification error:", error);
@@ -157,7 +165,7 @@ export default function Payment() {
   };
 
   return (
-    <section className="bg-white justify-evenly h-screen">
+    <section className="bg-white justify-evenly">
       <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
         <div className="mx-auto max-w-screen-md text-center mb-8 lg:mb-12">
           <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900">

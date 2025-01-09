@@ -75,8 +75,8 @@ const usePromotionalMessage = (initialHotelName: string) => {
     };
 
     const sendBulkMessage = async (selectedTemplate: string) => {
-        if (!ownerHotelName || !sliderValue) {
-            toast.error("Hotel name and number of recipients are required");
+        if (!sliderValue) {
+            toast.error("Number of recipients are required");
             return;
         }
 
@@ -128,9 +128,7 @@ const usePromotionalMessage = (initialHotelName: string) => {
                     };
                     break;
                 case 'eventBooking':
-                    if (!date) {
-                        throw new Error('Date and Time are required for date-based messages');
-                    }
+
                     endpoint = '/message/bulk-messaging/event-booking';
                     payload = {
                         ownerHotelName,
@@ -156,6 +154,7 @@ const usePromotionalMessage = (initialHotelName: string) => {
                 setPhoneNumber("");
                 setAddress("");
                 setSliderValue(0);
+                setTime("")
 
                 toast.success(response.data.message || "Message sent successfully!");
             }

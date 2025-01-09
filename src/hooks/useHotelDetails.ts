@@ -20,7 +20,7 @@ const useHotelDetails = (hotelId?: string) => {
 
         try {
             // Determine whether to use POST or PUT
-            const url = `https://dc0uc29zl4vtv.cloudfront.net/api/hotel/change-hotel-details`; // Same endpoint for both POST and PUT
+            const url = `/hotel/change-hotel-details`; // Same endpoint for both POST and PUT
 
             const response = await axiosPut<{ message: string }, { hotelName: string }>(url, {  hotelName: hotelDetails })
                

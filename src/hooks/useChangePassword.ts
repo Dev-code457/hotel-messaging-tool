@@ -29,7 +29,7 @@ const useChangePassword = () => {
 
     try {
       const response = await axiosPut(
-        "https://dc0uc29zl4vtv.cloudfront.net/api/password/change-password",
+        "/password/change-password",
         { password, newPassword },
       );
 

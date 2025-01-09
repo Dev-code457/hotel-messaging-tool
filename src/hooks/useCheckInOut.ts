@@ -2,6 +2,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { axiosPost } from "@/utils/axiosUtility";
 import { ApiResponse } from "@/types";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 
 
@@ -17,7 +19,9 @@ interface UseCheckInOutResult {
     handleCheckOut: (isPromotionalList: boolean) => Promise<void>;
     isPromotionalList: boolean;
     setIsPromotionalList: (value: boolean) => void;
+
 }
+
 
 export const useCheckInOut = (): UseCheckInOutResult => {
     const [phoneNumber, setPhoneNumber] = useState<string>("");
@@ -25,17 +29,19 @@ export const useCheckInOut = (): UseCheckInOutResult => {
     const [loadingCheckIn, setIsLoadingCheckIn] = useState<boolean>(false);
     const [loadingCheckOut, setIsLoadingCheckOut] = useState<boolean>(false);
     const [isPromotionalList, setIsPromotionalList] = useState<boolean>(false);
+    const hotelDetail = useSelector((state: RootState) => state.hotel.details);
     const handleSubmit = async (messageType: "checkin" | "checkout", isPromotionalList: boolean) => {
         if (messageType === "checkin") {
             setIsLoadingCheckIn(true);
         } else {
             setIsLoadingCheckOut(true);
         }
+
     
         try {
-            const response = await axiosPost<ApiResponse, { phoneNumber: string; messageType: string; isPromotionalList: boolean, userSpending: string }>(
+            const response = await axiosPost<ApiResponse, { phoneNumber: string; messageType: string; isPromotionalList: boolean, userSpending: string, hotelName: string }>(
                 "/message/check-in-out",
-                { phoneNumber, messageType, isPromotionalList, userSpending: String(userSpending) }
+                { phoneNumber, messageType, isPromotionalList, userSpending: String(userSpending),hotelName: hotelDetail?.data?.User?.hotelName }
             );
     
             if (response) {

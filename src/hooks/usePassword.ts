@@ -44,7 +44,7 @@ export const usePasswordReset = (token: string) => {
 
 
     try {
-      const response = await axiosPost(`https://dc0uc29zl4vtv.cloudfront.net/api/password/reset-password/${token}`, {
+      const response = await axiosPost(`/password/reset-password/${token}`, {
         password,
         confirmPassword,
         email: hotelDetail?.data?.User?.email,
