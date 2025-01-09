@@ -1,17 +1,20 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import storage from "redux-persist/lib/storage"; // default storage for web
 import { persistStore, persistReducer } from "redux-persist";
-import exampleReducer from "./slices/exampleSlice"; // your existing example slice
+import exampleReducer from "./slices/exampleSlice"; // example slice reducer
+import hotelReducer from "./slices/hotelSlice"; // hotel slice reducer
 
 // Configuration for redux-persist
 const persistConfig = {
   key: "root", // the key for the persisted reducer
   storage, // use localStorage
+  blacklist: ["hotel"], // Exclude the hotel slice from persistence
 };
 
 // Combine reducers if you have more than one
 const rootReducer = combineReducers({
-  example: exampleReducer, // your slice reducer
+  example: exampleReducer, // your example slice reducer
+  hotel: hotelReducer, // add the hotel reducer
 });
 
 // Create a persisted reducer
