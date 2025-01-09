@@ -31,6 +31,7 @@ function CheckInOut() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const userDetail = useSelector((state: RootState) => state.hotel.details);
+  const hotelDetail = useSelector((state: RootState) => state.hotel.details);
 
 
 
@@ -103,21 +104,10 @@ function CheckInOut() {
   };
 
   const dispatch = useDispatch();
-  const hotelDetail = useSelector((state: RootState) => state.hotel.details);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        dispatch(hotelActions.fetchHotelDetailsPending());
-        const data = await fetchHotelData();
-        dispatch(hotelActions.fetchHotelDetailsSuccess(data));
-      } catch (error: any) {
-        dispatch(hotelActions.fetchHotelDetailsFailure(error.message));
-      }
-    };
-
-    fetchData();
-  }, []);
+    fetchHotelData();
+  }, [dispatch]);
 
 
   return (

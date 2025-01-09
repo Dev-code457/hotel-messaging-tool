@@ -46,6 +46,10 @@ function ChangePassword() {
     }
   }, [initialHotelDetails, hotelDetail]);
 
+  useEffect(() => {
+    fetchHotelData();
+  }, [dispatch]);
+
   const user = hotelDetail?.data?.User
   console.log(user);
 
