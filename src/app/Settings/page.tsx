@@ -8,7 +8,7 @@ import Hero from "@/app/public/assets/forgot password.svg";
 import SideLayout from "@/components/SideLayout";
 import Spinner from "@/components/Loader";
 import useChangePassword from "@/hooks/useChangePassword";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchHotelData } from "@/global/index";
 import { hotelActions } from "@/redux/slices/hotelSlice";
 import { RootState } from "@/redux/store";
@@ -19,32 +19,10 @@ import { useRouter } from "next/navigation";
 function ChangePassword() {
 
   const [initialHotelDetails, setInitialhotelDetails] = useState("");
-
-
-
-
-  const [hotelDetail, setHotelDetail] = useState<any>()
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-
-
-        const data = await fetchHotelData(); // Fetch the data from the function
-
-        setHotelDetail(data); // Assuming data has hotel details
-
-
-      } catch (error: any) {
-        console.log(error);
-
-      }
-    };
-
-    fetchData();
-  }, []); // Empty
-  const id = hotelDetail?._id;
+  const dispatch = useDispatch();
+  const hotelDetail = useSelector((state: RootState) => state.hotel.details);
   const selectedOption = useSelector((state: RootState) => state.dropdown.selectedOption);
-
+  const id = hotelDetail?._id;
   const {
     password,
     setPassword,
@@ -71,15 +49,25 @@ function ChangePassword() {
   const user = hotelDetail?.data?.User
   console.log(user);
 
-
-
-  const handleUpgrade = () => {
-    router.push("/Payment");
-  }
-
+const handleUpgrade = () => { 
+  router.push("/Payment");
+}
 
 
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        dispatch(hotelActions.fetchHotelDetailsPending());
+        const data = await fetchHotelData();
+        dispatch(hotelActions.fetchHotelDetailsSuccess(data));
+      } catch (error: any) {
+        dispatch(hotelActions.fetchHotelDetailsFailure(error.message));
+      }
+    };
+
+    fetchData();
+  }, [dispatch, isLoading]);
 
 
   console.log(hotelDetail)
@@ -100,7 +88,7 @@ function ChangePassword() {
                     <form onSubmit={handleChangeHotelDetails}>
                       <Input
                         // value={hotelDetails}
-                        defaultValue={initialHotelDetails}
+                        defaultValue={initialHotelDetails} 
                         required
                         placeHolder={hotelDetail?.data?.User?.hotelName ? hotelDetail?.data?.User?.hotelName : null}
                         label="Add Hotel Name"
@@ -281,13 +269,13 @@ function ChangePassword() {
           {
             selectedOption === 'top-ups' && (
               <>
-                <Section classnames="text-center h-auto p-10 w-1/2" heading="Top-Ups">
-                  <div className="bg-white border border-green-600 p-6 rounded-lg shadow-lg max-w-xl mx-auto text-center">
-                    <p className="text-blue-600 text-2xl font-semibold mb-2">
-                      Coming Soon...
-                    </p>
-                  </div>
-                </Section>
+         <Section classnames="text-center h-auto p-10 w-1/2" heading="Top-Ups">
+  <div className="bg-white border border-green-600 p-6 rounded-lg shadow-lg max-w-xl mx-auto text-center">
+    <p className="text-blue-600 text-2xl font-semibold mb-2">
+      Coming Soon...
+    </p>
+  </div>
+</Section>
               </>
             )
           }

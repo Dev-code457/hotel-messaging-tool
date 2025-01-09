@@ -30,7 +30,7 @@ function CheckInOut() {
   } = useCheckInOut();
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-
+  const userDetail = useSelector((state: RootState) => state.hotel.details);
 
 
 
@@ -102,43 +102,22 @@ function CheckInOut() {
     }
   };
 
-  // const dispatch = useDispatch();
-  // const hotelDetail = useSelector((state: RootState) => state.hotel.details);
-  // const userDetail = useSelector((state: RootState) => state.hotel.details);
+  const dispatch = useDispatch();
+  const hotelDetail = useSelector((state: RootState) => state.hotel.details);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       await fetchHotelData(dispatch);
-  //     } catch (error) {
-  //       console.error("Failed to fetch hotel data:", error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, [dispatch]);
-
-  const [userDetail, setUserDetail] = useState<any>();
-  const [hotelDetail, setHotelDetail] = useState<any>()
   useEffect(() => {
     const fetchData = async () => {
       try {
-
-
-        const data = await fetchHotelData(); // Fetch the data from the function
-
-        setHotelDetail(data); // Assuming data has hotel details
-        setUserDetail(data); // Assuming data has user details
-
+        dispatch(hotelActions.fetchHotelDetailsPending());
+        const data = await fetchHotelData();
+        dispatch(hotelActions.fetchHotelDetailsSuccess(data));
       } catch (error: any) {
-        console.log(error);
-
+        dispatch(hotelActions.fetchHotelDetailsFailure(error.message));
       }
     };
 
     fetchData();
-  }, []); // Empty
-
-
+  }, []);
 
 
   return (
