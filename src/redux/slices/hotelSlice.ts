@@ -2,7 +2,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface HotelState {
-  details: any;  // Define the shape of your hotel data here
+  details: any;  
   loading: boolean;
   error: string | null;
 }
@@ -32,5 +32,5 @@ const hotelSlice = createSlice({
   },
 });
 
-export const hotelActions = hotelSlice.actions;  // This exports the actions
+export const hotelActions = hotelSlice.actions;
 export default hotelSlice.reducer;

@@ -5,7 +5,6 @@ import Hero from "../../app/public/assets/Logo.png";
 import ThankYouOverlay from "@/components/Thankyou";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import Spinner from "@/components/Loader";
 
 // Type definitions
 interface RazorpayResponse {
