@@ -8,7 +8,7 @@ import Hero from "@/app/public/assets/forgot password.svg";
 import SideLayout from "@/components/SideLayout";
 import Spinner from "@/components/Loader";
 import useChangePassword from "@/hooks/useChangePassword";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { fetchHotelData } from "@/global/index";
 import { hotelActions } from "@/redux/slices/hotelSlice";
 import { RootState } from "@/redux/store";
@@ -19,21 +19,30 @@ import { useRouter } from "next/navigation";
 function ChangePassword() {
 
   const [initialHotelDetails, setInitialhotelDetails] = useState("");
-  const dispatch = useDispatch();
-  const hotelDetail = useSelector((state: RootState) => state.hotel.details);
 
-  const id = hotelDetail?._id;
+
+
+
+  const [hotelDetail, setHotelDetail] = useState<any>()
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await fetchHotelData(dispatch);
-      } catch (error) {
-        console.error("Failed to fetch hotel data:", error);
+
+
+        const data = await fetchHotelData(); // Fetch the data from the function
+
+        setHotelDetail(data); // Assuming data has hotel details
+
+
+      } catch (error: any) {
+        console.log(error);
+
       }
     };
 
     fetchData();
-  }, [dispatch]);
+  }, []); // Empty
+  const id = hotelDetail?._id;
   const selectedOption = useSelector((state: RootState) => state.dropdown.selectedOption);
 
   const {
@@ -62,15 +71,15 @@ function ChangePassword() {
   const user = hotelDetail?.data?.User
   console.log(user);
 
- 
-
-const handleUpgrade = () => { 
-  router.push("/Payment");
-}
 
 
+  const handleUpgrade = () => {
+    router.push("/Payment");
+  }
 
- 
+
+
+
 
 
   console.log(hotelDetail)
@@ -91,7 +100,7 @@ const handleUpgrade = () => {
                     <form onSubmit={handleChangeHotelDetails}>
                       <Input
                         // value={hotelDetails}
-                        defaultValue={initialHotelDetails} 
+                        defaultValue={initialHotelDetails}
                         required
                         placeHolder={hotelDetail?.data?.User?.hotelName ? hotelDetail?.data?.User?.hotelName : null}
                         label="Add Hotel Name"
@@ -272,13 +281,13 @@ const handleUpgrade = () => {
           {
             selectedOption === 'top-ups' && (
               <>
-         <Section classnames="text-center h-auto p-10 w-1/2" heading="Top-Ups">
-  <div className="bg-white border border-green-600 p-6 rounded-lg shadow-lg max-w-xl mx-auto text-center">
-    <p className="text-blue-600 text-2xl font-semibold mb-2">
-      Coming Soon...
-    </p>
-  </div>
-</Section>
+                <Section classnames="text-center h-auto p-10 w-1/2" heading="Top-Ups">
+                  <div className="bg-white border border-green-600 p-6 rounded-lg shadow-lg max-w-xl mx-auto text-center">
+                    <p className="text-blue-600 text-2xl font-semibold mb-2">
+                      Coming Soon...
+                    </p>
+                  </div>
+                </Section>
               </>
             )
           }
