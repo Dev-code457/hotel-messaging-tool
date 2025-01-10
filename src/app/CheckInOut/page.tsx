@@ -107,33 +107,33 @@ const [userDetail, setUserDetails] = useState<any>();
 
   useEffect(() => {
     const fetchData = async () => {
+      console.log("Fetching hotel data...");
       try {
-      
         const data = await fetchHotelData();
-        setHotelDetails(data)
-        setUserDetails(data)
-       
+        console.log("Hotel data fetched:", data);
+        setHotelDetails(data);
+        setUserDetails(data);
       } catch (error: any) {
-    console.log(error);
-    
+        console.error("Error fetching hotel data:", error);
       }
     };
 
     fetchData();
   }, []);
-  console.log(hotelDetail,'jdsjkfnksdf;');
-  console.log(userDetail,'jdsjkfnksdf;');
-  
 
+  console.log("Current state: hotelDetail:", hotelDetail);
+  console.log("Current state: userDetail:", userDetail);
 
   if (!userDetail && !hotelDetail) {
+    console.log("Loading spinner displayed as no data is available.");
     return (
-      <div className="h-screen bg-white  bg-transparent flex flex-col justify-center items-center">
-        <Spinner  />
-    
+      <div className="h-screen bg-white bg-transparent flex flex-col justify-center items-center">
+        <Spinner />
       </div>
     );
   }
+
+  console.log("Rendering Check In/Out component...");
 
 
 
