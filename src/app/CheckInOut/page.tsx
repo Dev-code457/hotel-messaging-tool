@@ -121,7 +121,9 @@ function CheckInOut() {
 
   useEffect(() => {
     console.log("🔰 [CheckInOut] Component mounted");
-    fetchHotelData();
+   const data =  fetchHotelData();
+   console.log(data);
+   
     return () => {
       console.log("👋 [CheckInOut] Component unmounting");
     };
