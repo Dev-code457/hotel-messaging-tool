@@ -24,22 +24,8 @@ function ChangePassword() {
 
   
   const selectedOption = useSelector((state: RootState) => state.dropdown.selectedOption);
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-        
-          const data = await fetchHotelData();
-          setHotelDetail(data)
-          setUserDetails(data)
-         
-        } catch (error: any) {
-      console.log(error);
-      
-        }
-      };
+ 
   
-      fetchData();
-    }, []);
     console.log(hotelDetail,'jdsjkfnksdf;');
     console.log(userDetail,'jdsjkfnksdf;');
     
@@ -72,6 +58,29 @@ function ChangePassword() {
 
   const user = hotelDetail?.data?.User
   console.log(user);
+
+
+  useEffect(() => {
+    let isCancelled = false;
+  
+    const fetchData = async () => {
+      try {
+        const data = await fetchHotelData();
+        if (!isCancelled) {
+          setHotelDetail(data);
+          setUserDetails(data)
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+  
+    fetchData();
+  
+    return () => {
+      isCancelled = true;
+    };
+  }, [handleChangeHotelDetails, handleChangePassword]);
 
 const handleUpgrade = () => { 
   router.push("/Payment");
