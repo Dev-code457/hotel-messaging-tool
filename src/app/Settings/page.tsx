@@ -48,8 +48,8 @@ function ChangePassword() {
 
   }, [pathName]);
 
-  console.log(hotelDetail, 'jdsjkfnksdf;');
-  console.log(userDetail, 'jdsjkfnksdf;');
+
+
 
 
 
