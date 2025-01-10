@@ -4,6 +4,7 @@ import { axiosPost } from "@/utils/axiosUtility";
 import { ApiResponse } from "@/types";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { useHotelData } from "./useHotelUser";
 
 
 
@@ -29,7 +30,7 @@ export const useCheckInOut = (): UseCheckInOutResult => {
     const [loadingCheckIn, setIsLoadingCheckIn] = useState<boolean>(false);
     const [loadingCheckOut, setIsLoadingCheckOut] = useState<boolean>(false);
     const [isPromotionalList, setIsPromotionalList] = useState<boolean>(false);
-    const hotelDetail = useSelector((state: RootState) => state.hotel.details);
+    const { data }: any = useHotelData()
     const handleSubmit = async (messageType: "checkin" | "checkout", isPromotionalList: boolean) => {
         if (messageType === "checkin") {
             setIsLoadingCheckIn(true);
@@ -37,13 +38,13 @@ export const useCheckInOut = (): UseCheckInOutResult => {
             setIsLoadingCheckOut(true);
         }
 
-    
+
         try {
             const response = await axiosPost<ApiResponse, { phoneNumber: string; messageType: string; isPromotionalList: boolean, userSpending: string, hotelName: string }>(
                 "/message/check-in-out",
-                { phoneNumber, messageType, isPromotionalList, userSpending: String(userSpending),hotelName: hotelDetail?.data?.User?.hotelName }
+                { phoneNumber, messageType, isPromotionalList, userSpending: String(userSpending), hotelName: data?.data?.User?.hotelName }
             );
-    
+
             if (response) {
                 console.log(response, "Response from server");
                 toast.success(response.data.message || "Message sent successfully!");
@@ -51,8 +52,8 @@ export const useCheckInOut = (): UseCheckInOutResult => {
                 toast.error("No response from server.");
             }
         } catch (error: any) {
-            console.log("Error details:", error); 
-    
+            console.log("Error details:", error);
+
             if (error?.response?.data?.errors) {
                 error.response.data.errors.forEach((err: string) => {
                     toast.error(err);
@@ -71,7 +72,7 @@ export const useCheckInOut = (): UseCheckInOutResult => {
             }
         }
     };
-    
+
 
     const handleCheckIn = async (isPromotionalList: boolean): Promise<void> => handleSubmit("checkin", isPromotionalList);
     const handleCheckOut = async (isPromotionalList: boolean): Promise<void> => handleSubmit("checkout", isPromotionalList);
