@@ -98,7 +98,7 @@ const useAddNumber = () => {
 
         try {
           const response = await axiosPost<FeedbackResponse, BulkInput>(
-            " /hotel/add-bulk-customer",
+            "/hotel/add-bulk-customer",
             { customers: [entry] }
           );
 
