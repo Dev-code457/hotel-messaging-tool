@@ -119,6 +119,14 @@ function CheckInOut() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    console.log("🔰 [CheckInOut] Component mounted");
+    fetchHotelData();
+    return () => {
+      console.log("👋 [CheckInOut] Component unmounting");
+    };
+  }, []);
+
 
   return (
     <SideLayout>
