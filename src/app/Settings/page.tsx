@@ -15,12 +15,17 @@ import { RootState } from "@/redux/store";
 import useHotelDetails from "@/hooks/useHotelDetails";
 import Profile from '@/components/Profile'
 import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 function ChangePassword() {
 
   const [initialHotelDetails, setInitialhotelDetails] = useState("");
   const [hotelDetail, setHotelDetail] = useState<any>();
   const [userDetail, setUserDetails] = useState<any>();
+  const router = useRouter()
+  const pathName = usePathname()
+
+
 
 
   const selectedOption = useSelector((state: RootState) => state.dropdown.selectedOption);
@@ -41,7 +46,7 @@ function ChangePassword() {
 
     fetchData();
 
-  }, []);
+  }, [pathName]);
 
   console.log(hotelDetail, 'jdsjkfnksdf;');
   console.log(userDetail, 'jdsjkfnksdf;');
@@ -64,7 +69,7 @@ function ChangePassword() {
     setHotelDetails,
     isLoading
   } = useHotelDetails(id as string);
-  const router = useRouter()
+
 
   useEffect(() => {
     console.log("Yes..........")
