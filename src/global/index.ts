@@ -20,7 +20,7 @@ export async function fetchHotelData(token: string) {
 
     // Parse the JSON data from the response
     const data = await response.json();
-    toast.success(data)
+    toast.success(JSON.stringify(data))
     console.log(data);
 
     return data;
