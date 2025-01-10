@@ -10,7 +10,6 @@ import Spinner from "@/components/Loader";
 import useChangePassword from "@/hooks/useChangePassword";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchHotelData } from "@/global/index";
-import { hotelActions } from "@/redux/slices/hotelSlice";
 import { RootState } from "@/redux/store";
 import useHotelDetails from "@/hooks/useHotelDetails";
 import Profile from '@/components/Profile'
@@ -30,23 +29,24 @@ function ChangePassword() {
 
   const selectedOption = useSelector((state: RootState) => state.dropdown.selectedOption);
   useEffect(() => {
-
-
-    const fetchData = async () => {
-      try {
-        const data = await fetchHotelData();
-
-        setHotelDetail(data);
-        setUserDetails(data)
-
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchData();
-
-  }, [pathName]);
+      const fetchData = async () => {
+        console.log("Fetching hotel data...");
+        try {
+          const token = localStorage.getItem("__temp");
+          if(token){
+            const data = await fetchHotelData(token);
+            console.log("Hotel data fetched:", data);
+            setHotelDetail(data);
+            setUserDetails(data);
+          }
+      
+        } catch (error: any) {
+          console.error("Error fetching hotel data:", error);
+        }
+      };
+  
+      fetchData();
+    }, []);
 
 
 

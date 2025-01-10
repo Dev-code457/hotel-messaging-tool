@@ -109,10 +109,14 @@ const [userDetail, setUserDetails] = useState<any>();
     const fetchData = async () => {
       console.log("Fetching hotel data...");
       try {
-        const data = await fetchHotelData();
-        console.log("Hotel data fetched:", data);
-        setHotelDetails(data);
-        setUserDetails(data);
+        const token = localStorage.getItem("__temp");
+        if(token){
+          const data = await fetchHotelData(token);
+          console.log("Hotel data fetched:", data);
+          setHotelDetails(data);
+          setUserDetails(data);
+        }
+    
       } catch (error: any) {
         console.error("Error fetching hotel data:", error);
       }

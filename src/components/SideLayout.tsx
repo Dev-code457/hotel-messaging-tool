@@ -24,10 +24,13 @@ function SideLayout({ children }: { children: ReactNode }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const token = localStorage.getItem('__temp')
+if(token){
+  const data = await fetchHotelData(token);
 
-        const data = await fetchHotelData();
+  setUserDetails(data)
+}
 
-        setUserDetails(data)
 
       } catch (error: any) {
         console.log(error);

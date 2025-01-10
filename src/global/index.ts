@@ -1,13 +1,31 @@
-import { axiosGet } from "@/utils/axiosUtility";
+import { toast } from "sonner";
 
-export async function fetchHotelData() {
-    try {
-      const response = await axiosGet('/hotel/get-user-hotel');
-      console.log(response.data);
-      const data = response.data;
-      return data;
-    } catch (error) {
-      console.error("Error fetching hotel data:", error);
-      throw error;
+
+export async function fetchHotelData(token: string) {
+  try {
+    // Send the token in the Authorization header with a Cache-Control header to avoid caching
+    const response = await fetch('https://dc0uc29zl4vtv.cloudfront.net/api/hotel/get-user-hotel', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Cache-Control': 'no-cache', // Prevent caching
+      },
+    });
+
+    // Check if the response is OK
+    if (!response.ok) {
+      throw new Error('Error fetching hotel data');
     }
+
+
+    // Parse the JSON data from the response
+    const data = await response.json();
+    toast.success(data)
+    console.log(data);
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching hotel data:", error);
+    throw error;
   }
+}
