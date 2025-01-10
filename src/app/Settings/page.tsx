@@ -22,16 +22,33 @@ function ChangePassword() {
   const [hotelDetail, setHotelDetail] = useState<any>();
   const [userDetail, setUserDetails] = useState<any>();
 
-  
+
   const selectedOption = useSelector((state: RootState) => state.dropdown.selectedOption);
- 
-  
-    console.log(hotelDetail,'jdsjkfnksdf;');
-    console.log(userDetail,'jdsjkfnksdf;');
-    
-  
-  
-    
+  useEffect(() => {
+
+
+    const fetchData = async () => {
+      try {
+        const data = await fetchHotelData();
+
+        setHotelDetail(data);
+        setUserDetails(data)
+
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+
+  }, []);
+
+  console.log(hotelDetail, 'jdsjkfnksdf;');
+  console.log(userDetail, 'jdsjkfnksdf;');
+
+
+
+
   const id = hotelDetail?._id;
   const {
     password,
@@ -59,43 +76,20 @@ function ChangePassword() {
   const user = hotelDetail?.data?.User
   console.log(user);
 
-
-  useEffect(() => {
-    let isCancelled = false;
-  
-    const fetchData = async () => {
-      try {
-        const data = await fetchHotelData();
-        if (!isCancelled) {
-          setHotelDetail(data);
-          setUserDetails(data)
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-  
-    fetchData();
-  
-    return () => {
-      isCancelled = true;
-    };
-  }, [handleChangeHotelDetails, handleChangePassword]);
-
-const handleUpgrade = () => { 
-  router.push("/Payment");
-}
+  const handleUpgrade = () => {
+    router.push("/Payment");
+  }
 
 
 
-if (!hotelDetail) {
-  return (
-    <div className="h-screen bg-white  bg-transparent flex flex-col justify-center items-center">
-      <Spinner  />
-  
-    </div>
-  );
-}
+  if (!hotelDetail) {
+    return (
+      <div className="h-screen bg-white  bg-transparent flex flex-col justify-center items-center">
+        <Spinner />
+
+      </div>
+    );
+  }
 
 
   console.log(hotelDetail)
@@ -116,7 +110,7 @@ if (!hotelDetail) {
                     <form onSubmit={handleChangeHotelDetails}>
                       <Input
                         // value={hotelDetails}
-                        defaultValue={initialHotelDetails} 
+                        defaultValue={initialHotelDetails}
                         required
                         placeHolder={hotelDetail?.data?.User?.hotelName ? hotelDetail?.data?.User?.hotelName : null}
                         label="Add Hotel Name"
@@ -297,13 +291,13 @@ if (!hotelDetail) {
           {
             selectedOption === 'top-ups' && (
               <>
-         <Section classnames="text-center h-auto p-10 w-1/2" heading="Top-Ups">
-  <div className="bg-white border border-green-600 p-6 rounded-lg shadow-lg max-w-xl mx-auto text-center">
-    <p className="text-blue-600 text-2xl font-semibold mb-2">
-      Coming Soon...
-    </p>
-  </div>
-</Section>
+                <Section classnames="text-center h-auto p-10 w-1/2" heading="Top-Ups">
+                  <div className="bg-white border border-green-600 p-6 rounded-lg shadow-lg max-w-xl mx-auto text-center">
+                    <p className="text-blue-600 text-2xl font-semibold mb-2">
+                      Coming Soon...
+                    </p>
+                  </div>
+                </Section>
               </>
             )
           }
