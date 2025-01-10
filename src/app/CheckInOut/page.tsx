@@ -12,8 +12,9 @@ import Spinner from "@/components/Loader";
 import Profile from "@/components/Profile";
 import { RootState } from "@/redux/store";
 import { hotelActions } from "@/redux/slices/hotelSlice";
-import { fetchHotelData } from "@/global";
+
 import * as yup from "yup";
+import { useHotelData } from "@/hooks/useHotelUser";
 
 function CheckInOut() {
   const {
@@ -30,8 +31,9 @@ function CheckInOut() {
   } = useCheckInOut();
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-const [hotelDetail, setHotelDetails] = useState<any>();
-const [userDetail, setUserDetails] = useState<any>();
+  const { data, loading, error, refetch }: any = useHotelData();
+  
+console.log(data);
 
 
 
@@ -85,6 +87,7 @@ const [userDetail, setUserDetails] = useState<any>();
     const isValid = await validateForm();
     if (isValid) {
       handleCheckIn(isPromotionalList);
+      refetch()
     }
   };
 
@@ -92,6 +95,7 @@ const [userDetail, setUserDetails] = useState<any>();
     const isValid = await validateForm();
     if (isValid) {
       handleCheckOut(isPromotionalList);
+      refetch()
     }
   };
 
@@ -105,30 +109,30 @@ const [userDetail, setUserDetails] = useState<any>();
 
 
 
-  useEffect(() => {
-    const fetchData = async () => {
-      console.log("Fetching hotel data...");
-      try {
-        const token = localStorage.getItem("__temp");
-        if(token){
-          const data = await fetchHotelData(token);
-          console.log("Hotel data fetched:", data);
-          setHotelDetails(data);
-          setUserDetails(data);
-        }
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     console.log("Fetching hotel data...");
+  //     try {
+  //       const token = localStorage.getItem("__temp");
+  //       if(token){
+  //         const data = await fetchHotelData(token);
+  //         console.log("Hotel data fetched:", data);
+  //         setHotelDetails(data);
+  //         setUserDetails(data);
+  //       }
     
-      } catch (error: any) {
-        console.error("Error fetching hotel data:", error);
-      }
-    };
+  //     } catch (error: any) {
+  //       console.error("Error fetching hotel data:", error);
+  //     }
+  //   };
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
-  console.log("Current state: hotelDetail:", hotelDetail);
-  console.log("Current state: userDetail:", userDetail);
+  // console.log("Current state: hotelDetail:", hotelDetail);
+  // console.log("Current state: userDetail:", userDetail);
 
-  if (!userDetail && !hotelDetail) {
+  if (!data) {
     console.log("Loading spinner displayed as no data is available.");
     return (
       <div className="h-screen bg-white bg-transparent flex flex-col justify-center items-center">
@@ -137,7 +141,7 @@ const [userDetail, setUserDetails] = useState<any>();
     );
   }
 
-  console.log("Rendering Check In/Out component...");
+
 
 
 
@@ -150,7 +154,7 @@ const [userDetail, setUserDetails] = useState<any>();
           <h1 className="text-4xl text-black font-bold mb-14">
             Welcome{" "}
             <span className="text-blue-600">
-              {hotelDetail?.data?.hotel?.hotelName}
+              {data?.data?.hotel?.hotelName}
             </span>
             <span className="text-black">!</span>
           </h1>
@@ -212,10 +216,10 @@ const [userDetail, setUserDetails] = useState<any>();
                           "Send Check In Message"
                         )
                       }
-                      classnames={`bg-green-500 hover:bg-green-600 py-3 ${!userDetail?.data?.User?.planType ? "cursor-not-allowed" : "cursor-pointer"}`}
+                      classnames={`bg-green-500 hover:bg-green-600 py-3 ${!data?.data?.User?.planType ? "cursor-not-allowed" : "cursor-pointer"}`}
                       type="submit"
                       onClick={handleCheckInWithValidation}
-                      disabled={!userDetail?.data?.User?.planType || loadingCheckIn}
+                      disabled={!data?.data?.User?.planType || loadingCheckIn}
                     />
                     <Button
                       text={
@@ -227,10 +231,10 @@ const [userDetail, setUserDetails] = useState<any>();
                           "Send Check Out Message"
                         )
                       }
-                      classnames={`bg-blue-500 hover:bg-blue-600 py-3 ${!userDetail?.data?.User?.planType ? "cursor-not-allowed" : "cusrsor-pointer"}`}
+                      classnames={`bg-blue-500 hover:bg-blue-600 py-3 ${!data?.data?.User?.planType ? "cursor-not-allowed" : "cusrsor-pointer"}`}
                       type="submit"
                       onClick={handleCheckOutWithValidation}
-                      disabled={!userDetail?.data?.User?.planType || loadingCheckOut}
+                      disabled={!data?.data?.User?.planType || loadingCheckOut}
                     />
                   </div>
                 </form>

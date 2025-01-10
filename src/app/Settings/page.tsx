@@ -9,18 +9,16 @@ import SideLayout from "@/components/SideLayout";
 import Spinner from "@/components/Loader";
 import useChangePassword from "@/hooks/useChangePassword";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchHotelData } from "@/global/index";
 import { RootState } from "@/redux/store";
 import useHotelDetails from "@/hooks/useHotelDetails";
 import Profile from '@/components/Profile'
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
+import { useHotelData } from "@/hooks/useHotelUser";
 
 function ChangePassword() {
 
   const [initialHotelDetails, setInitialhotelDetails] = useState("");
-  const [hotelDetail, setHotelDetail] = useState<any>();
-  const [userDetail, setUserDetails] = useState<any>();
   const router = useRouter()
   const pathName = usePathname()
 
@@ -28,25 +26,10 @@ function ChangePassword() {
 
 
   const selectedOption = useSelector((state: RootState) => state.dropdown.selectedOption);
-  useEffect(() => {
-      const fetchData = async () => {
-        console.log("Fetching hotel data...");
-        try {
-          const token = localStorage.getItem("__temp");
-          if(token){
-            const data = await fetchHotelData(token);
-            console.log("Hotel data fetched:", data);
-            setHotelDetail(data);
-            setUserDetails(data);
-          }
-      
-        } catch (error: any) {
-          console.error("Error fetching hotel data:", error);
-        }
-      };
+  const { data, error, refetch }: any = useHotelData()
+  const hotelDetail = data;
+  console.log(data);
   
-      fetchData();
-    }, []);
 
 
 
@@ -64,7 +47,6 @@ function ChangePassword() {
     loading,
   } = useChangePassword();
   const {
-    hotelDetails,
     handleChangeHotelDetails,
     setHotelDetails,
     isLoading
@@ -87,7 +69,7 @@ function ChangePassword() {
 
 
 
-  if (!hotelDetail) {
+  if (!data) {
     return (
       <div className="h-screen bg-white  bg-transparent flex flex-col justify-center items-center">
         <Spinner />

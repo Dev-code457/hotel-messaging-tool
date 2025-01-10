@@ -10,8 +10,9 @@ import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
 import { IoIosLock } from "react-icons/io";
-import { fetchHotelData } from "@/global";
+
 import Spinner from "./Loader";
+import { useHotelData } from "@/hooks/useHotelUser";
 
 
 function SideLayout({ children }: { children: ReactNode }) {
@@ -19,29 +20,12 @@ function SideLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModal, setIsModal] = useState(true);
-  const [userDetail, setUserDetails] = useState<any>()
+
   const value = useSelector((state: RootState) => state.example.value);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = localStorage.getItem('__temp')
-if(token){
-  const data = await fetchHotelData(token);
-
-  setUserDetails(data)
-}
+  const { data, loading, error, refetch }: any = useHotelData();
 
 
-      } catch (error: any) {
-        console.log(error);
 
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  console.log(userDetail, 'jdsjkfnksdf;');
 
 
 
@@ -105,7 +89,7 @@ if(token){
       >
         <div className="h-full px-3 overflow-y-auto bg-black">
           {
-            !userDetail ? (<div className="flex justify-center items-center pt-64"><Spinner /></div>) : (<ul className="space-y-4 ml-2">
+            !data ? (<div className="flex justify-center items-center pt-64"><Spinner /></div>) : (<ul className="space-y-4 ml-2">
               <li>
                 <Link
                   href="/"
@@ -115,7 +99,7 @@ if(token){
                 </Link>
               </li>
 
-              {!userDetail?.data?.User?.planType && (
+              {!data?.data?.User?.planType && (
                 <div className="relative ml-2">
                   {/* Links */}
                   <ul className="bg-black p-4 rounded-lg space-y-4">
@@ -167,7 +151,7 @@ if(token){
 
 
 
-              {(isAuthenticated && userDetail?.data?.User?.planType) ? (
+              {(isAuthenticated && data?.data?.User?.planType) ? (
                 <>
                   {links.map((link) => {
 
