@@ -19,9 +19,33 @@ import { useRouter } from "next/navigation";
 function ChangePassword() {
 
   const [initialHotelDetails, setInitialhotelDetails] = useState("");
-  const dispatch = useDispatch();
-  const hotelDetail = useSelector((state: RootState) => state.hotel.details);
+  const [hotelDetail, setHotelDetail] = useState<any>();
+  const [userDetail, setUserDetails] = useState<any>();
+
+  
   const selectedOption = useSelector((state: RootState) => state.dropdown.selectedOption);
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+        
+          const data = await fetchHotelData();
+          setHotelDetail(data)
+          setUserDetails(data)
+         
+        } catch (error: any) {
+      console.log(error);
+      
+        }
+      };
+  
+      fetchData();
+    }, []);
+    console.log(hotelDetail,'jdsjkfnksdf;');
+    console.log(userDetail,'jdsjkfnksdf;');
+    
+  
+  
+    
   const id = hotelDetail?._id;
   const {
     password,
@@ -55,19 +79,14 @@ const handleUpgrade = () => {
 
 
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        dispatch(hotelActions.fetchHotelDetailsPending());
-        const data = await fetchHotelData();
-        dispatch(hotelActions.fetchHotelDetailsSuccess(data));
-      } catch (error: any) {
-        dispatch(hotelActions.fetchHotelDetailsFailure(error.message));
-      }
-    };
-
-    fetchData();
-  }, [dispatch, isLoading]);
+if (!hotelDetail) {
+  return (
+    <div className="h-screen bg-white  bg-transparent flex flex-col justify-center items-center">
+      <Spinner  />
+  
+    </div>
+  );
+}
 
 
   console.log(hotelDetail)

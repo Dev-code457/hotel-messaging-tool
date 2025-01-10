@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Logo from "@/app/public/assets/GoodPegg.png";
 import Image from "next/image";
@@ -10,6 +10,8 @@ import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
 import { IoIosLock } from "react-icons/io";
+import { fetchHotelData } from "@/global";
+import Spinner from "./Loader";
 
 
 function SideLayout({ children }: { children: ReactNode }) {
@@ -17,8 +19,31 @@ function SideLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModal, setIsModal] = useState(true);
+  const [userDetail, setUserDetails] = useState<any>()
   const value = useSelector((state: RootState) => state.example.value);
-  const userDetail = useSelector((state: RootState) => state.hotel.details);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+
+        const data = await fetchHotelData();
+
+        setUserDetails(data)
+
+      } catch (error: any) {
+        console.log(error);
+
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  console.log(userDetail, 'jdsjkfnksdf;');
+
+
+
+
+
 
   const links = [
     { name: "Check In / Check Out", path: "/CheckInOut" },
@@ -69,39 +94,88 @@ function SideLayout({ children }: { children: ReactNode }) {
           ></path>
         </svg>
       </button>
+
       <aside
         id="default-sidebar"
         className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
         aria-label="Sidebar"
       >
         <div className="h-full px-3 overflow-y-auto bg-black">
+          {
+            !userDetail ? (<div className="flex justify-center items-center pt-64"><Spinner /></div>) : (<ul className="space-y-4 ml-2">
+              <li>
+                <Link
+                  href="/"
+                  className="flex items-center mr-4 justify-center rounded-lg hover group"
+                >
+                  <Image src={Logo} alt="LOGO" className="w-[60%]" />
+                </Link>
+              </li>
 
-          <ul className="space-y-4 ml-2">
-            <li>
-              <Link
-                href="/"
-                className="flex items-center mr-4 justify-center rounded-lg hover group"
-              >
-                <Image src={Logo} alt="LOGO" className="w-[60%]" />
-              </Link>
-            </li>
+              {!userDetail?.data?.User?.planType && (
+                <div className="relative ml-2">
+                  {/* Links */}
+                  <ul className="bg-black p-4 rounded-lg space-y-4">
+                    {links.map((link) => {
+                      if (
+                        value < 1 &&
+                        ["Check In/ Check Out", "Promotions/ Offers", "Feedback"].includes(link.name)
+                      ) {
+                        return null;
+                      }
+                      return (
+                        <li key={link.path}>
+                          <Link
+                            href={link.path}
+                            className={"flex items-center justify-start rounded-lg group font-bold text-white "}
+                            onClick={
+                              link.name === "Logout"
+                                ? (e) => {
+                                  e.preventDefault();
+                                  setIsModalOpen(true);
+                                }
+                                : undefined
+                            }
+                          >
+                            <p>{link.name === "Logout" ? null : link.name}</p>
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
 
-            {!userDetail?.data?.User?.planType && (
-              <div className="relative ml-2">
-                {/* Links */}
-                <ul className="bg-black p-4 rounded-lg space-y-4">
+                  {/* Lock Overlay */}
+                  <div className="absolute inset-0 bg-black bg-opacity-75 shadow-lg flex items-center justify-center rounded-lg">
+                    <div className="text-center text-white">
+                      <div className="flex items-center justify-center mb-4 shadow-2xl">
+                        <IoIosLock size={50} />
+                      </div>
+
+                      <button
+                        onClick={() => router.push("/Payment")}
+                        className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition duration-300"
+                      >
+                        Unlock Now
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+
+
+              {(isAuthenticated && userDetail?.data?.User?.planType) ? (
+                <>
                   {links.map((link) => {
-                    if (
-                      value < 1 &&
-                      ["Check In/ Check Out", "Promotions/ Offers", "Feedback"].includes(link.name)
-                    ) {
+
+                    if (value < 1 && ["Check In/ Check Out", "Promotions/ Offers", "Feedback"].includes(link.name)) {
                       return null;
                     }
                     return (
-                      <li key={link.path}>
+                      <li key={link.path} className="ml-2">
                         <Link
                           href={link.path}
-                          className={"flex items-center justify-start rounded-lg group font-bold text-white "}
+                          className={`flex items-center justify-start rounded-lg group font-bold  ${pathname === link.path ? " text-green-600 shadow-2xl shadow-blue-600" : "text-white "}`}
                           onClick={
                             link.name === "Logout"
                               ? (e) => {
@@ -111,65 +185,22 @@ function SideLayout({ children }: { children: ReactNode }) {
                               : undefined
                           }
                         >
-                          <p>{link.name === "Logout" ? null : link.name}</p>
+                          <p>{link.name}</p>
                         </Link>
                       </li>
                     );
                   })}
-                </ul>
-
-                {/* Lock Overlay */}
-                <div className="absolute inset-0 bg-black bg-opacity-75 shadow-lg flex items-center justify-center rounded-lg">
-                  <div className="text-center text-white">
-                    <div className="flex items-center justify-center mb-4 shadow-2xl">
-                      <IoIosLock size={50} />
-                    </div>
-
-                    <button
-                      onClick={() => router.push("/Payment")}
-                      className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition duration-300"
-                    >
-                      Unlock Now
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
+                </>
+              ) : null}
 
 
 
-            {(isAuthenticated && userDetail?.data?.User?.planType) ? (
-              <>
-                {links.map((link) => {
-
-                  if (value < 1 && ["Check In/ Check Out", "Promotions/ Offers", "Feedback"].includes(link.name)) {
-                    return null;
-                  }
-                  return (
-                    <li key={link.path} className="ml-2">
-                      <Link
-                        href={link.path}
-                        className={`flex items-center justify-start rounded-lg group font-bold  ${pathname === link.path ? " text-green-600 shadow-2xl shadow-blue-600" : "text-white "}`}
-                        onClick={
-                          link.name === "Logout"
-                            ? (e) => {
-                              e.preventDefault();
-                              setIsModalOpen(true);
-                            }
-                            : undefined
-                        }
-                      >
-                        <p>{link.name}</p>
-                      </Link>
-                    </li>
-                  );
-                })}
-              </>
-            ) : null}
+            </ul>
+            )
+          }
 
 
 
-          </ul>
         </div>
       </aside>
       <div className="h-screen">

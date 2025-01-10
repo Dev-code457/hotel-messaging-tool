@@ -30,7 +30,8 @@ function CheckInOut() {
   } = useCheckInOut();
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const userDetail = useSelector((state: RootState) => state.hotel.details);
+const [hotelDetail, setHotelDetails] = useState<any>();
+const [userDetail, setUserDetails] = useState<any>();
 
 
 
@@ -102,32 +103,39 @@ function CheckInOut() {
     }
   };
 
-  const dispatch = useDispatch();
-  const hotelDetail = useSelector((state: RootState) => state.hotel.details);
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        dispatch(hotelActions.fetchHotelDetailsPending());
+      
         const data = await fetchHotelData();
-        dispatch(hotelActions.fetchHotelDetailsSuccess(data));
+        setHotelDetails(data)
+        setUserDetails(data)
+       
       } catch (error: any) {
-        dispatch(hotelActions.fetchHotelDetailsFailure(error.message));
+    console.log(error);
+    
       }
     };
 
     fetchData();
   }, []);
+  console.log(hotelDetail,'jdsjkfnksdf;');
+  console.log(userDetail,'jdsjkfnksdf;');
+  
 
-  useEffect(() => {
-    console.log("🔰 [CheckInOut] Component mounted");
-   const data =  fetchHotelData();
-   console.log(data);
-   
-    return () => {
-      console.log("👋 [CheckInOut] Component unmounting");
-    };
-  }, []);
+
+  if (!userDetail && !hotelDetail) {
+    return (
+      <div className="h-screen bg-white  bg-transparent flex flex-col justify-center items-center">
+        <Spinner  />
+    
+      </div>
+    );
+  }
+
+
 
 
   return (
