@@ -14,9 +14,10 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import * as yup from "yup";
 import usePromotionalMessage from "@/hooks/usePromotionalMessage";
+import { useHotelData } from "@/hooks/useHotelUser";
 
 function PromotionalMessage() {
-  const hotelDetail = useSelector((state: RootState) => state.hotel.details);
+const {data}: any = useHotelData()
   const [selectedTemplate, setSelectedTemplate] = useState("discounts");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -37,7 +38,7 @@ function PromotionalMessage() {
     handleTimeChange,
     handlePhoneNumberChange,
     sendBulkMessage,
-  } = usePromotionalMessage(hotelDetail?.data.User.hotelName || "");
+  } = usePromotionalMessage(data?.data.User.hotelName || "");
 
 
 console.log(time,"dnasjfndsjkfnksdnfl");
@@ -386,7 +387,7 @@ console.log(time,"dnasjfndsjkfnksdnfl");
                 <MessagePreviewWindow
                   address={address}
                   discount={discount}
-                  hotelName={hotelDetail?.hotelName || ownerHotelName || ""}
+                  hotelName={data?.hotelName || ownerHotelName || ""}
                   phoneNumber={phoneNumber}
                   date={date}
                   time={time}
