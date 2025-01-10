@@ -8,8 +8,10 @@ export async function fetchHotelData(token: string) {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
-        'Cache-Control': 'no-cache', // Prevent caching
-      },
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
     });
 
     // Check if the response is OK
