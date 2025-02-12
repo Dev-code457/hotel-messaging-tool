@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { hotelActions } from "@/redux/slices/hotelSlice";
+import { useHotelData } from "./useHotelUser";
 
 
 export const usePasswordReset = (token: string) => {
@@ -14,7 +15,7 @@ export const usePasswordReset = (token: string) => {
   const [error, setError] = useState<string | null>(null);
 
   const dispatch = useDispatch();
-  const hotelDetail = useSelector((state: RootState) => state.hotel.details);
+  const {data}: any = useHotelData()
 
   useEffect(() => {
     const persistedHotelData = localStorage.getItem("persist:root");
@@ -47,8 +48,8 @@ export const usePasswordReset = (token: string) => {
       const response = await axiosPost(`/password/reset-password/${token}`, {
         password,
         confirmPassword,
-        email: hotelDetail?.data?.User?.email,
-        hotelName: hotelDetail?.data?.hotel?.dbName,
+        email: data?.data?.User?.email,
+        hotelName: data?.data?.hotel?.dbName,
       });
 
       toast.success(response.data.message || "Password reset successfully!");

@@ -3,14 +3,14 @@ import { toast } from "sonner";
 import { axiosPut } from "@/utils/axiosUtility";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { useHotelData } from "./useHotelUser";
 
 const useForgotPassword = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const hotelDetail = useSelector((state: RootState) => state.hotel.details);
 
-  console.log(hotelDetail);
+
 
 
   const forgotPassword = async (email: string) => {

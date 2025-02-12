@@ -2,13 +2,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { axiosPost } from "@/utils/axiosUtility";
 import { ApiResponse } from "@/types";
-import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
 import { useHotelData } from "./useHotelUser";
-
-
-
-
 interface UseCheckInOutResult {
     phoneNumber: string;
     setPhoneNumber: (value: string) => void;
