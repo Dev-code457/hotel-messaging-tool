@@ -31,7 +31,7 @@ export function useHotelData() {
       if (!token) throw new Error('No token found');
 
       const response = await fetch(
-        'https://dc0uc29zl4vtv.cloudfront.net/api/hotel/get-user-hotel', 
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/hotel/get-user-hotel`,
         {
           method: 'GET',
           headers: {
