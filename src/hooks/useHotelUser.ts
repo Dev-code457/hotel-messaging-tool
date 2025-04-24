@@ -1,6 +1,4 @@
-// Create a custom hook for real-time data fetching
 import { useState, useEffect } from 'react';
-import { toast } from 'sonner';
 
 interface HotelData {
   User: {
@@ -54,10 +52,10 @@ export function useHotelData() {
         setData(newData);
       }
       
-    } catch (err) {
+    } 
+    catch (err) {
       if (err instanceof Error && err.name === 'AbortError') return;
       setError(err instanceof Error ? err : new Error('Unknown error'));
-      toast.error('Failed to fetch latest data');
     } finally {
       setLoading(false);
     }

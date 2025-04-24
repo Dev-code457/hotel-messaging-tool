@@ -132,7 +132,7 @@ console.log(data);
   // console.log("Current state: hotelDetail:", hotelDetail);
   // console.log("Current state: userDetail:", userDetail);
 
-  if (!data) {
+  if (data) {
     console.log("Loading spinner displayed as no data is available.");
     return (
       <div className="h-screen bg-white bg-transparent flex flex-col justify-center items-center">
@@ -216,10 +216,10 @@ console.log(data);
                           "Send Check In Message"
                         )
                       }
-                      classnames={`bg-green-500 hover:bg-green-600 py-3 ${!data?.data?.User?.planType ? "cursor-not-allowed" : "cursor-pointer"}`}
+                      classnames={`bg-green-500 hover:bg-green-600 py-3 ${data?.data?.User?.planType ? "cursor-not-allowed" : "cursor-pointer"}`}
                       type="submit"
                       onClick={handleCheckInWithValidation}
-                      disabled={!data?.data?.User?.planType || loadingCheckIn}
+                      disabled={data?.data?.User?.planType || loadingCheckIn}
                     />
                     <Button
                       text={
@@ -231,10 +231,10 @@ console.log(data);
                           "Send Check Out Message"
                         )
                       }
-                      classnames={`bg-blue-500 hover:bg-blue-600 py-3 ${!data?.data?.User?.planType ? "cursor-not-allowed" : "cusrsor-pointer"}`}
+                      classnames={`bg-blue-500 hover:bg-blue-600 py-3 ${data?.data?.User?.planType ? "cursor-not-allowed" : "cusrsor-pointer"}`}
                       type="submit"
                       onClick={handleCheckOutWithValidation}
-                      disabled={!data?.data?.User?.planType || loadingCheckOut}
+                      disabled={data?.data?.User?.planType || loadingCheckOut}
                     />
                   </div>
                 </form>

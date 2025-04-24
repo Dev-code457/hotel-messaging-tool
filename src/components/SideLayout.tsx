@@ -89,7 +89,7 @@ function SideLayout({ children }: { children: ReactNode }) {
       >
         <div className="h-full px-3 overflow-y-auto bg-black">
           {
-            !data ? (<div className="flex justify-center items-center pt-64"><Spinner /></div>) : (<ul className="space-y-4 ml-2">
+            data ? (<div className="flex justify-center items-center pt-64"><Spinner /></div>) : (<ul className="space-y-4 ml-2">
               <li>
                 <Link
                   href="/"
