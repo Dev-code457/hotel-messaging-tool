@@ -229,7 +229,7 @@ function ChangePassword() {
                   </p>
                   <p className="text-gray-800 text-lg">
                     Please purchase a relevant plan to get{' '}
-                    <span className="underline text-blue-600 font-medium hover:text-blue-800 transition-colors" onClick={() => router.push("/Payment")}>started</span>.
+                    <button className="underline text-blue-600 font-medium hover:text-blue-800 transition-colors" onClick={() => router.push("/Payment")}>started</button>.
                   </p>
                 </div>
               </Section>
