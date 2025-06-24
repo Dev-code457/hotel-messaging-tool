@@ -1,3 +1,4 @@
+// useHotelData.tsx
 import { useState, useEffect } from 'react';
 
 interface HotelData {
@@ -18,12 +19,14 @@ interface HotelData {
   timestamp: string;
 }
 
+// This is your custom hook
 export function useHotelData() {
   const [data, setData] = useState<HotelData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);  // Default state is loading
   const [error, setError] = useState<Error | null>(null);
 
   const fetchData = async (signal?: AbortSignal) => {
+    setLoading(true); // Set loading to true when fetching new data
     try {
       const token = localStorage.getItem("__temp");
       if (!token) throw new Error('No token found');
@@ -37,7 +40,7 @@ export function useHotelData() {
             'Cache-Control': 'no-cache, no-store, must-revalidate',
             'Pragma': 'no-cache'
           },
-          signal // Add abort signal
+          signal
         }
       );
 
@@ -46,18 +49,17 @@ export function useHotelData() {
       }
 
       const newData = await response.json();
-      
-      // Compare timestamps to ensure we're getting fresh data
+
+      // Only update if the timestamp is newer
       if (!data || new Date(newData.timestamp) > new Date(data.timestamp)) {
         setData(newData);
       }
-      
-    } 
-    catch (err) {
+
+    } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') return;
       setError(err instanceof Error ? err : new Error('Unknown error'));
     } finally {
-      setLoading(false);
+      setLoading(false); // Set loading to false after the fetch is done
     }
   };
 
@@ -68,7 +70,7 @@ export function useHotelData() {
     return () => controller.abort();
   }, []);
 
-  // Set up periodic refresh (every 30 seconds)
+  // Periodic refresh (every 30 seconds)
   useEffect(() => {
     const interval = setInterval(() => {
       fetchData();
@@ -77,7 +79,7 @@ export function useHotelData() {
     return () => clearInterval(interval);
   }, []);
 
-  const refetch = () => fetchData();
+  const refetch = () => fetchData(); // Refetch function to trigger data fetch
 
   return { data, loading, error, refetch };
 }
