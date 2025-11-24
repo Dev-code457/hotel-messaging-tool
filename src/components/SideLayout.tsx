@@ -132,7 +132,7 @@ function SideLayout({ children }: { children: ReactNode }) {
                   </ul>
 
                   {/* Lock Overlay */}
-                  {/* <div className="absolute inset-0 bg-black bg-opacity-75 shadow-lg flex items-center justify-center rounded-lg">
+                  <div className="absolute inset-0 bg-black bg-opacity-75 shadow-lg flex items-center justify-center rounded-lg">
                     <div className="text-center text-white">
                       <div className="flex items-center justify-center mb-4 shadow-2xl">
                         <IoIosLock size={50} />
@@ -145,7 +145,7 @@ function SideLayout({ children }: { children: ReactNode }) {
                         Unlock Now
                       </button>
                     </div>
-                  </div> */}
+                  </div>
                 </div>
               )}
 

@@ -15,6 +15,7 @@ interface ErrorResponse {
 // Create an instance of Axios
 const axiosInstance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+    timeout: 30000, // 30 seconds timeout
     headers: {
         "Content-Type": "application/json",
     },
@@ -47,6 +48,15 @@ axiosInstance.interceptors.request.use((config) => {
     return Promise.reject(error);
 });
 
+// Add a response interceptor
+axiosInstance.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        console.error('Response Interceptor Error:', error);
+        return Promise.reject(error);
+    }
+);
+
 const handleResponse = <T>(response: AxiosResponse<ApiResponse<T>>): AxiosResponse<ApiResponse<T>> => {
 
     return response;
@@ -68,7 +78,10 @@ const handleError = (error: any): never => {
         }
     } else if (error.request) {
         console.error('No response received from server:', error);
-        throw new Error("No response received from server");
+        throw new Error("No response from server. Please check if the server is running.");
+    } else if (error.code === 'ECONNABORTED') {
+        console.error('Request timeout:', error);
+        throw new Error("Request timeout. Please try again.");
     } else {
         console.error('Unexpected Error:', error.message);
         throw new Error(error.message || "An unexpected error occurred");
